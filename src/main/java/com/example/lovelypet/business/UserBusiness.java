@@ -3,8 +3,10 @@ package com.example.lovelypet.business;
 import com.example.lovelypet.entity.User;
 import com.example.lovelypet.exception.BaseException;
 import com.example.lovelypet.exception.UserException;
+import com.example.lovelypet.mapper.UserMapper;
 import com.example.lovelypet.model.LoginRequest;
 import com.example.lovelypet.model.UserRegisterRequest;
+import com.example.lovelypet.model.UserRegisterResponse;
 import com.example.lovelypet.service.UserService;
 import org.springframework.stereotype.Service;
 
@@ -16,8 +18,11 @@ public class UserBusiness {
 
     private final UserService userService;
 
-    public UserBusiness(UserService userService) {
+    private final UserMapper userMapper;
+
+    public UserBusiness(UserService userService, UserMapper userMapper) {
         this.userService = userService;
+        this.userMapper = userMapper;
     }
 
     public User register(UserRegisterRequest reqUser) throws BaseException {
@@ -26,7 +31,7 @@ public class UserBusiness {
         return user;
     }
 
-    public Optional<User> login(LoginRequest loginRequest) throws BaseException {
+    public UserRegisterResponse login(LoginRequest loginRequest) throws BaseException {
         String op = loginRequest.getPassWord();
         String ou = loginRequest.getUserName();
         if (Objects.isNull(op)) {
@@ -45,7 +50,8 @@ public class UserBusiness {
             throw UserException.loginFailPasswordIncorrect();
 
         } else {
-            return opt;
+            UserRegisterResponse ures = userMapper.toUserRegisterResponse(user);
+            return ures;
         }
     }
 

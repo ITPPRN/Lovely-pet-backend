@@ -5,13 +5,12 @@ import com.example.lovelypet.entity.User;
 import com.example.lovelypet.exception.BaseException;
 import com.example.lovelypet.model.LoginRequest;
 import com.example.lovelypet.model.UserRegisterRequest;
+import com.example.lovelypet.model.UserRegisterResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/user")
@@ -30,8 +29,8 @@ public class UserApi {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Optional<User>> login(@RequestBody LoginRequest loginRequest) throws BaseException {
-        Optional<User> response = userBusiness.login(loginRequest);
+    public ResponseEntity<UserRegisterResponse> login(@RequestBody LoginRequest loginRequest) throws BaseException {
+        UserRegisterResponse response = userBusiness.login(loginRequest);
         return ResponseEntity.ok(response);
 
     }
