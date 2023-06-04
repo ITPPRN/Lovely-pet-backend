@@ -7,9 +7,9 @@ import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-@Entity(name = "photo_hotel")
-public class PhotoHotel extends BaseEntity {
+@Entity(name = "hotel_servicePetType")
+public class HotelService extends BaseEntity {
 
-    @Column(nullable = true, length = 254)
-    private String photoHotelFile;
+    @Column(nullable = false, length = 60)
+    private String serviceName;
 }

@@ -4,35 +4,30 @@ import com.example.lovelypet.entity.Pet;
 import com.example.lovelypet.entity.PetType;
 import com.example.lovelypet.entity.User;
 import com.example.lovelypet.repository.PetRepository;
+import com.example.lovelypet.repository.PetTypeRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
-public class PetService {
+public class PetTypeService {
 
-   private final PetRepository repository;
+   private final PetTypeRepository repository;
 
-    public PetService(PetRepository repository) {
+    public PetTypeService(PetTypeRepository repository) {
         this.repository = repository;
     }
 
-//    Optional<Pet> findByPetTypeId(PetType petType){
-//        return repository.findByPetTypeId(petType);
-//    }
+    public PetType create(String petTypeName){
 
-    List<Pet> findByUserId(User user){
-        return repository.findByUserId(user);
-    }
-
-    public Pet create(User user,String petName,String petPhoto){
-
-        Pet entity = new Pet();
-        entity.setUserId(user);
-        entity.setPetName(petName);
-        entity.setPetPhoto(petPhoto);
+        PetType entity = new PetType();
+        entity.setName(petTypeName);
         return repository.save(entity);
     }
 
+    public Optional<PetType> findByName(String name) {
+
+        return repository.findByName(name);
+    }
 }

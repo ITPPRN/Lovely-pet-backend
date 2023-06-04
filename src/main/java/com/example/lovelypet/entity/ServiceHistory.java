@@ -1,15 +1,25 @@
 package com.example.lovelypet.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-@Entity(name = "pet_type")
-public class PetType extends BaseEntity {
+@Entity(name = "service_history")
+public class ServiceHistory extends BaseEntity {
+    // entity hotel
+    @ManyToOne
+    @JoinColumn(name = "hotelId", nullable = false)
+    private Hotel hotelId;
 
-    @Column(nullable = false, length = 60)
-    private String name;
+    // entity user
+    @ManyToOne
+    @JoinColumn(name = "userId", nullable = false)
+    private User userId;
+
+    // entity booking
+    @OneToOne
+    @JoinColumn(name = "bookingId", nullable = false)
+    private Booking bookingId;
 }

@@ -1,61 +1,61 @@
 package com.example.lovelypet.exception;
 
-public class ClinicException extends BaseException {
-    public ClinicException(String code) {
-        super("clinic." + code);
+public class HotelException extends BaseException {
+    public HotelException(String code) {
+        super("hotel." + code);
     }
 
-    public static ClinicException createUserNameNull() {
-        return new ClinicException("register.userName.null");
+    public static HotelException createUserNameNull() {
+        return new HotelException("register.userName.null");
     }
 
-    public static ClinicException createPassWordNull() {
-        return new ClinicException("register.passWord.null");
+    public static HotelException createPassWordNull() {
+        return new HotelException("register.passWord.null");
     }
 
-    public static ClinicException createNameNull() {
-        return new ClinicException("register.name.null");
+    public static HotelException createNameNull() {
+        return new HotelException("register.name.null");
     }
 
-    public static ClinicException createTelNull() {
-        return new ClinicException("register.tel.null");
+    public static HotelException createTelNull() {
+        return new HotelException("register.tel.null");
     }
 
-    public static ClinicException createEmailNull() {
-        return new ClinicException("register.email.null");
+    public static HotelException createEmailNull() {
+        return new HotelException("register.email.null");
     }
 
-    public static ClinicException createAddressNull() {
-        return new ClinicException("register.address.null");
+    public static HotelException createAddressNull() {
+        return new HotelException("register.address.null");
     }
 
-    public static ClinicException createPhotoNull() {
-        return new ClinicException("register.photo.null");
+    public static HotelException createPhotoNull() {
+        return new HotelException("register.photo.null");
     }
 
-    public static ClinicException createLicenseNull() {
-        return new ClinicException("register.license.null");
+    public static HotelException createLicenseNull() {
+        return new HotelException("register.license.null");
     }
 
-    public static ClinicException createEmailDuplicated() {
-        return new ClinicException("create.email.duplicated");
+    public static HotelException createEmailDuplicated() {
+        return new HotelException("create.email.duplicated");
     }
 
-    public static ClinicException createUserNameDuplicated() {
-        return new ClinicException("create.userName.duplicated");
+    public static HotelException createUserNameDuplicated() {
+        return new HotelException("create.userName.duplicated");
     }
 
-    public static ClinicException createLicenseDuplicated() {
-        return new ClinicException("create.license.duplicated");
+    public static HotelException createLicenseDuplicated() {
+        return new HotelException("create.license.duplicated");
     }
 
 
     //LOGIN
-    public static ClinicException loginFailUserNameNotFound() {
-        return new ClinicException("login.fail");
+    public static HotelException loginFailUserNameNotFound() {
+        return new HotelException("login.fail");
     }
 
-    public static ClinicException loginFailPasswordIncorrect() {
-        return new ClinicException("login.fail");
+    public static HotelException loginFailPasswordIncorrect() {
+        return new HotelException("login.fail");
     }
 }

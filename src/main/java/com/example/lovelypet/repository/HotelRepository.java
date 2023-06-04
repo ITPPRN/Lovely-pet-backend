@@ -1,18 +1,19 @@
 package com.example.lovelypet.repository;
 
-import com.example.lovelypet.entity.Clinic;
+import com.example.lovelypet.entity.Hotel;
+import com.example.lovelypet.entity.User;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;
 
-public interface ClinicRepository extends CrudRepository<Clinic, String> {
+public interface HotelRepository extends CrudRepository<Hotel, String> {
 
-    boolean existsByUserNameC(String userName);
+    boolean existsByHotelUsername(String hotelUsername);
 
-    boolean existsByEmailC(String email);
+    boolean existsByEmail(String email);
 
-    boolean existsByLicenseC(String license);
+    Optional<Hotel> findByHotelUsername(String hotelUsername);
 
-    Optional<Clinic> findByUserNameC(String userName);
+    Optional<Hotel> findById(int idU);
 
 }

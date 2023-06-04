@@ -7,9 +7,15 @@ import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-@Entity(name = "type_food")
-public class TypeFood extends BaseEntity {
+@Entity(name = "food_oder")
+public class FoodOder extends BaseEntity {
 
-    @Column(nullable = false, length = 60)
-    private String name;
+    @Column(nullable = false, length = 10)
+    private float totalPrice;
+
+    @Column(nullable = false, length = 254)
+    private String paymentReceipt;
+
+    @Column(nullable = false, length = 10)
+    private String foodOderStaten;
 }

@@ -1,9 +1,11 @@
 package com.example.lovelypet;
 
+import com.example.lovelypet.entity.Hotel;
 import com.example.lovelypet.entity.Pet;
 import com.example.lovelypet.entity.PetType;
 import com.example.lovelypet.entity.User;
 import com.example.lovelypet.exception.BaseException;
+import com.example.lovelypet.service.HotelService;
 import com.example.lovelypet.service.PetService;
 import com.example.lovelypet.service.PetTypeService;
 import com.example.lovelypet.service.UserService;
@@ -12,143 +14,71 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class TestUserService {
+class TestHotelService {
 
     @Autowired
-    private UserService userService;
+    private HotelService hotelService;
 
-    @Autowired
-    private PetService pService;
-
-    @Autowired
-    private PetTypeService petTypeService;
 
     @Order(1)
     @Test
     void testCreate() throws BaseException {
-        User user = userService.create(
+        Hotel hotel = hotelService.create(
                 TestCreateData.userName,
                 TestCreateData.passWord,
                 TestCreateData.name,
+                TestCreateData.tel,
                 TestCreateData.email,
-                TestCreateData.phoneNumber
+                TestCreateData.location
         );
 
         //check not null
-        Assertions.assertNotNull(user);
-        Assertions.assertNotNull(user.getId());
+        Assertions.assertNotNull(hotel);
+        Assertions.assertNotNull(hotel.getId());
 
         //check equals
-        Assertions.assertEquals(TestCreateData.email, user.getEmail());
-        Assertions.assertEquals(TestCreateData.userName, user.getUserName());
+        Assertions.assertEquals(TestCreateData.email, hotel.getEmail());
+        Assertions.assertEquals(TestCreateData.userName, hotel.getHotelUsername());
 
-        boolean isMatched = userService.matchPassword(TestCreateData.passWord, user.getPassWord());
+        boolean isMatched = hotelService.matchPassword(TestCreateData.passWord,hotel.getPassword());
         Assertions.assertTrue(isMatched);
 
-        Assertions.assertEquals(TestCreateData.name, user.getName());
-        Assertions.assertEquals(TestCreateData.phoneNumber, user.getPhoneNumber());
+        Assertions.assertEquals(TestCreateData.name, hotel.getHotelName());
+        Assertions.assertEquals(TestCreateData.tel, hotel.getHotelTel());
 
     }
 
     @Order(2)
     @Test
     void testUpdate() throws BaseException {
-        Optional<User> opt = userService.findLog(TestCreateData.userName);
+        Optional<Hotel> opt = hotelService.findLog(TestCreateData.userName);
         Assertions.assertTrue(opt.isPresent());
 
-        User user = opt.get();
+        Hotel hotel = opt.get();
 
-        User updateedUser = userService.updateName(user.getId(), TestUpdateData.name);
+        Hotel updatedUser = hotelService.updateName(hotel.getId(), TestUpdateData.name);
 
-        Assertions.assertNotNull(updateedUser);
-        Assertions.assertEquals(TestUpdateData.name, updateedUser.getName());
+        Assertions.assertNotNull(updatedUser);
+        Assertions.assertEquals(TestUpdateData.name, updatedUser.getHotelName());
     }
 
-    @Order(3)
+    @Order(9)
     @Test
-    void testCretePet() throws BaseException {
-        Optional<User> opt = userService.findLog(TestCreateData.userName);
+    void testDelete() throws BaseException {
+        Optional<Hotel> opt = hotelService.findLog(TestCreateData.userName);
         Assertions.assertTrue(opt.isPresent());
 
-        User user = opt.get();
+        Hotel hotel = opt.get();
+        hotelService.deleteByIdU(String.valueOf(hotel.getId()));
 
-        List<Pet> p = user.getPet();
-        Assertions.assertTrue(p.isEmpty());
+        Optional<Hotel> optDelete = hotelService.findLog(TestCreateData.userName);
+        Assertions.assertTrue(optDelete.isEmpty());
 
-        Optional<PetType> obj = petTypeService.findByName(TestPetCreateData.type);
-        if(obj.isEmpty()){
-            PetType pt = petTypeService.create(TestPetCreateData.type);
-            Assertions.assertNotNull(pt);
-            Assertions.assertEquals(TestPetCreateData.type, pt.getName());
-            obj = petTypeService.findByName(TestPetCreateData.type);
-        }
-        Assertions.assertTrue(obj.isPresent());
-
-        PetType petType = obj.get();
-
-        List<Pet> p1 = petType.getPet();
-        Assertions.assertTrue(p1.isEmpty());
-
-        for (int i = 0; i <= 2; i++) {
-            Pet pet = pService.create(user, TestPetCreateData.petName, TestPetCreateData.petPhoto,petType);
-
-            Assertions.assertNotNull(pet);
-            Assertions.assertEquals(TestPetCreateData.petName, pet.getPetName());
-            Assertions.assertEquals(TestPetCreateData.petPhoto, pet.getPetPhoto());
-        }
-
-        Optional<PetType> obj1 = petTypeService.findByName(TestPetCreateData.type1);
-        if(obj1.isEmpty()){
-            PetType pt1 = petTypeService.create(TestPetCreateData.type1);
-            Assertions.assertNotNull(pt1);
-            Assertions.assertEquals(TestPetCreateData.type1, pt1.getName());
-            obj1 = petTypeService.findByName(TestPetCreateData.type1);
-        }
-        Assertions.assertTrue(obj1.isPresent());
-
-        PetType petType1 = obj1.get();
-
-        List<Pet> p11 = petType1.getPet();
-        Assertions.assertTrue(p11.isEmpty());
-
-        for (int i = 0; i <= 2; i++) {
-            Pet pet1 = pService.create(user, TestPetCreateData.petName, TestPetCreateData.petPhoto,petType1);
-
-            Assertions.assertNotNull(pet1);
-            Assertions.assertEquals(TestPetCreateData.petName, pet1.getPetName());
-            Assertions.assertEquals(TestPetCreateData.petPhoto, pet1.getPetPhoto());
-        }
     }
-
-//    @Order(9)
-//    @Test
-//    void testDelete() throws BaseException {
-//        Optional<User> opt = userService.findLog(TestCreateData.userName);
-//        Assertions.assertTrue(opt.isPresent());
-//
-//        User user = opt.get();
-//        userService.deleteByIdU(String.valueOf(user.getId()));
-//
-//        Optional<User> optDelete = userService.findLog(TestCreateData.userName);
-//        Assertions.assertTrue(optDelete.isEmpty());
-//
-//    }
-
-
-    interface TestPetCreateData {
-        String petName = "Panda";
-        String petPhoto = "";
-
-        String type = "Dog";
-
-        String type1 = "Cat";
-    }
-
 
     interface TestCreateData {
 
@@ -156,7 +86,8 @@ class TestUserService {
         String passWord = "test";
         String name = "test1";
         String userName = "test1";
-        String phoneNumber = "0876543210";
+        String tel = "0876543210";
+        String location = "144/4 ม.7 ต.ในเมือง อ.ในเมือง จ.ขอนแก่น";
     }
 
     interface TestUpdateData {
