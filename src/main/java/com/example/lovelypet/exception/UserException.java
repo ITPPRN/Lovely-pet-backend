@@ -13,6 +13,10 @@ public class UserException extends BaseException {
         return new UserException("user.not.found");
     }
 
+    public static UserException unauthorized() {
+        return new UserException("unauthorized");
+    }
+
     // อีเมลล์เป็นค่าว่าง
     public static UserException emailNull() {
         return new UserException("register.email.null");

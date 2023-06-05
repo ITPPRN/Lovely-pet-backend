@@ -7,10 +7,7 @@ import com.example.lovelypet.model.LoginRequest;
 import com.example.lovelypet.model.UserRegisterRequest;
 import com.example.lovelypet.model.UserRegisterResponse;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/user")
@@ -29,10 +26,16 @@ public class UserApi {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UserRegisterResponse> login(@RequestBody LoginRequest loginRequest) throws BaseException {
-        UserRegisterResponse response = userBusiness.login(loginRequest);
+    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) throws BaseException {
+        String response = userBusiness.login(loginRequest);
         return ResponseEntity.ok(response);
 
+    }
+
+    @GetMapping("/refresh-token")
+    public ResponseEntity<String> refreshToken() throws BaseException {
+        String response = userBusiness.refreshToken();
+        return ResponseEntity.ok(response);
     }
 
 

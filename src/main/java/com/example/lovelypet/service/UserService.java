@@ -71,6 +71,11 @@ public class UserService {
         }
     }
 
+    public Optional<User> findById(int idU) throws BaseException {
+        Optional<User> user = repository.findById(idU);
+        return user;
+    }
+
     public Optional<User> findLog(String userName) throws BaseException {
         Optional<User> user = repository.findByUserName(userName);
         return user;

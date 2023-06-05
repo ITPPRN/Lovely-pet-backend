@@ -1,0 +1,30 @@
+ ##spring.datasource.url = jdbc:postgresql://localhost:5432/lovelypet
+##spring.datasource.driverClassName = org.postgresql.Driver
+##spring.datasource.username = postgres
+##spring.datasource.password = Tee192414+
+##spring.jpa.hibernate.ddl-auto = create
+##spring.jpa.show-sql = true
+
+##spring.servlet.multipart.enabled=true
+##spring.servlet.multipart.max-file-size=2MB
+##spring.servlet.multipart.max-request-size=5MB
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: create
+  datasource:
+    url: jdbc:postgresql://localhost:5432/lovelypet
+    username: postgres
+    password: Tee192414+
+
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 5MB
+      max-request-size: 20MB
+
+---
+app:
+  token:
+    secret: n#MySecret9863656GGMPf
+    issuer: HotelPetService
