@@ -6,6 +6,7 @@ import com.example.lovelypet.exception.UserException;
 import com.example.lovelypet.mapper.UserMapper;
 import com.example.lovelypet.model.LoginRequest;
 import com.example.lovelypet.model.UserRegisterRequest;
+import com.example.lovelypet.model.UserRegisterResponse;
 import com.example.lovelypet.service.TokenService;
 import com.example.lovelypet.service.UserService;
 import com.example.lovelypet.util.SecurityUtil;
@@ -32,10 +33,10 @@ public class UserBusiness {
         this.userMapper = userMapper;
     }
 
-    public User register(UserRegisterRequest reqUser) throws BaseException {
+    public UserRegisterResponse register(UserRegisterRequest reqUser) throws BaseException {
         User user = userService.create(reqUser.getUserName(), reqUser.getPassWord(), reqUser.getName(), reqUser.getEmail(), reqUser.getPhoneNumber());
-        // TODO: mapper
-        return user;
+        UserRegisterResponse ures = userMapper.toUserRegisterResponse(user);
+        return ures;
     }
 
     public String refreshToken() throws BaseException {

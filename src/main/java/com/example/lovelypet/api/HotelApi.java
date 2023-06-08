@@ -1,42 +1,39 @@
 package com.example.lovelypet.api;
 
-import com.example.lovelypet.business.UserBusiness;
-import com.example.lovelypet.entity.User;
+import com.example.lovelypet.business.HotelBusiness;
 import com.example.lovelypet.exception.BaseException;
-import com.example.lovelypet.model.LoginRequest;
-import com.example.lovelypet.model.UserRegisterRequest;
-import com.example.lovelypet.model.UserRegisterResponse;
+import com.example.lovelypet.model.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/user")
-public class UserApi {
-    private final UserBusiness userBusiness;
+@RequestMapping("/hotel")
+public class HotelApi {
+    private final HotelBusiness hotelBusiness;
 
-    public UserApi(UserBusiness userBusiness) {
-        this.userBusiness = userBusiness;
+    public HotelApi(HotelBusiness hotelBusiness) {
+        this.hotelBusiness = hotelBusiness;
     }
 
 
     @PostMapping("register")
-    public ResponseEntity<UserRegisterResponse> register(@RequestBody UserRegisterRequest reqUser) throws BaseException {
-        UserRegisterResponse response = userBusiness.register(reqUser);
+    public ResponseEntity<HotelRegisterResponse> register(@RequestBody HotelRegisterRequest reqUser) throws BaseException {
+        HotelRegisterResponse response = hotelBusiness.register(reqUser);
         return ResponseEntity.ok(response);
     }
-
-    @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) throws BaseException {
-        String response = userBusiness.login(loginRequest);
-        return ResponseEntity.ok(response);
-
-    }
-
-    @GetMapping("/refresh-token")
-    public ResponseEntity<String> refreshToken() throws BaseException {
-        String response = userBusiness.refreshToken();
-        return ResponseEntity.ok(response);
-    }
+//
+//    @PostMapping("/login")
+//    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) throws BaseException {
+//        String response = userBusiness.login(loginRequest);
+//        return ResponseEntity.ok(response);
+//
+//    }
+//
+//    @GetMapping("/refresh-token")
+//    public ResponseEntity<String> refreshToken() throws BaseException {
+//        String response = userBusiness.refreshToken();
+//        return ResponseEntity.ok(response);
+//    }
 
 
 }

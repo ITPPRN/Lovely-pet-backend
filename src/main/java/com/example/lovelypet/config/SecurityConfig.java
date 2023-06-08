@@ -42,7 +42,7 @@ public class SecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeHttpRequests()
-                .requestMatchers("/user/register","/user/login","/clinic/loginC")
+                .requestMatchers("/user/register","/user/login","/hotel/register")
                 .permitAll()
                 .anyRequest().authenticated()
                 .and().apply(new TokenFilterConfigurer(tokenService)); // กำหนดว่า URL อื่นๆ จะต้องมีการล็อกอินเพื่อเข้าถึง
