@@ -21,19 +21,19 @@ public class HotelApi {
         HotelRegisterResponse response = hotelBusiness.register(reqUser);
         return ResponseEntity.ok(response);
     }
-//
-//    @PostMapping("/login")
-//    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) throws BaseException {
-//        String response = userBusiness.login(loginRequest);
-//        return ResponseEntity.ok(response);
-//
-//    }
-//
-//    @GetMapping("/refresh-token")
-//    public ResponseEntity<String> refreshToken() throws BaseException {
-//        String response = userBusiness.refreshToken();
-//        return ResponseEntity.ok(response);
-//    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) throws BaseException {
+        String response = hotelBusiness.login(loginRequest);
+        return ResponseEntity.ok(response);
+
+    }
+
+    @GetMapping("/refresh-token")
+    public ResponseEntity<String> refreshToken() throws BaseException {
+        String response = hotelBusiness.refreshToken();
+        return ResponseEntity.ok(response);
+    }
 
 
 }

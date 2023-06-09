@@ -100,4 +100,9 @@ public class HotelService {
     public boolean matchPassword(String requestPass, String dataPass) {
         return passwordEncoder.matches(requestPass,dataPass);
     }
+
+    public Optional<Hotel> findById(int idU) throws BaseException {
+        Optional<Hotel> hotel = repository.findById(idU);
+        return hotel;
+    }
 }

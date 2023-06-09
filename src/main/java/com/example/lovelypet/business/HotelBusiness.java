@@ -41,46 +41,46 @@ public class HotelBusiness {
         HotelRegisterResponse hRes = hotelMapper.toHotelRegisterResponse(hotel);
         return hRes;
    }
-//
-//    public String refreshToken() throws BaseException {
-//        Optional<String> opt = SecurityUtil.getCurrentUserId();
-//        if(opt.isEmpty()){
-//            throw UserException.unauthorized();
-//        }
-//
-//        String userId = opt.get();
-//
-//        Optional<User> optUser = userService.findById(Integer.parseInt(userId));
-//        if(opt.isEmpty()){
-//            throw UserException.notFound();
-//        }
-//
-//        User user = optUser.get();
-//        return tokenService.tokenize(user);
-//    }
-//
-//    public String login(LoginRequest loginRequest) throws BaseException {
-//        String op = loginRequest.getPassWord();
-//        String ou = loginRequest.getUserName();
-//        if (Objects.isNull(op)) {
-//            throw UserException.createPasswordNull();
-//        }
-//        if (Objects.isNull(ou)) {
-//            throw UserException.createUserNameNull();
-//        }
-//
-//        Optional<User> opt = userService.findLog(loginRequest.getUserName());
-//        if (opt.isEmpty()) {
-//            throw UserException.loginFailUserNameNotFound();
-//        }
-//        User user = opt.get();
-//        if (!userService.matchPassword(loginRequest.getPassWord(), user.getPassWord())) {
-//            throw UserException.loginFailPasswordIncorrect();
-//
-//        } else {
-//            return tokenService.tokenize(user);
-//        }
-//    }
+
+    public String refreshToken() throws BaseException {
+        Optional<String> opt = SecurityUtil.getCurrentUserId();
+        if(opt.isEmpty()){
+            throw UserException.unauthorized();
+        }
+
+        String userId = opt.get();
+
+        Optional<Hotel> optUser = hotelService.findById(Integer.parseInt(userId));
+        if(opt.isEmpty()){
+            throw UserException.notFound();
+        }
+
+        Hotel hotel = optUser.get();
+        return tokenService.tokenizeHotel(hotel);
+    }
+
+    public String login(LoginRequest loginRequest) throws BaseException {
+        String op = loginRequest.getPassWord();
+        String ou = loginRequest.getUserName();
+        if (Objects.isNull(op)) {
+            throw UserException.createPasswordNull();
+        }
+        if (Objects.isNull(ou)) {
+            throw UserException.createUserNameNull();
+        }
+
+        Optional<Hotel> opt = hotelService.findLog(loginRequest.getUserName());
+        if (opt.isEmpty()) {
+            throw UserException.loginFailUserNameNotFound();
+        }
+        Hotel hotel = opt.get();
+        if (!hotelService.matchPassword(loginRequest.getPassWord(), hotel.getPassword())) {
+            throw UserException.loginFailPasswordIncorrect();
+
+        } else {
+            return tokenService.tokenizeHotel(hotel);
+        }
+    }
 
 
 }
