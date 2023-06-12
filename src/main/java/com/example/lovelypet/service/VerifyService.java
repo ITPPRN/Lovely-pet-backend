@@ -2,23 +2,28 @@ package com.example.lovelypet.service;
 
 import com.example.lovelypet.entity.Verify;
 import com.example.lovelypet.exception.BaseException;
-import com.example.lovelypet.exception.UserException;
+import com.example.lovelypet.exception.VerifyException;
 import com.example.lovelypet.repository.VerifyRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class VerifyService {
 
-    private final VerifyRepository verifyRepository;
+    private final VerifyRepository repository;
+
+    private final PasswordEncoder passwordEncoder;
 
 
+    public VerifyService(VerifyRepository repository, PasswordEncoder passwordEncoder) {
+        this.repository = repository;
 
-    public VerifyService(VerifyRepository verifyRepository) {
-        this.verifyRepository = verifyRepository;
-
+        this.passwordEncoder = passwordEncoder;
     }
 
-    public Verify create() throws BaseException {
+    public void create() throws BaseException {
 
         String userName = "godOfSystem";
         String passWord = "godOfSystem";
@@ -27,9 +32,9 @@ public class VerifyService {
         String[] name = {"serve", "hotel", "heal"};
 
         //validate
-        if (verifyRepository.existsByUserName(userName)) {
+        if (repository.existsByUserName(userName)) {
             //throw error email duplicated
-            throw UserException.createUserNameDuplicated();
+            throw VerifyException.createUserNameDuplicated();
         }
 
         //save
@@ -37,9 +42,23 @@ public class VerifyService {
 
             Verify entity = new Verify();
             entity.setUserName(userName);
-            entity.setPassWord(passWord);
+            entity.setPassWord(passwordEncoder.encode(passWord));
             entity.setEmail(email);
-            return verifyRepository.save(entity);
+            repository.save(entity);
         }
+    }
+
+    public Optional<Verify> findById(int id) throws BaseException {
+        Optional<Verify> verify = repository.findById(id);
+        return verify;
+    }
+
+    public Optional<Verify> findLog(String userName) throws BaseException {
+        Optional<Verify> verify = repository.findByUserName(userName);
+        return verify;
+    }
+
+    public boolean matchPassword(String requestPass, String dataPass) {
+        return passwordEncoder.matches(requestPass, dataPass);
     }
 }
