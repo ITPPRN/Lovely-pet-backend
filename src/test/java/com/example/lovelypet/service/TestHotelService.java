@@ -1,4 +1,4 @@
-package com.example.lovelypet;
+package com.example.lovelypet.service;
 
 import com.example.lovelypet.entity.Hotel;
 import com.example.lovelypet.entity.Pet;

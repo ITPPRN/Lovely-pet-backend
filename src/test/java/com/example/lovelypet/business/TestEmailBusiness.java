@@ -1,4 +1,4 @@
-package com.example.lovelypet;
+package com.example.lovelypet.business;
 
 import com.example.lovelypet.business.EmailBusiness;
 import com.example.lovelypet.exception.BaseException;

@@ -4,7 +4,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -12,25 +13,23 @@ import java.time.LocalDate;
 public class Booking extends BaseEntity {
 
     @Column(nullable = false, length = 60)
-    private LocalDate bookingStartDate;
+    private Date bookingStartDate;
 
     @Column(nullable = false, length = 60)
-    private LocalDate bookingEndDate;
+    private Date bookingEndDate;
 
     @Column(nullable = false, length = 60)
-    private LocalDate date;
+    private LocalDateTime date;
 
     //FK
 
     // entity room
-    // อาจมีข้อผิดพลาดเพราะความสัมพัธ์ไม่แน่ชัด
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "roomId", referencedColumnName = "id")
     private Room roomId;
 
     // entity pet
-    // อาจมีข้อผิดพลาดเพราะความสัมพัธ์ไม่แน่ชัด
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "petId", referencedColumnName = "id")
     private Pet petId;
 
@@ -45,10 +44,8 @@ public class Booking extends BaseEntity {
     private User userId;
 
     // entity service history
-    @OneToOne(mappedBy = "bookingId" , orphanRemoval = true)
+    @OneToOne(mappedBy = "bookingId", orphanRemoval = true)
     private ServiceHistory serviceHistory;
-
-
 
 
 }

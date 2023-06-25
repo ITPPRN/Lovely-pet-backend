@@ -11,10 +11,10 @@ import static jakarta.persistence.FetchType.EAGER;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Entity(name = "room")
-public class Room extends BaseEntity {
+public class  Room extends BaseEntity {
 
-    @Column(nullable = false, length = 10)
-    private String roomNumber;
+    @Column(nullable = false, length = 3)
+    private int roomNumber;
 
     @Column(nullable = true, length = 254)
     private String roomDetails;
