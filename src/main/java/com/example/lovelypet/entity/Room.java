@@ -38,4 +38,9 @@ public class  Room extends BaseEntity {
 
     @ManyToOne()
     private Booking booking;
+
+    //entity room type
+    @ManyToOne
+    @JoinColumn(name = "roomTypeId",nullable = false)
+    private RoomType roomTypeId;
 }

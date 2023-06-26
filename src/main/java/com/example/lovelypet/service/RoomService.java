@@ -23,7 +23,6 @@ public class RoomService {
     public Room create(
             int totalRoom
 
-
             ) throws BaseException {
 
         //validate
