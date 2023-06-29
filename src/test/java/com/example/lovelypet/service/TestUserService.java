@@ -4,15 +4,11 @@ import com.example.lovelypet.entity.Pet;
 import com.example.lovelypet.entity.PetType;
 import com.example.lovelypet.entity.User;
 import com.example.lovelypet.exception.BaseException;
-import com.example.lovelypet.service.PetService;
-import com.example.lovelypet.service.PetTypeService;
-import com.example.lovelypet.service.UserService;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @SpringBootTest
@@ -63,7 +59,7 @@ class TestUserService {
 
         User user = opt.get();
 
-        User updateedUser = userService.updateName(user.getId(), TestUpdateData.name);
+        User updateedUser = userService.update(user.getId(), TestUpdateData.name);
 
         Assertions.assertNotNull(updateedUser);
         Assertions.assertEquals(TestUpdateData.name, updateedUser.getName());

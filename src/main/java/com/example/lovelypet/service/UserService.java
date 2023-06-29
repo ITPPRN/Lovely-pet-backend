@@ -85,7 +85,7 @@ public class UserService {
         return repository.save(user);
     }
 
-    public User updateName(int idU, String name) throws UserException {
+    public User update(int idU, String name) throws UserException {
         Optional<User> opt = repository.findById(idU);
         if(opt.isEmpty()){
             throw  UserException.notFound();

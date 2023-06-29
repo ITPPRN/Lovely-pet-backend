@@ -1,6 +1,7 @@
 package com.example.lovelypet.entity;
 
 import jakarta.persistence.*;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -13,16 +14,13 @@ import static jakarta.persistence.FetchType.EAGER;
 @Entity(name = "room")
 public class  Room extends BaseEntity {
 
-    @Column(nullable = false, length = 3)
-    private int roomNumber;
-
     @Column(nullable = true, length = 254)
     private String roomDetails;
 
-    @Column(nullable = false, length = 10)
+    @Column(nullable = false, length = 100)
     private float roomPrice;
 
-    @Column(nullable = false, length = 10)
+    @Column(nullable = false, length = 100)
     private String status;
 
     // Fk
@@ -36,8 +34,6 @@ public class  Room extends BaseEntity {
     @OneToMany(mappedBy = "roomId", fetch = EAGER, orphanRemoval = true)
     private List<PhotoRoom> photoRooms;
 
-    @ManyToOne()
-    private Booking booking;
 
     //entity room type
     @ManyToOne
