@@ -18,7 +18,7 @@ import java.util.Optional;
 
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class TestHotelService {
+class                                              TestHotelService {
 
     @Autowired
     private HotelService hotelService;

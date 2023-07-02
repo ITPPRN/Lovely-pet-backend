@@ -74,7 +74,11 @@ public class RoomService {
         return roomRepository.findById(id);
     }
 
-    public  void deleteByIdU(String idU){
+    public Optional<Room> findByIdAndHotelId(int id, Hotel hotelId) {
+        return roomRepository.findByIdAndHotelId(id, hotelId);
+    }
+
+    public void deleteByIdU(String idU) {
         roomRepository.deleteById(idU);
     }
 

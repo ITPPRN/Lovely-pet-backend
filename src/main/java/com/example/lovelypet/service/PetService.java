@@ -12,21 +12,25 @@ import java.util.Optional;
 @Service
 public class PetService {
 
-   private final PetRepository repository;
+    private final PetRepository repository;
 
     public PetService(PetRepository repository) {
         this.repository = repository;
     }
 
-    List<Pet> findByPetTypeId(PetType petType){
+    List<Pet> findByPetTypeId(PetType petType) {
         return repository.findByPetTypeId(petType);
     }
 
-    List<Pet> findByUserId(User user){
+    List<Pet> findByUserId(User user) {
         return repository.findByUserId(user);
     }
 
-    public Pet create(User user,String petName,String petPhoto,PetType petType){
+    Optional<Pet> findByIdAndUserId(int id, User userId) {
+        return repository.findByIdAndUserId(id, userId);
+    }
+
+    public Pet create(User user, String petName, String petPhoto, PetType petType) {
 
         Pet entity = new Pet();
         entity.setUserId(user);
