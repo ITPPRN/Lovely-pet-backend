@@ -7,6 +7,7 @@ import com.example.lovelypet.mapper.UserMapper;
 import com.example.lovelypet.model.LoginRequest;
 import com.example.lovelypet.model.UserRegisterRequest;
 import com.example.lovelypet.model.UserRegisterResponse;
+import com.example.lovelypet.model.UserUpdateRequest;
 import com.example.lovelypet.service.TokenService;
 import com.example.lovelypet.service.UserService;
 import com.example.lovelypet.util.SecurityUtil;
@@ -39,16 +40,49 @@ public class UserBusiness {
         return ures;
     }
 
+    public String updateNormalData(UserUpdateRequest updateRequest) throws BaseException {
+
+        User updatedUser = userService.updateNormalData(
+                updateRequest.getId(),
+                updateRequest.getName(),
+                updateRequest.getPhoneNumber()
+        );
+        return "";
+    }
+
+    public String resetPassword(UserUpdateRequest updateRequest) throws BaseException {
+
+        String newPassword = updateRequest.getNewPassWord();
+
+        if (Objects.isNull(newPassword)) {
+            throw UserException.createPasswordNull();
+        }
+        Optional<User> opt = userService.findById(updateRequest.getId());
+        if (opt.isEmpty()) {
+            throw UserException.loginFailUserNameNotFound();
+        }
+        User user = opt.get();
+        if (!userService.matchPassword(updateRequest.getOldPassword(), user.getPassWord())) {
+            throw UserException.passwordIncorrect();
+
+        }
+        User updatedUser = userService.resetPassword(
+                updateRequest.getId(),
+                updateRequest.getNewPassWord()
+        );
+        return "";
+    }
+
     public String refreshToken() throws BaseException {
         Optional<String> opt = SecurityUtil.getCurrentUserId();
-        if(opt.isEmpty()){
+        if (opt.isEmpty()) {
             throw UserException.unauthorized();
         }
 
         String userId = opt.get();
 
         Optional<User> optUser = userService.findById(Integer.parseInt(userId));
-        if(opt.isEmpty()){
+        if (opt.isEmpty()) {
             throw UserException.notFound();
         }
 

@@ -29,9 +29,9 @@ public class EmailBusiness {
             throw EmaillException.templateNotFound();
         }
 
-        String finallLink = "http://localhost:8080/activate" + token;
+        String finalLink = "http://localhost:8080/activate" + token;
         html = html.replace("${P_NAME}", name);
-        html = html.replace("${LINK}", finallLink);
+        html = html.replace("${LINK}", finalLink);
 
         //prepare subject
         String subject = "Please activate your account";

@@ -82,6 +82,40 @@ public class HotelBusiness {
         }
     }
 
+    public String updateNormalData(HotelUpdateRequest updateRequest) throws BaseException {
+
+        Hotel updatedUser = hotelService.updateNormalData(
+                updateRequest.getId(),
+                updateRequest.getHotelName(),
+                updateRequest.getLocation(),
+                updateRequest.getHotelTel()
+        );
+        return "";
+    }
+
+    public String resetPassword(HotelUpdateRequest updateRequest) throws BaseException {
+
+        String newPassword = updateRequest.getNewPassword();
+
+        if (Objects.isNull(newPassword)) {
+            throw UserException.createPasswordNull();
+        }
+        Optional<Hotel> opt = hotelService.findById(updateRequest.getId());
+        if (opt.isEmpty()) {
+            throw UserException.loginFailUserNameNotFound();
+        }
+        Hotel hotel = opt.get();
+        if (!hotelService.matchPassword(updateRequest.getOldPassword(), hotel.getPassword())) {
+            throw UserException.passwordIncorrect();
+
+        }
+        Hotel updatedHotel = hotelService.resetPassword(
+                updateRequest.getId(),
+                updateRequest.getNewPassword()
+        );
+        return "";
+    }
+
 
 }
 

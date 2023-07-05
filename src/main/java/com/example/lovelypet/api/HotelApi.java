@@ -35,6 +35,18 @@ public class HotelApi {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/update-normal")
+    public ResponseEntity<String> updateNormalData(@RequestBody HotelUpdateRequest hotelUpdateRequest) throws BaseException {
+        String response = hotelBusiness.updateNormalData(hotelUpdateRequest);
+        return ResponseEntity.ok("");
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestBody HotelUpdateRequest hotelUpdateRequest) throws BaseException {
+        String response = hotelBusiness.resetPassword(hotelUpdateRequest);
+        return ResponseEntity.ok(response);
+    }
+
 
 }
 //

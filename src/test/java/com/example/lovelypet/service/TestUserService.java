@@ -58,8 +58,7 @@ class TestUserService {
         Assertions.assertTrue(opt.isPresent());
 
         User user = opt.get();
-
-        User updateedUser = userService.update(user.getId(), TestUpdateData.name);
+        User updateedUser = userService.updateNormalData(user.getId(), TestUpdateData.name,null);
 
         Assertions.assertNotNull(updateedUser);
         Assertions.assertEquals(TestUpdateData.name, updateedUser.getName());

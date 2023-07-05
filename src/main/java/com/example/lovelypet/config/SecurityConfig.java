@@ -13,12 +13,25 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
     private final TokenService tokenService;
+
+    private final String[] PUBLIC = {
+            "/user/register",
+            "/user/login",
+            "/hotel/register",
+            "/hotel/login",
+            "/verify/login",
+            "/verify/home",
+            "/socket"
+    };
 
     public SecurityConfig(TokenService tokenService) {
         this.tokenService = tokenService;
@@ -42,12 +55,7 @@ public class SecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeHttpRequests()
-                .requestMatchers("/user/register",
-                        "/user/login",
-                        "/hotel/register",
-                        "/hotel/login",
-                        "/verify/login",
-                        "/verify/home")
+                .requestMatchers(PUBLIC)
                 .permitAll()
                 .anyRequest().authenticated()
                 .and().apply(new TokenFilterConfigurer(tokenService)); // กำหนดว่า URL อื่นๆ จะต้องมีการล็อกอินเพื่อเข้าถึง
@@ -66,4 +74,21 @@ public class SecurityConfig {
 //                .exceptionHandling() // กำหนดการจัดการข้อผิดพลาด
 //                .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)); // กำหนดการตอบกลับเมื่อการเข้าถึงถูกปฏิเสธ
         return http.build();
-    }}
+    }
+
+    @Bean
+    public CorsFilter corsFilter(){
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.addAllowedOrigin("http://localhost:4200"); // ที่อยู่ที่ หน้าบ้านรันอยู่ ในตัวอย่าง คือที่ที่ angular รันอยู่
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("OPTIONS");
+        config.addAllowedMethod("POST");
+        config.addAllowedMethod("GET");
+        config.addAllowedMethod("PUT");
+        config.addAllowedMethod("DELETE");
+        source.registerCorsConfiguration("/**",config);
+        return new CorsFilter(source);
+    }
+}

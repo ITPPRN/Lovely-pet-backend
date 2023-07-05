@@ -57,6 +57,9 @@ public class UserException extends BaseException {
         return new UserException("login.fail");
     }
 
-
+    //reset password
+    public static UserException passwordIncorrect() {
+        return new UserException("password.incorrect");
+    }
 
 }

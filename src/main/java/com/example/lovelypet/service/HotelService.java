@@ -105,4 +105,30 @@ public class HotelService {
         Optional<Hotel> hotel = repository.findById(idU);
         return hotel;
     }
+
+    public Hotel resetPassword(int id, String newPassword) throws BaseException {
+        Optional<Hotel> opt = repository.findById(id);
+        Hotel hotel = opt.get();
+        hotel.setPassword(newPassword);
+        return repository.save(hotel);
+    }
+
+    public Hotel updateNormalData(int id, String name, String location,String hotelTel ) throws BaseException {
+        Optional<Hotel> opt = repository.findById(id);
+        if (opt.isEmpty()) {
+            throw UserException.notFound();
+        }
+        Hotel hotel = opt.get();
+        if (!Objects.isNull(name)) {
+            hotel.setHotelName(name);
+        }
+        if (!Objects.isNull(location)) {
+            hotel.setLocation(location);
+        }
+        if (!Objects.isNull(hotelTel)) {
+            hotel.setHotelTel(hotelTel);
+        }
+
+        return repository.save(hotel);
+    }
 }

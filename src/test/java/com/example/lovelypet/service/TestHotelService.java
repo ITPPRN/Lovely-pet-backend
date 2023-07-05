@@ -18,7 +18,7 @@ import java.util.Optional;
 
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class                                              TestHotelService {
+class TestHotelService {
 
     @Autowired
     private HotelService hotelService;
@@ -44,7 +44,7 @@ class                                              TestHotelService {
         Assertions.assertEquals(TestCreateData.email, hotel.getEmail());
         Assertions.assertEquals(TestCreateData.userName, hotel.getHotelUsername());
 
-        boolean isMatched = hotelService.matchPassword(TestCreateData.passWord,hotel.getPassword());
+        boolean isMatched = hotelService.matchPassword(TestCreateData.passWord, hotel.getPassword());
         Assertions.assertTrue(isMatched);
 
         Assertions.assertEquals(TestCreateData.name, hotel.getHotelName());

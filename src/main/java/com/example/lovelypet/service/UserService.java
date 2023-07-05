@@ -81,26 +81,34 @@ public class UserService {
         return user;
     }
 
-    public User update(User user){
+    public User resetPassword(int id, String newPassword) throws BaseException {
+        Optional<User> opt = repository.findById(id);
+        User user = opt.get();
+        user.setPassWord(newPassword);
         return repository.save(user);
     }
 
-    public User update(int idU, String name) throws UserException {
-        Optional<User> opt = repository.findById(idU);
-        if(opt.isEmpty()){
-            throw  UserException.notFound();
+    public User updateNormalData(int id, String name, String phoneNumber) throws BaseException {
+        Optional<User> opt = repository.findById(id);
+        if (opt.isEmpty()) {
+            throw UserException.notFound();
         }
         User user = opt.get();
-        user.setName(name);
+        if (!Objects.isNull(name)) {
+            user.setName(name);
+        }
+        if (!Objects.isNull(phoneNumber)) {
+            user.setPhoneNumber(phoneNumber);
+        }
 
         return repository.save(user);
     }
 
-    public  void deleteByIdU(String idU){
+    public void deleteByIdU(String idU) {
         repository.deleteById(idU);
     }
 
     public boolean matchPassword(String requestPass, String dataPass) {
-        return passwordEncoder.matches(requestPass,dataPass);
+        return passwordEncoder.matches(requestPass, dataPass);
     }
 }

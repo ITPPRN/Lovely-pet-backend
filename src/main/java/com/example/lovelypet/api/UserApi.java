@@ -6,6 +6,7 @@ import com.example.lovelypet.exception.BaseException;
 import com.example.lovelypet.model.LoginRequest;
 import com.example.lovelypet.model.UserRegisterRequest;
 import com.example.lovelypet.model.UserRegisterResponse;
+import com.example.lovelypet.model.UserUpdateRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,6 +36,18 @@ public class UserApi {
     @GetMapping("/refresh-token")
     public ResponseEntity<String> refreshToken() throws BaseException {
         String response = userBusiness.refreshToken();
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/update-normal")
+    public ResponseEntity<String> update(@RequestBody UserUpdateRequest updateRequest) throws BaseException {
+        String response = userBusiness.updateNormalData(updateRequest);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestBody UserUpdateRequest updateRequest) throws BaseException {
+        String response = userBusiness.resetPassword(updateRequest);
         return ResponseEntity.ok(response);
     }
 
