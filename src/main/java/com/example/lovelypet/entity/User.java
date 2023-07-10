@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.data.util.Lazy;
 
+import java.util.Date;
 import java.util.List;
 
 import static jakarta.persistence.FetchType.EAGER;
@@ -53,4 +54,8 @@ public class User extends BaseEntity {
     //entity review
     @OneToMany(mappedBy = "userId", fetch = EAGER, orphanRemoval = true)
     private List<Review> reviews;
+
+    private Date tokenExpire;
+    private String token;
+    private boolean activated;
 }

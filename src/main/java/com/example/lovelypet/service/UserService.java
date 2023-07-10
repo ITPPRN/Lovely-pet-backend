@@ -4,9 +4,12 @@ import com.example.lovelypet.entity.User;
 import com.example.lovelypet.exception.BaseException;
 import com.example.lovelypet.exception.UserException;
 import com.example.lovelypet.repository.UserRepository;
+import com.example.lovelypet.util.SecurityUtil;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -23,7 +26,7 @@ public class UserService {
     }
 
 
-    public User create(String userName, String passWord, String name, String email, String phoneNumber) throws BaseException {
+    public User create(String userName, String passWord, String name, String email, String phoneNumber,String token, Date tokenExpireDate) throws BaseException {
 
         //validate
         if (Objects.isNull(email)) {
@@ -67,6 +70,8 @@ public class UserService {
             entity.setName(name);
             entity.setEmail(email);
             entity.setPhoneNumber(phoneNumber);
+            entity.setToken(token);
+            entity.setTokenExpire(tokenExpireDate);
             return repository.save(entity);
         }
     }
@@ -75,6 +80,17 @@ public class UserService {
         Optional<User> user = repository.findById(idU);
         return user;
     }
+
+    public Optional<User> findByEmail(String email) throws BaseException {
+        Optional<User> user = repository.findByEmail(email);
+        return user;
+    }
+
+    public Optional<User> findByToken(String token) throws BaseException {
+        Optional<User> user = repository.findByToken(token);
+        return user;
+    }
+
 
     public Optional<User> findLog(String userName) throws BaseException {
         Optional<User> user = repository.findByUserName(userName);
@@ -85,6 +101,10 @@ public class UserService {
         Optional<User> opt = repository.findById(id);
         User user = opt.get();
         user.setPassWord(newPassword);
+        return repository.save(user);
+    }
+
+    public User update(User user)throws BaseException{
         return repository.save(user);
     }
 

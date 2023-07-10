@@ -2,6 +2,7 @@ package com.example.lovelypet.service;
 
 import com.example.lovelypet.entity.*;
 import com.example.lovelypet.exception.BaseException;
+import com.example.lovelypet.util.SecurityUtil;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -45,12 +46,14 @@ class TestBookingService {
     void testCreate() throws BaseException {
 
         // USER
+        String token = SecurityUtil.generateToken();
         User user = userService.create(
                 "test",
                 "1412eff",
                 "testName",
                 "test@gmail.com",
-                "0025566487"
+                "0025566487",
+                token
         );
         //check not null
         Assertions.assertNotNull(user);

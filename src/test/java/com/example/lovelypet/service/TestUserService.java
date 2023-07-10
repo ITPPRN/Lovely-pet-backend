@@ -4,10 +4,12 @@ import com.example.lovelypet.entity.Pet;
 import com.example.lovelypet.entity.PetType;
 import com.example.lovelypet.entity.User;
 import com.example.lovelypet.exception.BaseException;
+import com.example.lovelypet.util.SecurityUtil;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,12 +29,15 @@ class TestUserService {
     @Order(1)
     @Test
     void testCreate() throws BaseException {
+        String token = SecurityUtil.generateToken();
         User user = userService.create(
                 TestCreateData.userName,
                 TestCreateData.passWord,
                 TestCreateData.name,
                 TestCreateData.email,
-                TestCreateData.phoneNumber
+                TestCreateData.phoneNumber,
+                token,
+                new Date()
         );
 
         //check not null

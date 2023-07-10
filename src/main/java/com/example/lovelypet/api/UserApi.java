@@ -1,12 +1,9 @@
 package com.example.lovelypet.api;
 
 import com.example.lovelypet.business.UserBusiness;
-import com.example.lovelypet.entity.User;
 import com.example.lovelypet.exception.BaseException;
-import com.example.lovelypet.model.LoginRequest;
-import com.example.lovelypet.model.UserRegisterRequest;
-import com.example.lovelypet.model.UserRegisterResponse;
-import com.example.lovelypet.model.UserUpdateRequest;
+import com.example.lovelypet.model.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +21,18 @@ public class UserApi {
     public ResponseEntity<UserRegisterResponse> register(@RequestBody UserRegisterRequest reqUser) throws BaseException {
         UserRegisterResponse response = userBusiness.register(reqUser);
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/activate")
+    public ResponseEntity<ActivateResponse>activate(@RequestBody ActivateRequest request) throws BaseException {
+        ActivateResponse response = userBusiness.activate(request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/resend-activate-email")
+    public ResponseEntity<Void>resendActivationEmail(@RequestBody ResendActivateEmailRequest request) throws BaseException {
+         userBusiness.resendActivationEmail(request);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @PostMapping("/login")
@@ -50,8 +59,6 @@ public class UserApi {
         String response = userBusiness.resetPassword(updateRequest);
         return ResponseEntity.ok(response);
     }
-
-
 }
 //
 //

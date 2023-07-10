@@ -26,11 +26,13 @@ public class SecurityConfig {
     private final String[] PUBLIC = {
             "/user/register",
             "/user/login",
+            "/user/activate",
+            "/user/resend-activate-email",
             "/hotel/register",
             "/hotel/login",
             "/verify/login",
             "/verify/home",
-            "/socket"
+            "/socket/**"
     };
 
     public SecurityConfig(TokenService tokenService) {
