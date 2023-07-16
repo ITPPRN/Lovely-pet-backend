@@ -24,7 +24,8 @@ public class RoomService {
     public Room create(
             Hotel hotelId,
             RoomType roomType,
-            float roomPrice
+            float roomPrice,
+            String Details
     ) throws BaseException {
 
         //validate
@@ -44,6 +45,9 @@ public class RoomService {
         entity.setRoomTypeId(roomType);
         entity.setRoomPrice(roomPrice);
         entity.setStatus("empty");
+        if (!Objects.isNull(Details)) {
+            entity.setRoomDetails(Details);
+        }
         return roomRepository.save(entity);
     }
 

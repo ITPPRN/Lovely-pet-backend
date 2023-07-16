@@ -15,7 +15,7 @@ public class Review extends BaseEntity {
     @Column(nullable = false, length = 2)
     private float rating;
 
-    @Column(nullable = false, length = 254)
+    @Column(nullable = true, length = 254)
     private String comment;
 
 

@@ -13,7 +13,7 @@ import lombok.EqualsAndHashCode;
 public class PhotoRoom extends BaseEntity {
 
     @Column(nullable = true, length = 254)
-    private String photoRoomFile;
+    private String photoRoomPartFile;
 
     // Fk
 

@@ -26,7 +26,6 @@ public class VerifyApi {
     public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) throws BaseException {
         String response = verifyBusiness.login(loginRequest);
         return ResponseEntity.ok(response);
-
     }
 
     @GetMapping("/refresh-token")

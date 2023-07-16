@@ -28,6 +28,8 @@ public class VerifyBusiness {
         verifyService.create();
     }
 
+
+
     public String refreshToken() throws BaseException {
         Optional<String> opt = SecurityUtil.getCurrentUserId();
         if (opt.isEmpty()) {

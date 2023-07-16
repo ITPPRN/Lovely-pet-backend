@@ -58,4 +58,9 @@ public class HotelException extends BaseException {
     public static HotelException loginFailPasswordIncorrect() {
         return new HotelException("login.fail");
     }
+
+    //find
+    public static HotelException notFound() {
+        return new HotelException("hotel.not.found");
+    }
 }
