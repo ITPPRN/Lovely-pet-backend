@@ -32,7 +32,8 @@ public class SecurityConfig {
             "/hotel/login",
             "/verify/login",
             "/verify/home",
-            "/socket/**"
+            "/socket/**",
+            "room/upload-image"
     };
 
     public SecurityConfig(TokenService tokenService) {
