@@ -102,7 +102,7 @@ public class PhotoRoomBusiness {
         String filePath = uploadDir + File.separator + fileName;
 
         // สร้างไดเร็กทอรีถ้ายังไม่มี
-        File directory = new File(uploadDir);
+        File directory = new File(uploadDir);//////////////
         if (!directory.exists()) {
             directory.mkdirs();
         }
