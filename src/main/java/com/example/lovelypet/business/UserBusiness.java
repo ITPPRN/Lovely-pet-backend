@@ -39,7 +39,15 @@ public class UserBusiness {
 
     public UserRegisterResponse register(UserRegisterRequest reqUser) throws BaseException {
         String token = SecurityUtil.generateToken();
-        User user = userService.create(reqUser.getUserName(), reqUser.getPassWord(), reqUser.getName(), reqUser.getEmail(), reqUser.getPhoneNumber(), token,nextXMinute(30));
+        User user = userService.create(
+                reqUser.getUserName(),
+                reqUser.getPassWord(),
+                reqUser.getName(),
+                reqUser.getEmail(),
+                reqUser.getPhoneNumber(),
+                token,
+                nextXMinute(30)
+        );
         UserRegisterResponse ures = userMapper.toUserRegisterResponse(user);
         sendEmail(user);
         return ures;

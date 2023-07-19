@@ -14,6 +14,9 @@ import static jakarta.persistence.FetchType.EAGER;
 @Entity(name = "room")
 public class  Room extends BaseEntity {
 
+    @Column(nullable = false, length = 100)
+    private int roomNumber;
+
     @Column(nullable = true, length = 254)
     private String roomDetails;
 

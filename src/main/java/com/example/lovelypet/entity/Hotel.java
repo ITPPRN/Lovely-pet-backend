@@ -6,6 +6,7 @@ import jakarta.persistence.OneToMany;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.Date;
 import java.util.List;
 
 import static jakarta.persistence.FetchType.EAGER;
@@ -63,4 +64,8 @@ public class Hotel extends BaseEntity {
     //entity review
     @OneToMany(mappedBy = "hotelId", fetch = EAGER, orphanRemoval = true)
     private List<Review> reviews;
+
+    private Date tokenExpire;
+    private String token;
+    private boolean activated;
 }

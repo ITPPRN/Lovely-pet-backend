@@ -68,7 +68,8 @@
 //            Room room = roomService.create(
 //                    hotelOpt,
 //                    roomTypeOpt,
-//                    TestCreateDataRoom.price
+//                    TestCreateDataRoom.price,
+//                    ""
 //            );
 //            //check not null
 //            Assertions.assertNotNull(room);

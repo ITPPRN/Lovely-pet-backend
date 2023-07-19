@@ -1,14 +1,13 @@
 package com.example.lovelypet.service;
 
 import com.example.lovelypet.entity.Hotel;
-import com.example.lovelypet.entity.User;
 import com.example.lovelypet.exception.BaseException;
 import com.example.lovelypet.exception.HotelException;
-import com.example.lovelypet.exception.UserException;
 import com.example.lovelypet.repository.HotelRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -24,12 +23,14 @@ public class HotelService {
     }
 
     public Hotel create(
-                        String hotelUsername,
-                        String hotelPassword,
-                        String hotelName,
-                        String hotelTel,
-                        String email,
-                        String location
+            String hotelUsername,
+            String hotelPassword,
+            String hotelName,
+            String hotelTel,
+            String email,
+            String location,
+            String token,
+            Date tokenExpireDate
     ) throws BaseException {
 
         //validate
@@ -72,14 +73,16 @@ public class HotelService {
             entity.setRating(0.0F);
             entity.setVerify("waite");
             entity.setOpenState("CLOSE");
+            entity.setToken(token);
+            entity.setTokenExpire(tokenExpireDate);
             return repository.save(entity);
         }
     }
 
-    public Hotel updateName(int idU, String name) throws UserException {
+    public Hotel updateName(int idU, String name) throws BaseException {
         Optional<Hotel> opt = repository.findById(idU);
-        if(opt.isEmpty()){
-            throw  UserException.notFound();
+        if (opt.isEmpty()) {
+            throw HotelException.notFound();
         }
         Hotel hotel = opt.get();
         hotel.setHotelName(name);
@@ -87,7 +90,7 @@ public class HotelService {
         return repository.save(hotel);
     }
 
-    public  void deleteByIdU(String idU){
+    public void deleteByIdU(String idU) {
         repository.deleteById(idU);
     }
 
@@ -98,7 +101,7 @@ public class HotelService {
     }
 
     public boolean matchPassword(String requestPass, String dataPass) {
-        return passwordEncoder.matches(requestPass,dataPass);
+        return passwordEncoder.matches(requestPass, dataPass);
     }
 
     public Optional<Hotel> findById(int idU) throws BaseException {
@@ -113,10 +116,10 @@ public class HotelService {
         return repository.save(hotel);
     }
 
-    public Hotel updateNormalData(int id, String name, String location,String hotelTel ) throws BaseException {
+    public Hotel updateNormalData(int id, String name, String location, String hotelTel) throws BaseException {
         Optional<Hotel> opt = repository.findById(id);
         if (opt.isEmpty()) {
-            throw UserException.notFound();
+            throw HotelException.notFound();
         }
         Hotel hotel = opt.get();
         if (!Objects.isNull(name)) {
@@ -130,5 +133,19 @@ public class HotelService {
         }
 
         return repository.save(hotel);
+    }
+
+    public Hotel update(Hotel hotel) throws BaseException {
+        return repository.save(hotel);
+    }
+
+    public Optional<Hotel> findByToken(String token) throws BaseException {
+        Optional<Hotel> hotel = repository.findByToken(token);
+        return hotel;
+    }
+
+    public Optional<Hotel> findByEmail(String email) throws BaseException {
+        Optional<Hotel> hotel = repository.findByToken(email);
+        return hotel;
     }
 }

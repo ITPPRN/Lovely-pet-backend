@@ -49,6 +49,29 @@ public class HotelException extends BaseException {
         return new HotelException("create.license.duplicated");
     }
 
+    //ACTIVATE
+    public static HotelException activateNoToken() {
+        return new HotelException("activate.no.token");
+    }
+
+    public static HotelException activateAlready() {
+        return new HotelException("activate.already");
+    }
+    public static HotelException activateFail() {
+        return new HotelException("activate.fail");
+    }
+    public static HotelException activateTokenExpire() {
+        return new HotelException("activate.token.expire");
+    }
+
+    //resend activation
+    public static HotelException resendActivationEmailNoEmail() {
+        return new HotelException("resend.activation.no.email");
+    }
+
+    public static HotelException resendActivationEmailNoEmailEmailNotFound() {
+        return new HotelException("resend.activation.fail");
+    }
 
     //LOGIN
     public static HotelException loginFailUserNameNotFound() {
@@ -57,6 +80,18 @@ public class HotelException extends BaseException {
 
     public static HotelException loginFailPasswordIncorrect() {
         return new HotelException("login.fail");
+    }
+
+    public static HotelException loginFailUserUnactivated() {
+        return new HotelException("login.fail.unactivated");
+    }
+
+    public static HotelException passwordIncorrect() {
+        return new HotelException("password.incorrect");
+    }
+
+    public static HotelException unauthorized() {
+        return new HotelException("unauthorized");
     }
 
     //find

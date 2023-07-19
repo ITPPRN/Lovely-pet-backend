@@ -16,4 +16,8 @@ public interface HotelRepository extends CrudRepository<Hotel, String> {
 
     Optional<Hotel> findById(int idU);
 
+    Optional<Hotel> findByToken(String token);
+
+    Optional<Hotel> findByEmail(String email);
+
 }

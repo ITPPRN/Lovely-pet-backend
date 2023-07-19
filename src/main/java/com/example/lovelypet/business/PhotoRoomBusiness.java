@@ -15,9 +15,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
+
 
 @Service
 public class PhotoRoomBusiness {
@@ -47,7 +50,7 @@ public class PhotoRoomBusiness {
         // สร้างชื่อไฟล์ที่ไม่ซ้ำกัน
         String fileName = generateUniqueFileName(file.getOriginalFilename());
 
-        String uploadDir = "./uploaded_images"; // เปลี่ยนตามต้องการให้เหมาะสมกับโฟลเดอร์ที่ต้องการบันทึกรูปภาพ
+        String uploadDir = "./src/main/resources/imageUpload/"; // เปลี่ยนตามต้องการให้เหมาะสมกับโฟลเดอร์ที่ต้องการบันทึกรูปภาพ
         String filePath = uploadDir + File.separator + fileName;
 
         // สร้างไดเร็กทอรีถ้ายังไม่มี
@@ -60,17 +63,51 @@ public class PhotoRoomBusiness {
         Path path = Paths.get(filePath);
         Files.write(path, file.getBytes());
 
+
         // Save the image information in the database
         PhotoRoom response = photoRoomService.create(fileName, idRoom);
 
         return response;
     }
 
+    public List<PhotoRoom> findById(Room id) {
+        return photoRoomService.findById(id);
+    }
+
+
     // สร้างชื่อไฟล์ที่ไม่ซ้ำกัน
     private String generateUniqueFileName(String originalFileName) {
         return UUID.randomUUID().toString() + "_" + originalFileName;
     }
+
+    public File getImageFile(String imageName) {
+        return new File("src/main/resources/imageUpload/" + imageName);
+    }
+
+    public List<String> getAllImageNames() {
+        return photoRoomService.findAll().stream().map(PhotoRoom::getPhotoRoomPartFile).collect(Collectors.toList());
+    }
 }
+
+
+/* upload image
+// สร้างชื่อไฟล์ที่ไม่ซ้ำกัน
+        String fileName = generateUniqueFileName(file.getOriginalFilename());
+
+        String uploadDir = "src/main/resources/imageUpload"; // เปลี่ยนตามต้องการให้เหมาะสมกับโฟลเดอร์ที่ต้องการบันทึกรูปภาพ
+        String filePath = uploadDir + File.separator + fileName;
+
+        // สร้างไดเร็กทอรีถ้ายังไม่มี
+        File directory = new File(uploadDir);
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+
+        // Save the image file
+        Path path = Paths.get(filePath);
+        Files.write(path, file.getBytes());
+
+ */
 
 
 

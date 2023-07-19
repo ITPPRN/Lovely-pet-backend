@@ -8,6 +8,7 @@ import com.example.lovelypet.exception.RoomException;
 import com.example.lovelypet.repository.RoomRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -25,7 +26,8 @@ public class RoomService {
             Hotel hotelId,
             RoomType roomType,
             float roomPrice,
-            String Details
+            String Details,
+            int roomNumber
     ) throws BaseException {
 
         //validate
@@ -48,10 +50,11 @@ public class RoomService {
         if (!Objects.isNull(Details)) {
             entity.setRoomDetails(Details);
         }
+        entity.setRoomNumber(roomNumber);
         return roomRepository.save(entity);
     }
 
-    public Room update(int id, String details, float price, String status) throws BaseException {
+    public Room update(int id, String details, float price, String status,RoomType type) throws BaseException {
         Optional<Room> opt = roomRepository.findById(id);
         if (opt.isEmpty()) {
             throw RoomException.notFound();
@@ -70,6 +73,10 @@ public class RoomService {
             room.setStatus(status);
         }
 
+        if (!Objects.isNull(type)) {
+            room.setRoomTypeId(type);
+        }
+
 
         return roomRepository.save(room);
     }
@@ -86,8 +93,10 @@ public class RoomService {
         roomRepository.deleteById(idU);
     }
 
-
-}
-/* public int getLastRoomNumber() {
+    public List<Room>findByHotelId(Hotel hotel){
+        return roomRepository.findByHotelId(hotel);
+    }
+    public int getLastRoomNumber() {
         return roomRepository.findMaxRoomNumber();
-    }*/
+    }
+}

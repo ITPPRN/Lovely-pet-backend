@@ -11,6 +11,7 @@ import com.example.lovelypet.service.RoomService;
 import com.example.lovelypet.service.RoomTypeService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -42,11 +43,14 @@ public class RoomBusiness {
         RoomType roomType = optType.get();
 
         for (int i = 1; i <= total; i++) {
+            List<Room> opt = roomService.findByHotelId(hotelId);
+            int roomNumber = opt.size() + 1;
             Room room = roomService.create(
                     hotelId,
                     roomType,
                     request.getPrice(),
-                    request.getDetails()
+                    request.getDetails(),
+                    roomNumber
             );
         }
 
@@ -64,17 +68,20 @@ public class RoomBusiness {
             optType = roomTypeService.findByName(type);
         }
         RoomType roomType = optType.get();
-
-        for (int i = 1; i <= total; i++) {
-            Room room = roomService.update(
-                    request.getId(),
-                    request.getDetails(),
-                    request.getPrice(),
-                    request.getStatus()
-            );
-        }
-
+        Room room = roomService.update(
+                request.getId(),
+                request.getDetails(),
+                request.getPrice(),
+                request.getStatus(),
+                roomType
+        );
         return "";
+    }
+
+    public void deleteu(int id){
+        Optional<Room> opt = roomService.findById(id);
+        Room room = opt.get();
+        roomService.deleteByIdU(String.valueOf(room.getId()));
     }
 
     public Hotel findHotelById(int id) throws BaseException {
@@ -84,6 +91,10 @@ public class RoomBusiness {
         }
         Hotel response = opt.get();
         return response;
+    }
+
+    public Optional<Room> findById(int id) {
+        return roomService.findById(id);
     }
 }
 

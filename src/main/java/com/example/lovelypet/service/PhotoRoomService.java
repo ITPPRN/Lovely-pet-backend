@@ -7,7 +7,9 @@ import com.example.lovelypet.exception.PhotoRoomException;
 import com.example.lovelypet.repository.PhotoRoomRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class PhotoRoomService {
@@ -18,6 +20,14 @@ public class PhotoRoomService {
     public PhotoRoomService(PhotoRoomRepository photoRoomRepository) {
         this.photoRoomRepository = photoRoomRepository;
 
+    }
+
+    public List<PhotoRoom> findById(Room id) {
+        return  photoRoomRepository.findAll();
+    }
+
+    public List<PhotoRoom> findAll() {
+        return  photoRoomRepository.findAll();
     }
 
     public PhotoRoom create(

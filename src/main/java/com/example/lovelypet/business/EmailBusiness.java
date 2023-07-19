@@ -70,6 +70,49 @@ public class EmailBusiness {
         });
     }
 
+
+    public void sendActivateHotelEmail(String email, String name, String token) throws BaseException, MessagingException {
+
+        //prepare content(HTML)
+        String html;
+        try {
+            html = readEmailTemplate("email-activate-hotel.html");
+        } catch (IOException e) {
+            throw EmaillException.templateNotFound();
+        }
+
+        log.info("Token" + token);
+
+        String ip = "";
+
+        String finalLink = "http://"+ip+":8080/activate/" + token;
+        html = html.replace("${P_NAME}", name);
+        html = html.replace("${P_LINK}", finalLink);
+
+        EmailRequest request = new EmailRequest();
+        request.setTo(email);
+        request.setSubject("Please activate your account");
+        request.setContent(html);
+
+        CompletableFuture<SendResult<String, EmailRequest>> completableFuture = kafkaTemplate.send("activation-email", request);
+
+        ListenableFuture<SendResult<String, EmailRequest>> future = new CompletableToListenableFutureAdapter<>(completableFuture);
+
+        future.addCallback(new ListenableFutureCallback<SendResult<String, EmailRequest>>() {
+            @Override
+            public void onFailure(Throwable ex) {
+                log.error("kafka sent fail");
+                log.error(ex);
+            }
+
+            @Override
+            public void onSuccess(SendResult<String, EmailRequest> result) {
+                log.info("kafka sent success");
+                log.info(result);
+            }
+        });
+    }
+
     public void sendResetPasswordEmail(String email, String name, String token) throws BaseException, MessagingException {
 
         //prepare content(HTML)

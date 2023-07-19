@@ -1,8 +1,8 @@
 package com.example.lovelypet.business;
 
 import com.example.lovelypet.exception.BaseException;
+import com.example.lovelypet.model.HotelRegisterRequest;
 import com.example.lovelypet.model.RoomRequest;
-import com.example.lovelypet.service.HotelService;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -18,21 +18,30 @@ class TestRoomBusiness {
     private RoomBusiness roomBusiness;
 
     @Autowired
-    private HotelService hotelService;
+    private HotelBusiness hotelBusiness;
 
 
     @Order(1)
     @Test
     void testAddRoom() throws BaseException {
 
-        hotelService.create(
-                "11111",
-                "11111",
-                "ggggg",
-                "22222",
-                "111111",
-                "64648"
-        );
+        HotelRegisterRequest request1 = new HotelRegisterRequest();
+        request1.setEmail("564");
+        request1.setPassword("5555");
+        request1.setLocation("5555");
+        request1.setHotelName("5555");
+        request1.setHotelUsername("555");
+        request1.setHotelTel("333");
+        hotelBusiness.register(request1);
+
+        HotelRegisterRequest request2 = new HotelRegisterRequest();
+        request2.setEmail("5641");
+        request2.setPassword("5515");
+        request2.setLocation("55515");
+        request2.setHotelName("55155");
+        request2.setHotelUsername("5155");
+        request2.setHotelTel("3313");
+        hotelBusiness.register(request2);
 
         RoomRequest request = new RoomRequest();
         request.setType("Normal");
@@ -40,8 +49,15 @@ class TestRoomBusiness {
         request.setHotelId(1);
         request.setPrice(300);
         request.setDetails("Fan room");
-
         roomBusiness.addRoom(request);
+
+        RoomRequest request3 = new RoomRequest();
+        request3.setType("VIP");
+        request3.setTotal(15);
+        request3.setHotelId(2);
+        request3.setPrice(300);
+        request3.setDetails("Fan room");
+        roomBusiness.addRoom(request3);
     }
 
     @Order(2)
@@ -64,6 +80,12 @@ class TestRoomBusiness {
             }
             roomBusiness.updateRoom(request);
         }
+    }
+
+    @Order(3)
+    @Test
+    void testDeleteRoom() throws BaseException {
+        roomBusiness.deleteu(1);
     }
 }
 

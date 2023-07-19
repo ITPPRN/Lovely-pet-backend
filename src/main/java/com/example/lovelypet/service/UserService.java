@@ -26,7 +26,15 @@ public class UserService {
     }
 
 
-    public User create(String userName, String passWord, String name, String email, String phoneNumber,String token, Date tokenExpireDate) throws BaseException {
+    public User create(
+            String userName,
+            String passWord,
+            String name,
+            String email,
+            String phoneNumber,
+            String token,
+            Date tokenExpireDate
+    ) throws BaseException {
 
         //validate
         if (Objects.isNull(email)) {
