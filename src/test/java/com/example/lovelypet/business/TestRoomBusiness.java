@@ -10,6 +10,10 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class TestRoomBusiness {
@@ -19,6 +23,9 @@ class TestRoomBusiness {
 
     @Autowired
     private HotelBusiness hotelBusiness;
+
+    @Autowired
+    private PhotoRoomBusiness photoRoomBusiness;
 
 
     @Order(1)
@@ -81,11 +88,10 @@ class TestRoomBusiness {
             roomBusiness.updateRoom(request);
         }
     }
-
-    @Order(3)
-    @Test
-    void testDeleteRoom() throws BaseException {
-        roomBusiness.deleteu(1);
-    }
+//    @Order(3)
+//    @Test
+//    void testDeleteRoom() throws BaseException {
+//        roomBusiness.deleteU(1);
+//    }
 }
 

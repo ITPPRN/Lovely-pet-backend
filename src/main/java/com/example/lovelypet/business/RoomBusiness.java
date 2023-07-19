@@ -5,6 +5,7 @@ import com.example.lovelypet.entity.Room;
 import com.example.lovelypet.entity.RoomType;
 import com.example.lovelypet.exception.BaseException;
 import com.example.lovelypet.exception.HotelException;
+import com.example.lovelypet.exception.RoomException;
 import com.example.lovelypet.model.RoomRequest;
 import com.example.lovelypet.service.HotelService;
 import com.example.lovelypet.service.RoomService;
@@ -78,10 +79,20 @@ public class RoomBusiness {
         return "";
     }
 
-    public void deleteu(int id){
+    public String deleteU(int id) throws BaseException {
         Optional<Room> opt = roomService.findById(id);
+        if (opt.isEmpty()){
+            throw RoomException.notFound();
+        }
         Room room = opt.get();
         roomService.deleteByIdU(String.valueOf(room.getId()));
+
+        Optional<Room> confirm = roomService.findById(room.getId());
+        if (confirm.isEmpty()){
+            return "Delete room number"+room.getRoomNumber()+"success";
+        }else {
+            return "Delete room number"+room.getRoomNumber()+"fail";
+        }
     }
 
     public Hotel findHotelById(int id) throws BaseException {

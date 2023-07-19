@@ -51,7 +51,8 @@ public class PhotoRoomBusiness {
         String fileName = generateUniqueFileName(file.getOriginalFilename());
 
         String uploadDir = "./src/main/resources/imageUpload/"; // เปลี่ยนตามต้องการให้เหมาะสมกับโฟลเดอร์ที่ต้องการบันทึกรูปภาพ
-        String filePath = uploadDir + File.separator + fileName;
+        File filePath = new File(uploadDir, fileName);
+
 
         // สร้างไดเร็กทอรีถ้ายังไม่มี
         File directory = new File(uploadDir);
@@ -60,8 +61,11 @@ public class PhotoRoomBusiness {
         }
 
         // Save the image file
-        Path path = Paths.get(filePath);
-        Files.write(path, file.getBytes());
+        file.transferTo(filePath);
+
+// ใช้ในกรณีที่ไฟล์มีขนาดไม่ใหญ่และมีทรัพยากรณ์เครื่องเยอะ
+//        Path path = Paths.get(filePath);
+//        Files.write(path, file.getBytes());
 
 
         // Save the image information in the database

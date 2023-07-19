@@ -33,7 +33,6 @@ public class SecurityConfig {
             "/verify/login",
             "/verify/home",
             "/socket/**",
-            "/room/**"
     };
 
     public SecurityConfig(TokenService tokenService) {

@@ -14,7 +14,6 @@ import java.util.List;
 @RequestMapping("/room")
 public class RoomApi {
 
-    private static final String IMAGES_PATH = "src/main/resources/imageUpload/"; // เปลี่ยนเป็นเส้นทางจริงของรูปภาพที่อยู่ในเครื่อง Host
     private final RoomBusiness roomBusiness;
     private final PhotoRoomBusiness photoRoomBusiness;
 
@@ -41,14 +40,24 @@ public class RoomApi {
         return ResponseEntity.ok(response);
     }
 
+
+//////////// ยังไม่เสร็จ ////////////////////////////////
     @GetMapping("/imageNames")
     @ResponseBody
     public List<String> getImageNames() {
         return photoRoomBusiness.getAllImageNames();
     }
+////////////////////////////////////////////////////
+    @PostMapping("/delete-room")
+    public ResponseEntity<String> deleteRoom(@RequestParam int id) throws BaseException {
+        String response = roomBusiness.deleteU(id);
+        return ResponseEntity.ok(response);
+
+    }
 
 }
 /* ดึงรูปภาพ จาก database
+ private static final String IMAGES_PATH = "src/main/resources/imageUpload/"; // เปลี่ยนเป็นเส้นทางจริงของรูปภาพที่อยู่ในเครื่อง Host
  @GetMapping("/images")
     public ResponseEntity<InputStreamResource> getImageById(@RequestParam int id) {
         Optional<PhotoRoom> imageEntity = photoRoomBusiness.findById(id);
