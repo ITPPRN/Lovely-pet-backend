@@ -18,7 +18,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ##ddl-auto: create
   datasource:
     url: jdbc:postgresql://localhost:5432/lovelypet
     username: postgres

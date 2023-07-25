@@ -13,6 +13,6 @@ public interface PhotoRoomRepository extends CrudRepository<PhotoRoom, String> {
 
     List<PhotoRoom> findByRoomId(Room id);
 
-    List<PhotoRoom>findAll();
+
 
 }

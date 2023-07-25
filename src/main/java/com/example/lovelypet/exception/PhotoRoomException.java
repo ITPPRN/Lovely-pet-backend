@@ -18,4 +18,9 @@ public class PhotoRoomException extends BaseException {
     public static PhotoRoomException notFound() {
         return new PhotoRoomException("photo.room.not.found");
     }
+
+    //get image
+    public static PhotoRoomException getImageFail() {
+        return new PhotoRoomException("get.image.fail");
+    }
 }

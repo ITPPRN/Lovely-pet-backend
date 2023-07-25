@@ -88,6 +88,13 @@ class TestRoomBusiness {
             roomBusiness.updateRoom(request);
         }
     }
+
+    @Order(3)
+    @Test
+    void testListPhotoRoomRoom() throws BaseException {
+
+      photoRoomBusiness.listImage(1);
+    }
 //    @Order(3)
 //    @Test
 //    void testDeleteRoom() throws BaseException {

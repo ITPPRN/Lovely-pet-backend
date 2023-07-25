@@ -22,12 +22,12 @@ public class PhotoRoomService {
 
     }
 
-    public List<PhotoRoom> findById(Room id) {
-        return  photoRoomRepository.findAll();
+    public Optional<PhotoRoom> findById(int id) {
+        return photoRoomRepository.findById(id);
     }
 
-    public List<PhotoRoom> findAll() {
-        return  photoRoomRepository.findAll();
+    public List<PhotoRoom> findByRoomId(Room id) {
+        return photoRoomRepository.findByRoomId(id);
     }
 
     public PhotoRoom create(
