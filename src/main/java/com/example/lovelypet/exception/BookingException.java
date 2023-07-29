@@ -34,4 +34,15 @@ public class BookingException extends BaseException {
         return new BookingException("create.bookingDate.null");
     }
 
+    public static BookingException createBookingPaymentNull() {
+        return new BookingException("create.payment.null");
+    }
+
+    public static BookingException wrongPaymentMetgod() {
+        return new BookingException("wrong.payment.method");
+    }
+
+
+
+
 }

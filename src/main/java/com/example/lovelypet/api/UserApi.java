@@ -1,11 +1,16 @@
 package com.example.lovelypet.api;
 
 import com.example.lovelypet.business.UserBusiness;
+import com.example.lovelypet.entity.User;
 import com.example.lovelypet.exception.BaseException;
 import com.example.lovelypet.model.*;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/user")
@@ -23,15 +28,21 @@ public class UserApi {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/profile")
+    public ResponseEntity<UserProfileResponse> getMyUserProfile() throws BaseException {
+        UserProfileResponse response = userBusiness.getMyUserProfile();
+        return ResponseEntity.ok(response);
+    }
+
     @PostMapping("/activate")
-    public ResponseEntity<ActivateResponse>activate(@RequestBody ActivateRequest request) throws BaseException {
+    public ResponseEntity<ActivateResponse> activate(@RequestBody ActivateRequest request) throws BaseException {
         ActivateResponse response = userBusiness.activate(request);
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/resend-activate-email")
-    public ResponseEntity<Void>resendActivationEmail(@RequestBody ResendActivateEmailRequest request) throws BaseException {
-         userBusiness.resendActivationEmail(request);
+    public ResponseEntity<Void> resendActivationEmail(@RequestBody ResendActivateEmailRequest request) throws BaseException {
+        userBusiness.resendActivationEmail(request);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
@@ -59,6 +70,29 @@ public class UserApi {
         String response = userBusiness.resetPassword(updateRequest);
         return ResponseEntity.ok(response);
     }
+
+    //อัพรูป
+    @PostMapping("/upload-image")
+    public ResponseEntity<User> uploadImage(@RequestParam("file") MultipartFile file, @RequestParam int id) throws BaseException, IOException {
+        User response = userBusiness.uploadImage(file, id);
+        return ResponseEntity.ok(response);
+    }
+
+    //ดึงรูป
+    @GetMapping("/get-images")
+    public ResponseEntity<InputStreamResource> getImageById(@RequestParam int id) throws BaseException {
+        return userBusiness.getImageById(id);
+    }
+
+    @GetMapping("/get-images-url")
+    public ResponseEntity<String> getImageUrl(@RequestParam int id) throws BaseException {
+        String response = userBusiness.getImageUrl(id);
+        return ResponseEntity.ok(response);
+    }
+
+    //////////////////////////////////////
+
+    //////////////////////////////////////////////
 }
 //
 //

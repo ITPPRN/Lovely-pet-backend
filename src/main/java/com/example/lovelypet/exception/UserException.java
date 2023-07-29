@@ -26,15 +26,19 @@ public class UserException extends BaseException {
     public static UserException createEmailNull() {
         return new UserException("create.email.null");
     }
+
     public static UserException createPasswordNull() {
         return new UserException("create.password.null");
     }
+
     public static UserException createNameNull() {
         return new UserException("create.name.null");
     }
+
     public static UserException createUserNameNull() {
         return new UserException("create.userName.null");
     }
+
     public static UserException createPhoneNumberNull() {
         return new UserException("create.phoneNumber.null");
     }
@@ -43,6 +47,7 @@ public class UserException extends BaseException {
     public static UserException createEmailDuplicated() {
         return new UserException("create.email.duplicated");
     }
+
     public static UserException createUserNameDuplicated() {
         return new UserException("create.userName.duplicated");
     }
@@ -74,19 +79,26 @@ public class UserException extends BaseException {
     public static UserException activateAlready() {
         return new UserException("activate.already");
     }
+
     public static UserException activateFail() {
         return new UserException("activate.fail");
     }
+
     public static UserException activateTokenExpire() {
         return new UserException("activate.token.expire");
     }
 
     //resend activation
-    public static UserException resendActivationEmailNoEmail() {
-        return new UserException("resend.activation.no.email");
+    public static UserException resendActivationEmailNoToken() {
+        return new UserException("resend.activation.no.token");
     }
 
-    public static UserException resendActivationEmailNoEmailEmailNotFound() {
+    public static UserException resendActivationTokenNotFound() {
         return new UserException("resend.activation.fail");
+    }
+
+    // image
+    public static UserException createUserIdNull() {
+        return new UserException("create.user.id.null");
     }
 }

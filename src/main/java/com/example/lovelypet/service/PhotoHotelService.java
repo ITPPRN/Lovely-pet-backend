@@ -7,7 +7,9 @@ import com.example.lovelypet.exception.PhotoHotelException;
 import com.example.lovelypet.repository.PhotoHotelRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class PhotoHotelService {
@@ -41,6 +43,15 @@ public class PhotoHotelService {
         entity.setPhotoHotelFile(partFile);
         entity.setHotelId(hotelId);
         return photoHotelRepository.save(entity);
+    }
+
+    public Optional<PhotoHotel> findById(int id) {
+        return photoHotelRepository.findById(id);
+    }
+
+
+    public List<PhotoHotel> findByHotelId(Hotel hotel) throws BaseException {
+        return photoHotelRepository.findByHotelId(hotel);
     }
 
 }

@@ -21,6 +21,15 @@ public class Booking extends BaseEntity {
     @Column(nullable = false, length = 60)
     private LocalDateTime date;
 
+    @Column(nullable = false, length = 60)
+    private String paymentMethod;
+
+    @Column(nullable = true,length = 254)
+    private String payment;
+
+    @Column(nullable = false, length = 60)
+    private String state;
+
     //FK
 
     // entity room

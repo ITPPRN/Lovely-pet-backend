@@ -1,8 +1,14 @@
 package com.example.lovelypet.repository;
 
+import com.example.lovelypet.entity.Hotel;
 import com.example.lovelypet.entity.PhotoHotel;
 import org.springframework.data.repository.CrudRepository;
 
-public interface PhotoHotelRepository extends CrudRepository<PhotoHotel, String> {
+import java.util.List;
+import java.util.Optional;
 
+public interface PhotoHotelRepository extends CrudRepository<PhotoHotel, String> {
+    Optional<PhotoHotel> findById(int idU);
+
+    List<PhotoHotel> findByHotelId(Hotel hotel);
 }

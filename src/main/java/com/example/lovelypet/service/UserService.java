@@ -4,11 +4,13 @@ import com.example.lovelypet.entity.User;
 import com.example.lovelypet.exception.BaseException;
 import com.example.lovelypet.exception.UserException;
 import com.example.lovelypet.repository.UserRepository;
-import com.example.lovelypet.util.SecurityUtil;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
 import java.util.Optional;
@@ -84,6 +86,7 @@ public class UserService {
         }
     }
 
+    @Cacheable(value = "user", key = "#idU", unless = "#result == null")
     public Optional<User> findById(int idU) throws BaseException {
         Optional<User> user = repository.findById(idU);
         return user;
@@ -112,7 +115,8 @@ public class UserService {
         return repository.save(user);
     }
 
-    public User update(User user)throws BaseException{
+    @CachePut(value = "user", key = "#id")
+    public User update(User user) throws BaseException {
         return repository.save(user);
     }
 
@@ -132,6 +136,8 @@ public class UserService {
         return repository.save(user);
     }
 
+    @CacheEvict(value = "user", key = "#id")
+    //@CacheEvict(value = "user",allEntries = true)//ในกรณีลบทั้งหมด
     public void deleteByIdU(String idU) {
         repository.deleteById(idU);
     }

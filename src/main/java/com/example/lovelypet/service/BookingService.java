@@ -26,7 +26,9 @@ public class BookingService {
             Pet pet,
             Date bookingStartDate,
             Date bookingEndDate,
-            LocalDateTime date
+            LocalDateTime date,
+            String paymentMethod,
+            String payment
 
     ) throws BaseException {
 
@@ -61,7 +63,6 @@ public class BookingService {
 
         //verify
 
-
         Booking entity = new Booking();
         entity.setUserId(user);
         entity.setHotelId(hotel);
@@ -70,6 +71,18 @@ public class BookingService {
         entity.setBookingStartDate(bookingStartDate);
         entity.setBookingEndDate(bookingEndDate);
         entity.setDate(date);
+        entity.setPaymentMethod(paymentMethod);
+        if (!paymentMethod.equals("cash payment")) {
+            if (Objects.isNull(payment)) {
+                throw BookingException.createBookingPaymentNull();
+            }
+            entity.setPayment(payment);
+        }else {
+            if (Objects.nonNull(payment)){
+                throw BookingException.wrongPaymentMetgod();
+            }
+        }
+        entity.setState("waite");
         return bookingRepository.save(entity);
     }
 

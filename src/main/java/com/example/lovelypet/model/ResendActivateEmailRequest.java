@@ -4,5 +4,5 @@ import lombok.Data;
 
 @Data
 public class ResendActivateEmailRequest {
-    private String email;
+    private String token;
 }

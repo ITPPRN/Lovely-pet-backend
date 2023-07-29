@@ -3,11 +3,10 @@ package com.example.lovelypet.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.springframework.data.util.Lazy;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -16,7 +15,7 @@ import static jakarta.persistence.FetchType.EAGER;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Entity(name = "userprofile")
-public class User extends BaseEntity {
+public class User extends BaseEntity implements Serializable {
 
     @Column(nullable = false, length = 60, unique = true)
     private String userName;
@@ -34,7 +33,7 @@ public class User extends BaseEntity {
     private String phoneNumber;
 
 
-    @Column(nullable = true, length = 254)
+    @Column(nullable = true)
     private String userPhoto;
 
     // Fk

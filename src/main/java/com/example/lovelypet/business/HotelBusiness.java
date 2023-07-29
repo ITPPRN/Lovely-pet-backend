@@ -125,7 +125,7 @@ public class HotelBusiness {
     }
 
     public void resendActivationEmail(ResendActivateEmailRequest request) throws BaseException{
-        String email = request.getEmail();
+        String email = request.getToken();
         if (StringUtil.isNullOrEmpty(email)){
             throw HotelException.resendActivationEmailNoEmail();
         }
@@ -209,17 +209,7 @@ public class HotelBusiness {
 
 
 //////////////////////////////////// ยังไม่เสร็จ ////////////////////
-    public String uploadImage ()throws BaseException{
-//        Hotel hotel;
-//        photoHotelService.create("",hotel);
-        return "";
-    }
 
-    public String getImage ()throws BaseException{
-//        Hotel hotel;
-//        photoHotelService.create("",hotel);
-        return "";
-    }
 ///////////////////////////////////////////////////////////////
 
 }

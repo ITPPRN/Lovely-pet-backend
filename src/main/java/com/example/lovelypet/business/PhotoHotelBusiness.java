@@ -1,12 +1,12 @@
 package com.example.lovelypet.business;
 
-import com.example.lovelypet.entity.PhotoRoom;
-import com.example.lovelypet.entity.Room;
+import com.example.lovelypet.entity.Hotel;
+import com.example.lovelypet.entity.PhotoHotel;
 import com.example.lovelypet.exception.BaseException;
 import com.example.lovelypet.exception.FileException;
 import com.example.lovelypet.exception.RoomException;
-import com.example.lovelypet.service.PhotoRoomService;
-import com.example.lovelypet.service.RoomService;
+import com.example.lovelypet.service.HotelService;
+import com.example.lovelypet.service.PhotoHotelService;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -26,20 +26,34 @@ import java.util.*;
 
 
 @Service
-public class PhotoRoomBusiness {
+public class PhotoHotelBusiness {
 
-    private final PhotoRoomService photoRoomService;
+    private final PhotoHotelService photoHotelService;
 
-    private final RoomService roomService;
+    private final HotelService hotelService;
 
-    private final String part = "src/main/resources/imageUpload/imageRoomUpload";
+    private final String part = "src/main/resources/imageUpload/imageHotelUpload";
 
-    public PhotoRoomBusiness(PhotoRoomService photoRoomService, RoomService roomService) {
-        this.photoRoomService = photoRoomService;
-        this.roomService = roomService;
+    public PhotoHotelBusiness(PhotoHotelService photoHotelService, HotelService hotelService) {
+        this.photoHotelService = photoHotelService;
+        this.hotelService = hotelService;
     }
 
-    public PhotoRoom uploadImage(MultipartFile file, int id) throws IOException, BaseException {
+    // เมธอดในการอ่านรูปภาพและเก็บข้อมูลลงในตัวแปร byte[]
+    public static byte[] readImage(String filePath) {
+        File imageFile = new File(filePath);
+        byte[] imageData = new byte[(int) imageFile.length()];
+
+        try (FileInputStream fis = new FileInputStream(imageFile)) {
+            fis.read(imageData);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return imageData;
+    }
+
+    public PhotoHotel uploadImage(MultipartFile file, int id) throws IOException, BaseException {
 
         //validate request
         if (file == null) {
@@ -63,8 +77,8 @@ public class PhotoRoomBusiness {
             throw RoomException.createRoomIdNull();
         }
 
-        Optional<Room> optIdRoom = roomService.findById(id);
-        Room idRoom = optIdRoom.get();
+        Optional<Hotel> optHotel = hotelService.findById(id);
+        Hotel idHotel = optHotel.get();
 
         // สร้างชื่อไฟล์ที่ไม่ซ้ำกัน
         String fileName = generateUniqueFileName(file.getOriginalFilename());
@@ -85,7 +99,7 @@ public class PhotoRoomBusiness {
         Files.write(path, file.getBytes());
 
         // Save the image information in the database
-        PhotoRoom response = photoRoomService.create(fileName, idRoom);
+        PhotoHotel response = photoHotelService.create(fileName, idHotel);
 
         return response;
     }
@@ -95,14 +109,14 @@ public class PhotoRoomBusiness {
         return UUID.randomUUID().toString() + "_" + originalFileName;
     }
 
-    public Optional<PhotoRoom> findById(int id) {
-        return photoRoomService.findById(id);
+    public Optional<PhotoHotel> findById(int id) {
+        return photoHotelService.findById(id);
     }
 
     public ResponseEntity<InputStreamResource> getImageById(int id) {
-        Optional<PhotoRoom> imageEntity = photoRoomService.findById(id);
+        Optional<PhotoHotel> imageEntity = photoHotelService.findById(id);
         if (imageEntity.isPresent()) {
-            String filename = imageEntity.get().getPhotoRoomPartFile();
+            String filename = imageEntity.get().getPhotoHotelFile();
             File imageFile = new File(part + File.separator + filename);
 
             try {
@@ -120,21 +134,21 @@ public class PhotoRoomBusiness {
         }
     }
 
-    public List<String> getImageUrl(int id) {
-        List<PhotoRoom> images = findByRoomId(id); // ดึงข้อมูลรูปภาพทั้งหมดจากฐานข้อมูล
+    public List<String> getImageUrl(int id) throws BaseException {
+        List<PhotoHotel> images = findByHotelId(id); // ดึงข้อมูลรูปภาพทั้งหมดจากฐานข้อมูล
         List<String> response = new ArrayList<>();
-        for (PhotoRoom image : images) {
+        for (PhotoHotel image : images) {
             // สร้าง URL สำหรับแสดงรูปภาพ
-            String imageUrl = part + File.separator + image.getPhotoRoomPartFile();
+            String imageUrl = part + File.separator + image.getPhotoHotelFile();
             response.add(imageUrl);
         }
         return response;
     }
 
-    public List<PhotoRoom> findByRoomId(int id) {
-        Optional<Room> opt = roomService.findById(id);
-        Room room = opt.get();
-        return photoRoomService.findByRoomId(room);
+    public List<PhotoHotel> findByHotelId(int id) throws BaseException {
+        Optional<Hotel> opt = hotelService.findById(id);
+        Hotel hotel = opt.get();
+        return photoHotelService.findByHotelId(hotel);
     }
 }
 

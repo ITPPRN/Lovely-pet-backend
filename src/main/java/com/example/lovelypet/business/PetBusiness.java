@@ -1,19 +1,21 @@
 package com.example.lovelypet.business;
 
-import com.example.lovelypet.entity.PhotoRoom;
-import com.example.lovelypet.entity.Room;
+import com.example.lovelypet.entity.Pet;
+import com.example.lovelypet.entity.PetType;
+import com.example.lovelypet.entity.User;
 import com.example.lovelypet.exception.BaseException;
 import com.example.lovelypet.exception.FileException;
 import com.example.lovelypet.exception.RoomException;
-import com.example.lovelypet.service.PhotoRoomService;
-import com.example.lovelypet.service.RoomService;
+import com.example.lovelypet.model.AddPetRequest;
+import com.example.lovelypet.service.PetService;
+import com.example.lovelypet.service.PetTypeService;
+import com.example.lovelypet.service.UserService;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -22,24 +24,59 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 
 @Service
-public class PhotoRoomBusiness {
+public class PetBusiness {
 
-    private final PhotoRoomService photoRoomService;
+    private final PetService petService;
 
-    private final RoomService roomService;
+    private final PetTypeService petTypeService;
 
-    private final String part = "src/main/resources/imageUpload/imageRoomUpload";
+    private final UserService userService;
+    private final String part = "src/main/resources/imageUpload/imagePet";
 
-    public PhotoRoomBusiness(PhotoRoomService photoRoomService, RoomService roomService) {
-        this.photoRoomService = photoRoomService;
-        this.roomService = roomService;
+    public PetBusiness(PetService petService, PetTypeService petTypeService, UserService userService) {
+        this.petService = petService;
+        this.petTypeService = petTypeService;
+        this.userService = userService;
     }
 
-    public PhotoRoom uploadImage(MultipartFile file, int id) throws IOException, BaseException {
+    public String addMyPet(AddPetRequest request) throws BaseException {
+
+        //user
+        Optional<User> optUser = userService.findById(request.getUserId());
+        User user = optUser.get();
+
+        //pet type
+        Optional<PetType> optionalPetType = petTypeService.findByName(request.getType());
+        if (!optionalPetType.isPresent()) {
+            petTypeService.create(request.getType());
+            optionalPetType = petTypeService.findByName(request.getType());
+        }
+        PetType type = optionalPetType.get();
+
+        //date
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        ParsePosition pos = new ParsePosition(0);
+        Date birthday = dateFormat.parse(request.getBirthday(), pos);
+
+        //add pet to database
+        Pet response = petService.create(
+                user,
+                request.getName(),
+                request.getPetPhoto(),
+                type,
+                birthday
+        );
+
+        return "response";
+    }
+
+    public Pet uploadImage(MultipartFile file, int id) throws IOException, BaseException {
 
         //validate request
         if (file == null) {
@@ -63,9 +100,6 @@ public class PhotoRoomBusiness {
             throw RoomException.createRoomIdNull();
         }
 
-        Optional<Room> optIdRoom = roomService.findById(id);
-        Room idRoom = optIdRoom.get();
-
         // สร้างชื่อไฟล์ที่ไม่ซ้ำกัน
         String fileName = generateUniqueFileName(file.getOriginalFilename());
 
@@ -85,7 +119,10 @@ public class PhotoRoomBusiness {
         Files.write(path, file.getBytes());
 
         // Save the image information in the database
-        PhotoRoom response = photoRoomService.create(fileName, idRoom);
+        Optional<Pet> opt = petService.findById(id);
+        Pet pet = opt.get();
+        pet.setPetPhoto(fileName);
+        Pet response = petService.update(pet);
 
         return response;
     }
@@ -95,14 +132,10 @@ public class PhotoRoomBusiness {
         return UUID.randomUUID().toString() + "_" + originalFileName;
     }
 
-    public Optional<PhotoRoom> findById(int id) {
-        return photoRoomService.findById(id);
-    }
-
     public ResponseEntity<InputStreamResource> getImageById(int id) {
-        Optional<PhotoRoom> imageEntity = photoRoomService.findById(id);
+        Optional<Pet> imageEntity = petService.findById(id);
         if (imageEntity.isPresent()) {
-            String filename = imageEntity.get().getPhotoRoomPartFile();
+            String filename = imageEntity.get().getPetPhoto();
             File imageFile = new File(part + File.separator + filename);
 
             try {
@@ -120,22 +153,12 @@ public class PhotoRoomBusiness {
         }
     }
 
-    public List<String> getImageUrl(int id) {
-        List<PhotoRoom> images = findByRoomId(id); // ดึงข้อมูลรูปภาพทั้งหมดจากฐานข้อมูล
-        List<String> response = new ArrayList<>();
-        for (PhotoRoom image : images) {
-            // สร้าง URL สำหรับแสดงรูปภาพ
-            String imageUrl = part + File.separator + image.getPhotoRoomPartFile();
-            response.add(imageUrl);
-        }
+    public String getImageUrl(int id) throws BaseException {
+        Optional<Pet> images = petService.findById(id); // ดึงข้อมูลรูปภาพทั้งหมดจากฐานข้อมูล
+        String response = part + File.separator + images.get().getPetPhoto();
         return response;
     }
 
-    public List<PhotoRoom> findByRoomId(int id) {
-        Optional<Room> opt = roomService.findById(id);
-        Room room = opt.get();
-        return photoRoomService.findByRoomId(room);
-    }
 }
 
 

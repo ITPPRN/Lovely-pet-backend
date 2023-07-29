@@ -16,4 +16,6 @@ public interface PetRepository extends CrudRepository<Pet, String> {
 
     Optional<Pet> findByIdAndUserId(int id, User userId);
 
+    Optional<Pet> findById(int id);
+
 }

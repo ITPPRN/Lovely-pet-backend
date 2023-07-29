@@ -5,6 +5,11 @@ public class HotelException extends BaseException {
         super("hotel." + code);
     }
 
+    public static HotelException createHotelIdNull() {
+        return new HotelException("hotel.id.null");
+    }
+
+
     public static HotelException createUserNameNull() {
         return new HotelException("register.userName.null");
     }

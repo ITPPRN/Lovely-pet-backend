@@ -1,19 +1,29 @@
 package com.example.lovelypet.api;
 
 import com.example.lovelypet.business.HotelBusiness;
+import com.example.lovelypet.business.PhotoHotelBusiness;
+import com.example.lovelypet.entity.PhotoHotel;
 import com.example.lovelypet.exception.BaseException;
 import com.example.lovelypet.model.*;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/hotel")
 public class HotelApi {
     private final HotelBusiness hotelBusiness;
 
-    public HotelApi(HotelBusiness hotelBusiness) {
+    private final PhotoHotelBusiness photoHotelBusiness;
+
+    public HotelApi(HotelBusiness hotelBusiness, PhotoHotelBusiness photoHotelBusiness) {
         this.hotelBusiness = hotelBusiness;
+        this.photoHotelBusiness = photoHotelBusiness;
     }
 
 
@@ -60,23 +70,24 @@ public class HotelApi {
         return ResponseEntity.ok(response);
     }
 
-
-
-//////////////ยังไม่เสร็จ //////////////////////////////////////////////////////////
-    // อัปโหลดรูป
+    //อัพรูป
     @PostMapping("/upload-image")
-    public ResponseEntity<String> uploadImage() throws BaseException {
-        String response = hotelBusiness.uploadImage();
+    public ResponseEntity<PhotoHotel> uploadImage(@RequestParam("file") MultipartFile file, @RequestParam int id) throws BaseException, IOException {
+        PhotoHotel response = photoHotelBusiness.uploadImage(file, id);
         return ResponseEntity.ok(response);
     }
 
     //ดึงรูป
-    @PostMapping("/get-image")
-    public ResponseEntity<String> getImage() throws BaseException {
-        String response = hotelBusiness.getImage();
+    @GetMapping("/get-images")
+    public ResponseEntity<InputStreamResource> getImageById(@RequestParam int id) {
+        return photoHotelBusiness.getImageById(id);
+    }
+
+    @GetMapping("/get-images-url")
+    public ResponseEntity<List<String>> getImageUrl(@RequestParam int id) throws BaseException {
+        List<String> response = photoHotelBusiness.getImageUrl(id);
         return ResponseEntity.ok(response);
     }
-/////////////////////////////////////////////////////////////////////////////////
 
 }
 //
