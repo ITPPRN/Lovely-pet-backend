@@ -5,6 +5,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+// ลบไฟล์.jar ที่ซ้ำออก
+
 @SpringBootApplication
 @EnableScheduling
 @EnableCaching
