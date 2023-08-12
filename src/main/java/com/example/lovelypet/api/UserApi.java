@@ -1,7 +1,6 @@
 package com.example.lovelypet.api;
 
 import com.example.lovelypet.business.UserBusiness;
-import com.example.lovelypet.entity.User;
 import com.example.lovelypet.exception.BaseException;
 import com.example.lovelypet.model.*;
 import org.springframework.core.io.InputStreamResource;
@@ -22,13 +21,13 @@ public class UserApi {
     }
 
 
-    @PostMapping("register")
+    @PostMapping("/register")
     public ResponseEntity<UserRegisterResponse> register(@RequestBody UserRegisterRequest reqUser) throws BaseException {
         UserRegisterResponse response = userBusiness.register(reqUser);
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/profile")
+    @PostMapping("/profile")
     public ResponseEntity<UserProfileResponse> getMyUserProfile() throws BaseException {
         UserProfileResponse response = userBusiness.getMyUserProfile();
         return ResponseEntity.ok(response);
@@ -53,15 +52,15 @@ public class UserApi {
 
     }
 
-    @GetMapping("/refresh-token")
+    @PostMapping("/refresh-token")
     public ResponseEntity<String> refreshToken() throws BaseException {
         String response = userBusiness.refreshToken();
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/update-normal")
-    public ResponseEntity<String> update(@RequestBody UserUpdateRequest updateRequest) throws BaseException {
-        String response = userBusiness.updateNormalData(updateRequest);
+    public ResponseEntity<UserRegisterResponse> updateProfile(@RequestBody UserUpdateRequest updateRequest) throws BaseException {
+        UserRegisterResponse response = userBusiness.updateNormalData(updateRequest);
         return ResponseEntity.ok(response);
     }
 
@@ -71,26 +70,44 @@ public class UserApi {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/not-reset-password")
+    private ResponseEntity<String> notResetPassword(@RequestBody UserUpdateRequest request) throws BaseException {
+        String response = userBusiness.notResetPassword(request);
+        return ResponseEntity.ok(response);
+    }
+
     //อัพรูป
     @PostMapping("/upload-image")
-    public ResponseEntity<User> uploadImage(@RequestParam("file") MultipartFile file, @RequestParam int id) throws BaseException, IOException {
-        User response = userBusiness.uploadImage(file, id);
+    public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile file) throws BaseException, IOException {
+        String response = userBusiness.uploadImage(file);
         return ResponseEntity.ok(response);
     }
 
     //ดึงรูป
-    @GetMapping("/get-images")
-    public ResponseEntity<InputStreamResource> getImageById(@RequestParam int id) throws BaseException {
-        return userBusiness.getImageById(id);
+    @PostMapping("/get-images")
+    public ResponseEntity<InputStreamResource> getImageById() throws BaseException {
+        return userBusiness.getImageById();
     }
 
-    @GetMapping("/get-images-url")
-    public ResponseEntity<String> getImageUrl(@RequestParam int id) throws BaseException {
-        String response = userBusiness.getImageUrl(id);
+    @PostMapping("/get-images-url")
+    public ResponseEntity<String> getImageUrl() throws BaseException {
+        String response = userBusiness.getImageUrl();
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/delete-account-request")
+    public ResponseEntity<String> deleteAccountRequest() throws BaseException {
+        String response = userBusiness.deleteRequest();
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/delete-image")
+    public ResponseEntity<String> deleteImage() throws BaseException {
+        String response = userBusiness.deleteImage();
+        return ResponseEntity.ok(response);
+    }
     //////////////////////////////////////
+
 
     //////////////////////////////////////////////
 }

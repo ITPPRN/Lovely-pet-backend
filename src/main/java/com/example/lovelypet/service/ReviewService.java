@@ -8,6 +8,7 @@ import com.example.lovelypet.exception.ReviewException;
 import com.example.lovelypet.repository.ReviewRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -28,7 +29,7 @@ public class ReviewService {
     ) throws BaseException {
 
         //validate
-        if (Objects.isNull(rating)) {
+        if (rating == 0.0) {
             throw ReviewException.createRatingNull();
         }
 
@@ -51,6 +52,27 @@ public class ReviewService {
         entity.setUserId(userId);
         entity.setHotelId(hotelId);
         return reviewRepository.save(entity);
+    }
+
+    //find
+    public List<Review> findByHotelId(Hotel hotel) {
+        return reviewRepository.findByHotelId(hotel);
+    }
+
+    //calculate
+    public float calculateAverageScore(Hotel hotel) {
+        List<Review> reviews = reviewRepository.findByHotelId(hotel);
+        int totalReviews = reviews.size();
+        if (totalReviews == 0) {
+            return 0.0F;
+        }
+
+        float sumScores = 0.0F;
+        for (Review review : reviews) {
+            sumScores += review.getRating();
+        }
+
+        return sumScores / totalReviews;
     }
 
 }

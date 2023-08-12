@@ -14,5 +14,12 @@ public class PhotoHotelException extends BaseException {
         return new PhotoHotelException("create.hotel.id.null");
     }
 
+    public static PhotoHotelException imageOverload() {
+        return new PhotoHotelException("image.overload");
+    }
+
+    public static PhotoHotelException notFound() {
+        return new PhotoHotelException("image.not.found");
+    }
 
 }

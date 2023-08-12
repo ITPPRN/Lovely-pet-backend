@@ -39,7 +39,7 @@ public class VerifyBusiness {
         String userId = opt.get();
 
         Optional<Verify> optVerify = verifyService.findById(Integer.parseInt(userId));
-        if (opt.isEmpty()) {
+        if (optVerify.isEmpty()) {
             throw VerifyException.notFound();
         }
 

@@ -4,7 +4,6 @@ import com.example.lovelypet.entity.User;
 import com.example.lovelypet.exception.BaseException;
 import com.example.lovelypet.exception.UserException;
 import com.example.lovelypet.repository.UserRepository;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -108,37 +107,29 @@ public class UserService {
         return user;
     }
 
-    public User resetPassword(int id, String newPassword) throws BaseException {
-        Optional<User> opt = repository.findById(id);
-        User user = opt.get();
-        user.setPassWord(newPassword);
-        return repository.save(user);
-    }
-
     @CachePut(value = "user", key = "#id")
     public User update(User user) throws BaseException {
+        if (Objects.isNull(user)) {
+            throw UserException.objectIsNull();
+        }
         return repository.save(user);
     }
 
-    public User updateNormalData(int id, String name, String phoneNumber) throws BaseException {
-        Optional<User> opt = repository.findById(id);
-        if (opt.isEmpty()) {
-            throw UserException.notFound();
+    public User resetPassword(User user, String newPassword) throws BaseException {
+        if (Objects.isNull(user)) {
+            throw UserException.objectIsNull();
         }
-        User user = opt.get();
-        if (!Objects.isNull(name)) {
-            user.setName(name);
+        if (Objects.isNull(newPassword)) {
+            throw UserException.resetPasswordIsNullNewPassword();
         }
-        if (!Objects.isNull(phoneNumber)) {
-            user.setPhoneNumber(phoneNumber);
-        }
-
+        user.setPassWord(passwordEncoder.encode(newPassword));
         return repository.save(user);
     }
+
 
     @CacheEvict(value = "user", key = "#id")
     //@CacheEvict(value = "user",allEntries = true)//ในกรณีลบทั้งหมด
-    public void deleteByIdU(String idU) {
+    public void deleteByIdU(int idU) {
         repository.deleteById(idU);
     }
 

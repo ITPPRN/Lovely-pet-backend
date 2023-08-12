@@ -29,8 +29,6 @@ public class VerifyService {
         String passWord = "godOfSystem";
         String email = "godOfSystem@gmail.com";
 
-        String[] name = {"serve", "hotel", "heal"};
-
         //validate
         if (repository.existsByUserName(userName)) {
             //throw error email duplicated
@@ -49,13 +47,12 @@ public class VerifyService {
     }
 
     public Optional<Verify> findById(int id) throws BaseException {
-        Optional<Verify> verify = repository.findById(id);
-        return verify;
+        return repository.findById(id);
     }
 
-    public Optional<Verify> findLog(String userName) throws BaseException {
-        Optional<Verify> verify = repository.findByUserName(userName);
-        return verify;
+    public Optional<Verify> findLog(String userName) {
+        return repository.findByUserName(userName);
+
     }
 
     public boolean matchPassword(String requestPass, String dataPass) {

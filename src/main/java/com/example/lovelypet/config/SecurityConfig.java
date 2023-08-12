@@ -1,6 +1,5 @@
 package com.example.lovelypet.config;
 
-import com.example.lovelypet.config.token.TokenFilter;
 import com.example.lovelypet.config.token.TokenFilterConfigurer;
 import com.example.lovelypet.service.TokenService;
 import org.springframework.context.annotation.Bean;
@@ -32,8 +31,7 @@ public class SecurityConfig {
             "/hotel/login",
             "/verify/login",
             "/verify/home",
-            "/socket/**",
-            "/room/**"
+            "/socket/**"
     };
 
     public SecurityConfig(TokenService tokenService) {
@@ -41,12 +39,12 @@ public class SecurityConfig {
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception{
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
@@ -80,7 +78,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public CorsFilter corsFilter(){
+    public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
@@ -91,7 +89,7 @@ public class SecurityConfig {
         config.addAllowedMethod("GET");
         config.addAllowedMethod("PUT");
         config.addAllowedMethod("DELETE");
-        source.registerCorsConfiguration("/**",config);
+        source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
     }
 }

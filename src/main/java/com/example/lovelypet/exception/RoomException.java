@@ -27,4 +27,8 @@ public class RoomException extends BaseException {
         return new RoomException("room.not.found");
     }
 
+    public static RoomException notFoundRoomType() {
+        return new RoomException("room.type.not.found");
+    }
+
 }

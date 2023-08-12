@@ -2,7 +2,6 @@ package com.example.lovelypet.api;
 
 import com.example.lovelypet.business.HotelBusiness;
 import com.example.lovelypet.business.PhotoHotelBusiness;
-import com.example.lovelypet.entity.PhotoHotel;
 import com.example.lovelypet.exception.BaseException;
 import com.example.lovelypet.model.*;
 import org.springframework.core.io.InputStreamResource;
@@ -28,7 +27,7 @@ public class HotelApi {
 
 
     @PostMapping("/register")
-    public ResponseEntity<HotelRegisterResponse> register(@RequestBody HotelRegisterRequest reqUser) throws BaseException {
+    public ResponseEntity<HotelRegisterResponse> register(@RequestBody HotelRegisterRequest reqUser) throws BaseException, IOException {
         HotelRegisterResponse response = hotelBusiness.register(reqUser);
         return ResponseEntity.ok(response);
     }
@@ -52,16 +51,16 @@ public class HotelApi {
 
     }
 
-    @GetMapping("/refresh-token")
+    @PostMapping("/refresh-token")
     public ResponseEntity<String> refreshToken() throws BaseException {
         String response = hotelBusiness.refreshToken();
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/update-normal")
-    public ResponseEntity<String> updateNormalData(@RequestBody HotelUpdateRequest hotelUpdateRequest) throws BaseException {
-        String response = hotelBusiness.updateNormalData(hotelUpdateRequest);
-        return ResponseEntity.ok("");
+    public ResponseEntity<HotelResponse> updateNormalData(@RequestBody HotelUpdateRequest hotelUpdateRequest) throws BaseException {
+        HotelResponse response = hotelBusiness.updateNormalData(hotelUpdateRequest);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/reset-password")
@@ -72,52 +71,53 @@ public class HotelApi {
 
     //อัพรูป
     @PostMapping("/upload-image")
-    public ResponseEntity<PhotoHotel> uploadImage(@RequestParam("file") MultipartFile file, @RequestParam int id) throws BaseException, IOException {
-        PhotoHotel response = photoHotelBusiness.uploadImage(file, id);
+    public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile[] file, @RequestParam int id) throws BaseException, IOException {
+        String response = photoHotelBusiness.storeImage(file, id);
         return ResponseEntity.ok(response);
     }
 
     //ดึงรูป
-    @GetMapping("/get-images")
+    @PostMapping("/get-images")
     public ResponseEntity<InputStreamResource> getImageById(@RequestParam int id) {
         return photoHotelBusiness.getImageById(id);
     }
 
-    @GetMapping("/get-images-url")
-    public ResponseEntity<List<String>> getImageUrl(@RequestParam int id) throws BaseException {
-        List<String> response = photoHotelBusiness.getImageUrl(id);
+    @PostMapping("/get-images-url")
+    public ResponseEntity<List<String>> getImageUrl() throws BaseException {
+        List<String> response = photoHotelBusiness.getImageUrl();
         return ResponseEntity.ok(response);
     }
 
+    //get hotel
+    @PostMapping("/list-hotel-to-service")
+    public ResponseEntity<List<HotelResponse>> listHotelToService() throws BaseException {
+        List<HotelResponse> response = hotelBusiness.listHotelByState2();
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/get-hotel-to-verify")
+    public ResponseEntity<List<HotelResponse>> getHotelToVerify() throws BaseException {
+        List<HotelResponse> response = hotelBusiness.getHotelByVerify();
+        return ResponseEntity.ok(response);
+    }
+
+    //delete image
+    @PostMapping("/delete-image-hotel")
+    public ResponseEntity<String> deleteImageHotel(@RequestParam String name) throws BaseException {
+        String response = photoHotelBusiness.deleteImage(name);
+        return ResponseEntity.ok(response);
+    }
+
+    //delete account request
+    @PostMapping("/delete-account-request")
+    public ResponseEntity<String> deleteAccountRequest() throws BaseException {
+        String response = hotelBusiness.deleteAccountRequest();
+        return ResponseEntity.ok(response);
+    }
+
+    ///////////////////////////////////////////////
+    //////////////////////////////////////////////
+
 }
-//
-//
-///*
-//    //ฟิว อินเจคชัน
-//    //@Autowired
-//    //private TestBusiness business;
-//
-//    private final UserBusiness business;
-//    @Autowired
-//    private UserRepository userProfileRepository;
-//
-//    public UserApi(UserBusiness business) {
-//        this.business = business;
-//    }
-//
-//
-//    @GetMapping("/register")
-//    public ResponseEntity<User> register(RegisterRequest userName, RegisterRequest passWord, RegisterRequest name, RegisterRequest email, RegisterRequest phoneNumber) throws BaseException {
-//        User response = business.register(userName, passWord, name, email, phoneNumber);
-//        return ResponseEntity.ok(response);
-//    }
-//
-//    @GetMapping("/list-by-username")
-//    public Object lisByUser(String userName) {
-//        APIResponse res = new APIResponse();
-//        List<User> lst = userProfileRepository.findByUserName(userName);
-//        res.setData(lst);
-//        return res.getData();
-//    }
-//
-//*/
+
+

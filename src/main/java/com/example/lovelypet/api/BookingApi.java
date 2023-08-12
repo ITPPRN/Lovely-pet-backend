@@ -2,12 +2,15 @@ package com.example.lovelypet.api;
 
 import com.example.lovelypet.business.BookingBusiness;
 import com.example.lovelypet.exception.BaseException;
+import com.example.lovelypet.model.BookingListResponse;
 import com.example.lovelypet.model.BookingRequest;
+import com.example.lovelypet.model.ConsiderBookingRequest;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/booking")
@@ -26,16 +29,65 @@ public class BookingApi {
     }
 
     //ดึงรูป
-    @GetMapping("/get-images")
-    public ResponseEntity<InputStreamResource> getImageById(@RequestParam int id) {
+    @PostMapping("/get-images")
+    public ResponseEntity<InputStreamResource> getImageById(@RequestBody int id) {
         return bookingBusiness.getImageById(id);
     }
 
-    @GetMapping("/get-images-url")
-    public ResponseEntity<String> getImageUrl(@RequestParam int id) throws BaseException {
+    @PostMapping("/get-images-url")
+    public ResponseEntity<String> getImageUrl(@RequestBody int id) throws BaseException {
         String response = bookingBusiness.getImageUrl(id);
         return ResponseEntity.ok(response);
     }
 
+    //get data
 
+    @PostMapping("/list-booking-all")
+    public ResponseEntity<List<BookingListResponse>> listBookingAll() throws BaseException {
+        List<BookingListResponse> response = bookingBusiness.allListBooking();
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/list-booking")
+    public ResponseEntity<List<BookingListResponse>> listBooking(@RequestBody String state) throws BaseException {
+        List<BookingListResponse> response = bookingBusiness.listBooking(state);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/get-booking")
+    public ResponseEntity<BookingListResponse> getBooking(@RequestParam int id) throws BaseException {
+        BookingListResponse response = bookingBusiness.getBooking(id);
+        return ResponseEntity.ok(response);
+    }
+
+    //consider booking
+    @PostMapping("/consider-booking")
+    public ResponseEntity<String> considerBooking(@RequestBody ConsiderBookingRequest request) throws BaseException {
+        String response = bookingBusiness.considerBooking(request);
+        return ResponseEntity.ok(response);
+    }
+
+    //update
+    @PostMapping("/update")
+    public ResponseEntity<String> updateData(@RequestBody BookingRequest request) throws BaseException, IOException {
+        String response = bookingBusiness.updateProfile(request);
+        return ResponseEntity.ok(response);
+    }
+
+    //cancel
+    @PostMapping("/cancel")
+    public ResponseEntity<String> cancel(@RequestParam int id) throws BaseException {
+        String response = bookingBusiness.cancelBooking(id);
+        return ResponseEntity.ok(response);
+    }
+
+    //delete
+    @PostMapping("/delete")
+    public ResponseEntity<String> delete(@RequestParam int id) throws BaseException {
+        String response = bookingBusiness.deleteBooking(id);
+        return ResponseEntity.ok(response);
+    }
+
+    ///////////////////////////////////
+    ///////////////////////////////////
 }

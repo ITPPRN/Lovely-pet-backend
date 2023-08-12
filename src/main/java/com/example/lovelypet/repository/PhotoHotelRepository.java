@@ -10,5 +10,9 @@ import java.util.Optional;
 public interface PhotoHotelRepository extends CrudRepository<PhotoHotel, String> {
     Optional<PhotoHotel> findById(int idU);
 
+    Optional<PhotoHotel> findByPhotoHotelFile(String name);
+
+    void deleteById(int id);
+
     List<PhotoHotel> findByHotelId(Hotel hotel);
 }

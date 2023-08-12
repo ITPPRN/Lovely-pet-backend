@@ -36,6 +36,9 @@ public class User extends BaseEntity implements Serializable {
     @Column(nullable = true)
     private String userPhoto;
 
+    @Column(nullable = true)
+    private Date dateDeleteAccount;
+
     // Fk
 
     // entity pet

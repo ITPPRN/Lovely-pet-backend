@@ -18,5 +18,15 @@ public class ServiceHistoryException extends BaseException {
         return new ServiceHistoryException("create.user.id.null");
     }
 
+    //find
+    public static ServiceHistoryException notFound() {
+        return new ServiceHistoryException("service.history.not.found");
+    }
+
+    //access
+    public static ServiceHistoryException accessDenied() {
+        return new ServiceHistoryException("access.denied");
+    }
+
 
 }

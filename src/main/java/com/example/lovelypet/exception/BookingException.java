@@ -38,11 +38,35 @@ public class BookingException extends BaseException {
         return new BookingException("create.payment.null");
     }
 
-    public static BookingException wrongPaymentMetgod() {
+    public static BookingException wrongPaymentMethod() {
         return new BookingException("wrong.payment.method");
     }
 
+    //find
+    public static BookingException notFound() {
+        return new BookingException("booking.not.found");
+    }
 
+    public static BookingException roomIsNotAvailable() {
+        return new BookingException("booking.room.is.not.available");
+    }
 
+    //update
+    public static BookingException updateObjectIsNull() {
+        return new BookingException("booking.update.object.is.null");
+    }
 
+    //update
+    public static BookingException updateFail() {
+        return new BookingException("update.fail");
+    }
+
+    public static BookingException updatePaymentMethodFail() {
+        return new BookingException("update.payment.method.fail");
+    }
+
+    //get
+    public static BookingException idBookingIsNull() {
+        return new BookingException("id.booking.is.null");
+    }
 }

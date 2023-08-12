@@ -43,6 +43,12 @@ public class Hotel extends BaseEntity {
     @Column(nullable = false, length = 120,unique = true)
     private String email;
 
+    @Column(nullable = true, length = 254)
+    private String additionalNotes;
+
+    @Column(nullable = true)
+    private Date dateDeleteAccount;
+
     //FK
 
     //entity room

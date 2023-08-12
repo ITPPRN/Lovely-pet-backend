@@ -18,4 +18,5 @@ public interface PetRepository extends CrudRepository<Pet, String> {
 
     Optional<Pet> findById(int id);
 
+    void deleteById(int id);
 }

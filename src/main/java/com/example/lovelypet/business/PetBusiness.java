@@ -5,11 +5,16 @@ import com.example.lovelypet.entity.PetType;
 import com.example.lovelypet.entity.User;
 import com.example.lovelypet.exception.BaseException;
 import com.example.lovelypet.exception.FileException;
-import com.example.lovelypet.exception.RoomException;
+import com.example.lovelypet.exception.PetException;
+import com.example.lovelypet.exception.UserException;
+import com.example.lovelypet.mapper.PetMapper;
 import com.example.lovelypet.model.AddPetRequest;
+import com.example.lovelypet.model.PetProfileResponse;
+import com.example.lovelypet.model.UpdatePetRequest;
 import com.example.lovelypet.service.PetService;
 import com.example.lovelypet.service.PetTypeService;
 import com.example.lovelypet.service.UserService;
+import com.example.lovelypet.util.SecurityUtil;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -34,28 +39,42 @@ public class PetBusiness {
 
     private final PetService petService;
 
+    private final PetMapper petMapper;
+
     private final PetTypeService petTypeService;
 
     private final UserService userService;
-    private final String part = "src/main/resources/imageUpload/imagePet";
+    private final String path = "src/main/resources/imageUpload/imagePet";
 
-    public PetBusiness(PetService petService, PetTypeService petTypeService, UserService userService) {
+    public PetBusiness(PetService petService, PetMapper petMapper, PetTypeService petTypeService, UserService userService) {
         this.petService = petService;
+        this.petMapper = petMapper;
         this.petTypeService = petTypeService;
         this.userService = userService;
     }
 
-    public String addMyPet(AddPetRequest request) throws BaseException {
+    public Pet addMyPet(AddPetRequest request) throws BaseException {
 
         //user
-        Optional<User> optUser = userService.findById(request.getUserId());
+        Optional<String> opt1 = SecurityUtil.getCurrentUserId();
+        if (opt1.isEmpty()) {
+            throw UserException.unauthorized();
+        }
+        String userId = opt1.get();
+        Optional<User> optUser = userService.findById(Integer.parseInt(userId));
+        if (optUser.isEmpty()) {
+            throw UserException.notFound();
+        }
         User user = optUser.get();
 
         //pet type
         Optional<PetType> optionalPetType = petTypeService.findByName(request.getType());
-        if (!optionalPetType.isPresent()) {
+        if (optionalPetType.isEmpty()) {
             petTypeService.create(request.getType());
             optionalPetType = petTypeService.findByName(request.getType());
+            if (optionalPetType.isEmpty()) {
+                throw PetException.notFound();
+            }
         }
         PetType type = optionalPetType.get();
 
@@ -65,18 +84,16 @@ public class PetBusiness {
         Date birthday = dateFormat.parse(request.getBirthday(), pos);
 
         //add pet to database
-        Pet response = petService.create(
+        return petService.create(
                 user,
                 request.getName(),
-                request.getPetPhoto(),
                 type,
                 birthday
         );
 
-        return "response";
     }
 
-    public Pet uploadImage(MultipartFile file, int id) throws IOException, BaseException {
+    public String uploadImage(MultipartFile file, int id) throws IOException, BaseException {
 
         //validate request
         if (file == null) {
@@ -96,47 +113,58 @@ public class PetBusiness {
             throw FileException.unsupported();
         }
 
-        if (Objects.isNull(id)) {
-            throw RoomException.createRoomIdNull();
+        if (id == 0) {
+            throw PetException.uploadIdNull();
         }
+
+        Optional<Pet> opt = petService.findById(id);
+        if (opt.isEmpty()) {
+            throw PetException.notFound();
+        }
+        Pet pet = opt.get();
+        //Check if there are no pictures yet.
+        if (Objects.nonNull(pet.getPetPhoto())) {
+            throw PetException.imageAlreadyExists();
+        }
+
 
         // สร้างชื่อไฟล์ที่ไม่ซ้ำกัน
         String fileName = generateUniqueFileName(file.getOriginalFilename());
 
-        String filePath = part + File.separator + fileName;
+        String filePath = path + File.separator + fileName;
         //File filePath = new File(uploadDir, fileName);
 
 
         // สร้างไดเร็กทอรีถ้ายังไม่มี
-        File directory = new File(part);
+        File directory = new File(path);
         if (!directory.exists()) {
-            directory.mkdirs();
+            boolean success = directory.mkdirs();
+            // ตรวจสอบผลลัพธ์
+            if (!success) {
+                throw FileException.failedToCreateDirectory();
+            }
         }
 
-        // Save the image file
-        //file.transferTo(filePath);
         Path path = Paths.get(filePath);
         Files.write(path, file.getBytes());
 
         // Save the image information in the database
-        Optional<Pet> opt = petService.findById(id);
-        Pet pet = opt.get();
-        pet.setPetPhoto(fileName);
-        Pet response = petService.update(pet);
 
-        return response;
+        pet.setPetPhoto(fileName);
+        Pet petUpdate = petService.update(pet);
+        return "Image" + petUpdate.getPetPhoto() + "has been successfully uploaded.";
     }
 
     // สร้างชื่อไฟล์ที่ไม่ซ้ำกัน
     private String generateUniqueFileName(String originalFileName) {
-        return UUID.randomUUID().toString() + "_" + originalFileName;
+        return UUID.randomUUID() + "_" + originalFileName;
     }
 
     public ResponseEntity<InputStreamResource> getImageById(int id) {
         Optional<Pet> imageEntity = petService.findById(id);
         if (imageEntity.isPresent()) {
             String filename = imageEntity.get().getPetPhoto();
-            File imageFile = new File(part + File.separator + filename);
+            File imageFile = new File(path + File.separator + filename);
 
             try {
                 InputStreamResource resource = new InputStreamResource(new FileInputStream(imageFile));
@@ -155,9 +183,151 @@ public class PetBusiness {
 
     public String getImageUrl(int id) throws BaseException {
         Optional<Pet> images = petService.findById(id); // ดึงข้อมูลรูปภาพทั้งหมดจากฐานข้อมูล
-        String response = part + File.separator + images.get().getPetPhoto();
+        if (images.isEmpty()) {
+            throw PetException.notFound();
+        }
+        return path + File.separator + images.get().getPetPhoto();
+
+    }
+
+    public PetProfileResponse updatePet(UpdatePetRequest request) throws BaseException {
+        if (request.getId() == 0) {
+            throw PetException.updateIdNull();
+        }
+        Optional<Pet> opt = petService.findById(request.getId());
+        if (opt.isEmpty()) {
+            throw PetException.notFound();
+        }
+        Pet pet = opt.get();
+
+        if (Objects.nonNull(request.getName())) {
+            pet.setPetName(request.getName());
+        }
+        if (Objects.nonNull(request.getType())) {
+            //pet type
+            Optional<PetType> optionalPetType = petTypeService.findByName(request.getType());
+            if (optionalPetType.isEmpty()) {
+                petTypeService.create(request.getType());
+                optionalPetType = petTypeService.findByName(request.getType());
+                if (optionalPetType.isEmpty()) {
+                    throw PetException.notFound();
+                }
+            }
+            PetType type = optionalPetType.get();
+            pet.setPetTypeId(type);
+        }
+
+        if (Objects.nonNull(request.getBirthday())) {
+            //date
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+            ParsePosition pos = new ParsePosition(0);
+            Date birthday = dateFormat.parse(request.getBirthday(), pos);
+            pet.setBirthday(birthday);
+        }
+        Pet petUpdate = petService.update(pet);
+        return petMapper.toPetProfileResponse(petUpdate);
+    }
+
+    public PetProfileResponse getProfilePet(int id) throws BaseException {
+        Optional<Pet> opt = petService.findById(id); // ดึงข้อมูลรูปภาพทั้งหมดจากฐานข้อมูล
+        if (opt.isEmpty()) {
+            throw PetException.notFound();
+        }
+        Pet pet = opt.get();
+        return petMapper.toPetProfileResponse(pet);
+    }
+
+    public List<PetProfileResponse> getMyPet() throws BaseException {
+        //user
+        Optional<String> opt1 = SecurityUtil.getCurrentUserId();
+        if (opt1.isEmpty()) {
+            throw UserException.unauthorized();
+        }
+        String userId = opt1.get();
+        Optional<User> optUser = userService.findById(Integer.parseInt(userId));
+        if (optUser.isEmpty()) {
+            throw UserException.notFound();
+        }
+        User user = optUser.get();
+
+        List<Pet> opt = petService.findByUserId(user);
+        if (opt.isEmpty()) {
+            throw PetException.notFound();
+        }
+        List<PetProfileResponse> response = new ArrayList<>();
+        for (Pet pet : opt) {
+            PetProfileResponse data = petMapper.toPetProfileResponse(pet);
+            response.add(data);
+        }
         return response;
     }
+
+    //find
+    public Optional<Pet> findById(int id) throws BaseException {
+        return petService.findById(id);
+    }
+
+    //delete
+
+    public String deleteImage(int id) throws BaseException {
+
+        Optional<Pet> optPet = findById(id);
+        if (optPet.isEmpty()) {
+            throw PetException.notFound();
+        }
+        Pet pet = optPet.get();
+        String fileName = pet.getPetPhoto();
+        String filePath = path + File.separator + fileName;
+
+        // สร้างอ็อบเจ็กต์ File จาก path ของไฟล์
+        File imageFile = new File(filePath);
+
+        // ตรวจสอบว่าไฟล์มีอยู่จริงหรือไม่ และลบไฟล์ออกจากเครื่อง server
+        if (imageFile.exists()) {
+            boolean deleted = imageFile.delete();
+            if (!deleted) {
+                throw FileException.deleteImageFailed();
+            }
+        } else {
+            throw FileException.deleteNoFile();
+        }
+
+        pet.setPetPhoto(null);
+        petService.update(pet);
+
+        return "Successfully deleted the" + fileName + "image.";
+    }
+
+    public String deletePet(int id) throws BaseException {
+        Optional<Pet> opt = petService.findById(id);
+        if (opt.isEmpty()) {
+            throw PetException.notFound();
+        }
+        Pet pet = opt.get();
+        String name = pet.getPetName();
+        String fileName = pet.getPetPhoto();
+        String filePath = path + File.separator + fileName;
+
+        // สร้างอ็อบเจ็กต์ File จาก path ของไฟล์
+        File imageFile = new File(filePath);
+
+        // ตรวจสอบว่าไฟล์มีอยู่จริงหรือไม่ และลบไฟล์ออกจากเครื่อง server
+        if (imageFile.exists()) {
+            boolean deleted = imageFile.delete();
+            if (!deleted) {
+                throw FileException.deleteImageFailed();
+            }
+        } else {
+            throw FileException.deleteNoFile();
+        }
+        petService.deleteById(id);
+        return "Successfully deleted" + name + "pet account.";
+    }
+
+
+    /////////////////////////////////////////////////////////
+
+    /////////////////////////////////////////////////////////
 
 }
 

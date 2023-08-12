@@ -1,6 +1,7 @@
 package com.example.lovelypet.model;
 
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 public class HotelRegisterRequest {
@@ -10,4 +11,5 @@ public class HotelRegisterRequest {
     private String hotelUsername;
     private String password;
     private String email;
+    private String additionalNotes;
 }

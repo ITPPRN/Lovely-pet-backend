@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class BookingService {
@@ -77,13 +79,42 @@ public class BookingService {
                 throw BookingException.createBookingPaymentNull();
             }
             entity.setPayment(payment);
-        }else {
-            if (Objects.nonNull(payment)){
-                throw BookingException.wrongPaymentMetgod();
+        } else {
+            if (Objects.nonNull(payment)) {
+                throw BookingException.wrongPaymentMethod();
             }
         }
         entity.setState("waite");
         return bookingRepository.save(entity);
     }
+
+    //find
+    public Optional<Booking> findById(int id) {
+        return bookingRepository.findById(id);
+    }
+
+    public List<Booking> findByIdHotelAndState(Hotel hotel, String state) {
+        return bookingRepository.findByHotelIdAndState(hotel, state);
+    }
+
+    public List<Booking> findByIdHotel(Hotel hotel) {
+        return bookingRepository.findByHotelId(hotel);
+    }
+
+    //update
+    public Booking updateBooking(Booking booking) throws BookingException {
+        if (Objects.isNull(booking)) {
+            throw BookingException.updateObjectIsNull();
+        }
+        return bookingRepository.save(booking);
+    }
+
+    //delete
+    public void deleteById(int id) {
+        bookingRepository.deleteById(id);
+    }
+
+    ////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////
 
 }

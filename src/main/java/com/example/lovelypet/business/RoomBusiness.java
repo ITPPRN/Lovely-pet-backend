@@ -40,6 +40,9 @@ public class RoomBusiness {
         if (optType.isEmpty()) {
             roomTypeService.create(type);
             optType = roomTypeService.findByName(type);
+            if (optType.isEmpty()) {
+                throw RoomException.notFoundRoomType();
+            }
         }
         RoomType roomType = optType.get();
 
@@ -55,18 +58,20 @@ public class RoomBusiness {
             );
         }
 
-        return "";
+        return "successfully added  list room of" + total + " rooms has been.";
     }
 
     public String updateRoom(RoomRequest request) throws BaseException {
-        int total = request.getTotal();
-        String type = request.getType();
 
+        String type = request.getType();
 
         Optional<RoomType> optType = roomTypeService.findByName(type);
         if (optType.isEmpty()) {
             roomTypeService.create(type);
             optType = roomTypeService.findByName(type);
+            if (optType.isEmpty()) {
+                throw RoomException.notFoundRoomType();
+            }
         }
         RoomType roomType = optType.get();
         Room room = roomService.update(
@@ -76,22 +81,22 @@ public class RoomBusiness {
                 request.getStatus(),
                 roomType
         );
-        return "";
+        return "Successfully updated room NO." + room.getRoomNumber() + " information.";
     }
 
     public String deleteU(int id) throws BaseException {
         Optional<Room> opt = roomService.findById(id);
-        if (opt.isEmpty()){
+        if (opt.isEmpty()) {
             throw RoomException.notFound();
         }
         Room room = opt.get();
         roomService.deleteByIdU(String.valueOf(room.getId()));
 
         Optional<Room> confirm = roomService.findById(room.getId());
-        if (confirm.isEmpty()){
-            return "Delete room number"+room.getRoomNumber()+"success";
-        }else {
-            return "Delete room number"+room.getRoomNumber()+"fail";
+        if (confirm.isEmpty()) {
+            return "Delete room number" + room.getRoomNumber() + "success";
+        } else {
+            return "Delete room number" + room.getRoomNumber() + "fail";
         }
     }
 
@@ -100,8 +105,7 @@ public class RoomBusiness {
         if (opt.isEmpty()) {
             throw HotelException.notFound();
         }
-        Hotel response = opt.get();
-        return response;
+        return opt.get();
     }
 
     public Optional<Room> findById(int id) {

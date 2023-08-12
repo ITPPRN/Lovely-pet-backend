@@ -3,10 +3,10 @@ package com.example.lovelypet.model;
 import lombok.Data;
 
 @Data
-public class AddPetRequest {
+public class PetProfileResponse {
 
-    private String name;
+    private int id;
+    private String PetName;
     private String birthday;
-    private String PetPhoto;
     private String type;
 }

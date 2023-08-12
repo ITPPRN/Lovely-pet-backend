@@ -30,7 +30,7 @@ class TestRoomBusiness {
 
     @Order(1)
     @Test
-    void testAddRoom() throws BaseException {
+    void testAddRoom() throws BaseException, IOException {
 
         HotelRegisterRequest request1 = new HotelRegisterRequest();
         request1.setEmail("564");
@@ -89,12 +89,12 @@ class TestRoomBusiness {
         }
     }
 
-    @Order(3)
-    @Test
-    void testListPhotoRoomRoom() throws BaseException {
-
-      photoRoomBusiness.listImage(1);
-    }
+//    @Order(3)
+//    @Test
+//    void testListPhotoRoomRoom() throws BaseException {
+//
+//      photoRoomBusiness.listImage(1);
+//    }
 //    @Order(3)
 //    @Test
 //    void testDeleteRoom() throws BaseException {

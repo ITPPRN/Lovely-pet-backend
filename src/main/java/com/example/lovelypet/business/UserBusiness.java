@@ -38,7 +38,7 @@ public class UserBusiness {
 
     private final EmailBusiness emailBusiness;
 
-    private final String part = "src/main/resources/imageUpload/imageUserProfileUpload";
+    private final String path = "src/main/resources/imageUpload/imageUserProfileUpload";
 
     public UserBusiness(UserService userService, TokenService tokenService, UserMapper userMapper, EmailBusiness emailBusiness) {
         this.userService = userService;
@@ -72,7 +72,7 @@ public class UserBusiness {
         String userId = opt.get();
 
         Optional<User> optUser = userService.findById(Integer.parseInt(userId));
-        if (opt.isEmpty()) {
+        if (optUser.isEmpty()) {
             throw UserException.notFound();
         }
 
@@ -95,14 +95,27 @@ public class UserBusiness {
 
     }
 
-    public String updateNormalData(UserUpdateRequest updateRequest) throws BaseException {
+    public UserRegisterResponse updateNormalData(UserUpdateRequest updateRequest) throws BaseException {
+        Optional<String> opt1 = SecurityUtil.getCurrentUserId();
+        if (opt1.isEmpty()) {
+            throw UserException.unauthorized();
+        }
 
-        User updatedUser = userService.updateNormalData(
-                updateRequest.getId(),
-                updateRequest.getName(),
-                updateRequest.getPhoneNumber()
-        );
-        return "";
+        String userId = opt1.get();
+
+        Optional<User> opt = userService.findById(Integer.parseInt(userId));
+        if (opt.isEmpty()) {
+            throw UserException.notFound();
+        }
+        User user = opt.get();
+        if (!Objects.isNull(updateRequest.getName())) {
+            user.setName(updateRequest.getName());
+        }
+        if (!Objects.isNull(updateRequest.getPhoneNumber())) {
+            user.setPhoneNumber(updateRequest.getPhoneNumber());
+        }
+        User update = userService.update(user);
+        return userMapper.toUserRegisterResponse(update);
     }
 
     public ActivateResponse activate(ActivateRequest request) throws BaseException {
@@ -166,24 +179,64 @@ public class UserBusiness {
     public String resetPassword(UserUpdateRequest updateRequest) throws BaseException {
 
         String newPassword = updateRequest.getNewPassWord();
-
         if (Objects.isNull(newPassword)) {
-            throw UserException.createPasswordNull();
+            throw UserException.resetPasswordIsNullNewPassword();
         }
-        Optional<User> opt = userService.findById(updateRequest.getId());
+        Optional<String> opt1 = SecurityUtil.getCurrentUserId();
+        if (opt1.isEmpty()) {
+            throw UserException.unauthorized();
+        }
+
+        String userId = opt1.get();
+        Optional<User> opt = userService.findById(Integer.parseInt(userId));
         if (opt.isEmpty()) {
-            throw UserException.loginFailUserNameNotFound();
+            throw UserException.notFound();
         }
         User user = opt.get();
+
         if (!userService.matchPassword(updateRequest.getOldPassword(), user.getPassWord())) {
             throw UserException.passwordIncorrect();
 
         }
-        User updatedUser = userService.resetPassword(
-                updateRequest.getId(),
-                updateRequest.getNewPassWord()
-        );
-        return "";
+        User optEmail = userService.resetPassword(user, newPassword);
+        sendEmailResetPassword(optEmail);
+        return "Successful password reset";
+    }
+
+    private void sendEmailResetPassword(User user) {
+
+        // generate token
+        String token = user.getToken();
+
+        try {
+            emailBusiness.sendResetPasswordEmail(user.getEmail(), user.getName(), token);
+        } catch (BaseException e) {
+            e.printStackTrace();
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    public String notResetPassword(UserUpdateRequest request) throws BaseException {
+
+        Optional<String> opt1 = SecurityUtil.getCurrentUserId();
+        if (opt1.isEmpty()) {
+            throw UserException.unauthorized();
+        }
+
+        String userId = opt1.get();
+        if (Objects.isNull(request.getOldPassword())) {
+            throw UserException.resetPasswordIsNullOldPassword();
+        }
+        Optional<User> opt = userService.findById(Integer.parseInt(userId));
+        if (opt.isEmpty()) {
+            throw UserException.notFound();
+        }
+        User user = opt.get();
+        user.setPassWord(request.getOldPassword());
+        userService.update(user);
+        return "Successful password recovery";
     }
 
     public String refreshToken() throws BaseException {
@@ -195,7 +248,7 @@ public class UserBusiness {
         String userId = opt.get();
 
         Optional<User> optUser = userService.findById(Integer.parseInt(userId));
-        if (opt.isEmpty()) {
+        if (optUser.isEmpty()) {
             throw UserException.notFound();
         }
 
@@ -207,10 +260,10 @@ public class UserBusiness {
         String op = loginRequest.getPassWord();
         String ou = loginRequest.getUserName();
         if (Objects.isNull(op)) {
-            throw UserException.createPasswordNull();
+            throw UserException.loginPasswordNull();
         }
         if (Objects.isNull(ou)) {
-            throw UserException.createUserNameNull();
+            throw UserException.loginUserNameNull();
         }
 
         Optional<User> opt = userService.findLog(loginRequest.getUserName());
@@ -225,13 +278,17 @@ public class UserBusiness {
         }
         if (!user.isActivated()) {
             throw UserException.loginFailUserUnactivated();
-
+        }
+        if (Objects.nonNull(user.getDateDeleteAccount())) {
+            user.setDateDeleteAccount(null);
+            User response = userService.update(user);
+            return tokenService.tokenize(response);
         } else {
             return tokenService.tokenize(user);
         }
     }
 
-    public User uploadImage(MultipartFile file, int id) throws IOException, BaseException {
+    public String uploadImage(MultipartFile file) throws IOException, BaseException {
 
         //validate request
         if (file == null) {
@@ -251,21 +308,39 @@ public class UserBusiness {
             throw FileException.unsupported();
         }
 
-        if (Objects.isNull(id)) {
-            throw UserException.createUserIdNull();
+        Optional<String> opt1 = SecurityUtil.getCurrentUserId();
+        if (opt1.isEmpty()) {
+            throw UserException.unauthorized();
         }
+
+        String userId = opt1.get();
+
+        Optional<User> optIdUser = userService.findById(Integer.parseInt(userId));
+        if (optIdUser.isEmpty()) {
+            throw UserException.notFound();
+        }
+        User user = optIdUser.get();
+        //จะมีได้แค่ 1 รูป
+        if (Objects.nonNull(user.getUserPhoto())) {
+            throw UserException.imageAlreadyExists();
+        }
+
 
         // สร้างชื่อไฟล์ที่ไม่ซ้ำกัน
         String fileName = generateUniqueFileName(file.getOriginalFilename());
 
-        String filePath = part + File.separator + fileName;
+        String filePath = path + File.separator + fileName;
         //File filePath = new File(uploadDir, fileName);
 
 
         // สร้างไดเร็กทอรีถ้ายังไม่มี
-        File directory = new File(part);
+        File directory = new File(path);
         if (!directory.exists()) {
-            directory.mkdirs();
+            boolean success = directory.mkdirs();
+            // ตรวจสอบผลลัพธ์
+            if (!success) {
+                throw FileException.failedToCreateDirectory();
+            }
         }
 
         // Save the image file
@@ -274,12 +349,10 @@ public class UserBusiness {
         Files.write(path, file.getBytes());
 
         // Save the image information in the database
-        Optional<User> optIdUser = userService.findById(id);
-        User user = optIdUser.get();
         user.setUserPhoto(fileName);
         User response = userService.update(user);
 
-        return response;
+        return "Image" + response.getUserPhoto() + "has been successfully uploaded.";
     }
 
     // สร้างชื่อไฟล์ที่ไม่ซ้ำกัน
@@ -291,11 +364,17 @@ public class UserBusiness {
         return userService.findById(id);
     }
 
-    public ResponseEntity<InputStreamResource> getImageById(int id) throws BaseException {
-        Optional<User> opt = userService.findById(id);
+    public ResponseEntity<InputStreamResource> getImageById() throws BaseException {
+        Optional<String> opt1 = SecurityUtil.getCurrentUserId();
+        if (opt1.isEmpty()) {
+            throw UserException.unauthorized();
+        }
+
+        String userId = opt1.get();
+        Optional<User> opt = userService.findById(Integer.parseInt(userId));
         if (opt.isPresent()) {
             String filename = opt.get().getUserPhoto();
-            File imageFile = new File(part + File.separator + filename);
+            File imageFile = new File(path + File.separator + filename);
 
             try {
                 InputStreamResource resource = new InputStreamResource(new FileInputStream(imageFile));
@@ -312,16 +391,103 @@ public class UserBusiness {
         }
     }
 
-    public String getImageUrl(int id) throws BaseException {
-        Optional<User> opt = userService.findById(id); // ดึงข้อมูลรูปภาพทั้งหมดจากฐานข้อมูล
+    public String getImageUrl() throws BaseException {
+        Optional<String> opt1 = SecurityUtil.getCurrentUserId();
+        if (opt1.isEmpty()) {
+            throw UserException.unauthorized();
+        }
+
+        String userId = opt1.get();
+        Optional<User> opt = userService.findById(Integer.parseInt(userId)); // ดึงข้อมูลรูปภาพทั้งหมดจากฐานข้อมูล
+        if (opt.isEmpty()) {
+            throw UserException.notFound();
+        }
         String filePhoto = opt.get().getUserPhoto();
-        String imageUrl = part + File.separator + filePhoto;
-        return imageUrl;
+        return path + File.separator + filePhoto;
     }
 
+    public String deleteRequest() throws BaseException {
+        Optional<String> opt1 = SecurityUtil.getCurrentUserId();
+        if (opt1.isEmpty()) {
+            throw UserException.unauthorized();
+        }
+        String userId = opt1.get();
+        Optional<User> optUser = findById(Integer.parseInt(userId));
+        if (optUser.isEmpty()) {
+            throw UserException.notFound();
+        }
+        User user = optUser.get();
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Asia/Bangkok"));
+        calendar.add(Calendar.DAY_OF_MONTH, 90);
+        Date dateDelete = calendar.getTime();
+        user.setDateDeleteAccount(dateDelete);
+        User response = userService.update(user);
+        return response.getName() + "account will be deleted when" + response.getDateDeleteAccount() + "if not logged in.";
+    }
+
+    public void deleteAccount(int id) throws BaseException {
+        Optional<User> opt = userService.findById(id);
+        if (opt.isEmpty()) {
+            throw UserException.notFound();
+        }
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Asia/Bangkok"));
+        Date date = calendar.getTime();
+        User user = opt.get();
+        if (!user.getDateDeleteAccount().equals(date)) {
+            return;
+        }
+        String fileName = user.getUserPhoto();
+        String filePath = path + File.separator + fileName;
+
+        // สร้างอ็อบเจ็กต์ File จาก path ของไฟล์
+        File imageFile = new File(filePath);
+
+        // ตรวจสอบว่าไฟล์มีอยู่จริงหรือไม่ และลบไฟล์ออกจากเครื่อง server
+        if (imageFile.exists()) {
+            boolean deleted = imageFile.delete();
+            if (!deleted) {
+                throw FileException.deleteImageFailed();
+            }
+        } else {
+            throw FileException.deleteNoFile();
+        }
+        userService.deleteByIdU(user.getId());
+    }
+
+    public String deleteImage() throws BaseException {
+        Optional<String> opt1 = SecurityUtil.getCurrentUserId();
+        if (opt1.isEmpty()) {
+            throw UserException.unauthorized();
+        }
+        String userId = opt1.get();
+        Optional<User> optUser = findById(Integer.parseInt(userId));
+        if (optUser.isEmpty()) {
+            throw UserException.notFound();
+        }
+        User user = optUser.get();
+        String fileName = user.getUserPhoto();
+        String filePath = path + File.separator + fileName;
+
+        // สร้างอ็อบเจ็กต์ File จาก path ของไฟล์
+        File imageFile = new File(filePath);
+
+        // ตรวจสอบว่าไฟล์มีอยู่จริงหรือไม่ และลบไฟล์ออกจากเครื่อง server
+        if (imageFile.exists()) {
+            boolean deleted = imageFile.delete();
+            if (!deleted) {
+                throw FileException.deleteImageFailed();
+            }
+        } else {
+            throw FileException.deleteNoFile();
+        }
+
+        user.setUserPhoto(null);
+        userService.update(user);
+
+        return "Successfully deleted the" + fileName + "image.";
+    }
 
     //////////////////////////////////////////
-
 
     //////////////////////////////////////////////////////////
 

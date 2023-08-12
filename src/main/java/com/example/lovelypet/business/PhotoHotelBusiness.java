@@ -2,18 +2,16 @@ package com.example.lovelypet.business;
 
 import com.example.lovelypet.entity.Hotel;
 import com.example.lovelypet.entity.PhotoHotel;
-import com.example.lovelypet.exception.BaseException;
-import com.example.lovelypet.exception.FileException;
-import com.example.lovelypet.exception.RoomException;
+import com.example.lovelypet.exception.*;
 import com.example.lovelypet.service.HotelService;
 import com.example.lovelypet.service.PhotoHotelService;
+import com.example.lovelypet.util.SecurityUtil;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -23,6 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -32,28 +31,36 @@ public class PhotoHotelBusiness {
 
     private final HotelService hotelService;
 
-    private final String part = "src/main/resources/imageUpload/imageHotelUpload";
+    private final String path = "src/main/resources/imageUpload/imageHotelUpload";
 
     public PhotoHotelBusiness(PhotoHotelService photoHotelService, HotelService hotelService) {
         this.photoHotelService = photoHotelService;
         this.hotelService = hotelService;
     }
 
-    // เมธอดในการอ่านรูปภาพและเก็บข้อมูลลงในตัวแปร byte[]
-    public static byte[] readImage(String filePath) {
-        File imageFile = new File(filePath);
-        byte[] imageData = new byte[(int) imageFile.length()];
 
-        try (FileInputStream fis = new FileInputStream(imageFile)) {
-            fis.read(imageData);
-        } catch (IOException e) {
-            e.printStackTrace();
+    // upload image
+    public String storeImage(MultipartFile[] files, int id) throws BaseException {
+        List<PhotoHotel> list = findByHotelId(id);
+        if (list.size() + files.length - 1 > 5) {
+            throw PhotoHotelException.imageOverload();
         }
+        List<String> filenames = Arrays.stream(files)
+                .map(file -> {
+                    String filename;
+                    try {
+                        filename = uploadImage(file, id);
+                    } catch (IOException | BaseException e) {
+                        throw new RuntimeException(e);
+                    }
+                    return filename;
+                })
+                .collect(Collectors.toList());
 
-        return imageData;
+        return "Files uploaded successfully: " + String.join(", ", filenames);
     }
 
-    public PhotoHotel uploadImage(MultipartFile file, int id) throws IOException, BaseException {
+    public String uploadImage(MultipartFile file, int id) throws IOException, BaseException {
 
         //validate request
         if (file == null) {
@@ -73,40 +80,51 @@ public class PhotoHotelBusiness {
             throw FileException.unsupported();
         }
 
-        if (Objects.isNull(id)) {
-            throw RoomException.createRoomIdNull();
+        if (id == 0) {
+            throw HotelException.createHotelIdNull();
         }
 
         Optional<Hotel> optHotel = hotelService.findById(id);
+        if (optHotel.isEmpty()) {
+            throw HotelException.notFound();
+        }
         Hotel idHotel = optHotel.get();
 
         // สร้างชื่อไฟล์ที่ไม่ซ้ำกัน
         String fileName = generateUniqueFileName(file.getOriginalFilename());
 
-        String filePath = part + File.separator + fileName;
+        String filePath = path + File.separator + fileName;
         //File filePath = new File(uploadDir, fileName);
 
 
         // สร้างไดเร็กทอรีถ้ายังไม่มี
-        File directory = new File(part);
+        File directory = new File(path);
         if (!directory.exists()) {
-            directory.mkdirs();
+            boolean success = directory.mkdirs();
+            // ตรวจสอบผลลัพธ์
+            if (!success) {
+                throw FileException.failedToCreateDirectory();
+            }
         }
 
-        // Save the image file
-        //file.transferTo(filePath);
-        Path path = Paths.get(filePath);
-        Files.write(path, file.getBytes());
+        try {
+            // Save the image file
+            //file.transferTo(filePath);
+            Path path = Paths.get(filePath);
+            Files.write(path, file.getBytes());
 
-        // Save the image information in the database
-        PhotoHotel response = photoHotelService.create(fileName, idHotel);
+            // Save the image information in the database
+            photoHotelService.create(fileName, idHotel);
+            return fileName;
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to store file " + fileName, e);
 
-        return response;
+        }
     }
 
     // สร้างชื่อไฟล์ที่ไม่ซ้ำกัน
     private String generateUniqueFileName(String originalFileName) {
-        return UUID.randomUUID().toString() + "_" + originalFileName;
+        return UUID.randomUUID() + "_" + originalFileName;
     }
 
     public Optional<PhotoHotel> findById(int id) {
@@ -117,7 +135,7 @@ public class PhotoHotelBusiness {
         Optional<PhotoHotel> imageEntity = photoHotelService.findById(id);
         if (imageEntity.isPresent()) {
             String filename = imageEntity.get().getPhotoHotelFile();
-            File imageFile = new File(part + File.separator + filename);
+            File imageFile = new File(path + File.separator + filename);
 
             try {
                 InputStreamResource resource = new InputStreamResource(new FileInputStream(imageFile));
@@ -134,22 +152,67 @@ public class PhotoHotelBusiness {
         }
     }
 
-    public List<String> getImageUrl(int id) throws BaseException {
-        List<PhotoHotel> images = findByHotelId(id); // ดึงข้อมูลรูปภาพทั้งหมดจากฐานข้อมูล
+    public List<String> getImageUrl() throws BaseException {
+        List<PhotoHotel> images = findByHotelId(getCurrentId()); // ดึงข้อมูลรูปภาพทั้งหมดจากฐานข้อมูล
         List<String> response = new ArrayList<>();
         for (PhotoHotel image : images) {
             // สร้าง URL สำหรับแสดงรูปภาพ
-            String imageUrl = part + File.separator + image.getPhotoHotelFile();
+            String imageUrl = path + File.separator + image.getPhotoHotelFile();
             response.add(imageUrl);
         }
         return response;
     }
 
+
+    //get id on token
+    private int getCurrentId() throws BaseException {
+        Optional<String> opt = SecurityUtil.getCurrentUserId();
+        if (opt.isEmpty()) {
+            throw UserException.unauthorized();
+        }
+        String hotelId = opt.get();
+        return Integer.parseInt(hotelId);
+    }
+
     public List<PhotoHotel> findByHotelId(int id) throws BaseException {
         Optional<Hotel> opt = hotelService.findById(id);
+        if (opt.isEmpty()) {
+            throw HotelException.notFound();
+        }
         Hotel hotel = opt.get();
         return photoHotelService.findByHotelId(hotel);
     }
+
+    //delete image
+    public String deleteImage(String name) throws BaseException {
+        Optional<PhotoHotel> opt = photoHotelService.findByName(name);
+        if (opt.isEmpty()) {
+            throw PhotoHotelException.notFound();
+        }
+        String fileName = opt.get().getPhotoHotelFile();
+        String filePath = path + File.separator + fileName;
+
+        // สร้างอ็อบเจ็กต์ File จาก path ของไฟล์
+        File imageFile = new File(filePath);
+
+        // ตรวจสอบว่าไฟล์มีอยู่จริงหรือไม่ และลบไฟล์ออกจากเครื่อง server
+        if (imageFile.exists()) {
+            boolean deleted = imageFile.delete();
+            if (!deleted) {
+                throw FileException.deleteImageFailed();
+            }
+        } else {
+            throw FileException.deleteNoFile();
+        }
+
+        photoHotelService.deleteByIdImage(opt.get().getId());
+
+
+        return "Successfully deleted the" + fileName + "image.";
+    }
+    //////////////////////////////////////////////
+
+    /////////////////////////////////////////////
 }
 
 

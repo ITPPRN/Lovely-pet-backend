@@ -5,7 +5,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Data
 public class BookingRequest {
-    private int userId;
     private int hotelId;
     private int roomId;
     private int petId;
@@ -13,4 +12,5 @@ public class BookingRequest {
     private String end;
     private String paymentMethod;
     private MultipartFile file;
+    private int idBooking;
 }

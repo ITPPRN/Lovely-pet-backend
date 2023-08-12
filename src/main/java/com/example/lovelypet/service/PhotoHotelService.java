@@ -49,7 +49,13 @@ public class PhotoHotelService {
         return photoHotelRepository.findById(id);
     }
 
+    public Optional<PhotoHotel> findByName(String name) {
+        return photoHotelRepository.findByPhotoHotelFile(name);
+    }
 
+    public void deleteByIdImage(int id) {
+        photoHotelRepository.deleteById(id);
+    }
     public List<PhotoHotel> findByHotelId(Hotel hotel) throws BaseException {
         return photoHotelRepository.findByHotelId(hotel);
     }

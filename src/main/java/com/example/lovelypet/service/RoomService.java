@@ -54,7 +54,7 @@ public class RoomService {
         return roomRepository.save(entity);
     }
 
-    public Room update(int id, String details, float price, String status,RoomType type) throws BaseException {
+    public Room update(int id, String details, float price, String status, RoomType type) throws BaseException {
         Optional<Room> opt = roomRepository.findById(id);
         if (opt.isEmpty()) {
             throw RoomException.notFound();
@@ -77,7 +77,6 @@ public class RoomService {
             room.setRoomTypeId(type);
         }
 
-
         return roomRepository.save(room);
     }
 
@@ -93,9 +92,10 @@ public class RoomService {
         roomRepository.deleteById(idU);
     }
 
-    public List<Room>findByHotelId(Hotel hotel){
+    public List<Room> findByHotelId(Hotel hotel) {
         return roomRepository.findByHotelId(hotel);
     }
+
     public int getLastRoomNumber() {
         return roomRepository.findMaxRoomNumber();
     }

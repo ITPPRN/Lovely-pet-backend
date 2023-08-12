@@ -10,7 +10,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Entity(name = "review")
-public class Review extends BaseEntity {
+public class  Review extends BaseEntity {
 
     @Column(nullable = false, length = 2)
     private float rating;
