@@ -63,6 +63,12 @@ public class HotelApi {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/update-verify")
+    public ResponseEntity<HotelResponse> updateVerifyState(@RequestBody HotelVerifyRequest hotelUpdateRequest) throws BaseException {
+        HotelResponse response = hotelBusiness.updateVerifyState(hotelUpdateRequest);
+        return ResponseEntity.ok(response);
+    }
+
     @PostMapping("/reset-password")
     public ResponseEntity<String> resetPassword(@RequestBody HotelUpdateRequest hotelUpdateRequest) throws BaseException {
         String response = hotelBusiness.resetPassword(hotelUpdateRequest);

@@ -1,6 +1,7 @@
 package com.example.lovelypet.business;
 
 import com.example.lovelypet.entity.Hotel;
+import com.example.lovelypet.entity.PhotoRoom;
 import com.example.lovelypet.entity.Room;
 import com.example.lovelypet.entity.RoomType;
 import com.example.lovelypet.exception.BaseException;
@@ -24,10 +25,13 @@ public class RoomBusiness {
 
     private final HotelService hotelService;
 
-    public RoomBusiness(RoomService roomService, RoomTypeService roomTypeService, HotelService hotelService) {
+    private final PhotoRoomBusiness photoRoomBusiness;
+
+    public RoomBusiness(RoomService roomService, RoomTypeService roomTypeService, HotelService hotelService, PhotoRoomBusiness photoRoomBusiness) {
         this.roomService = roomService;
         this.roomTypeService = roomTypeService;
         this.hotelService = hotelService;
+        this.photoRoomBusiness = photoRoomBusiness;
     }
 
     public String addRoom(RoomRequest request) throws BaseException {
@@ -49,7 +53,7 @@ public class RoomBusiness {
         for (int i = 1; i <= total; i++) {
             List<Room> opt = roomService.findByHotelId(hotelId);
             int roomNumber = opt.size() + 1;
-            Room room = roomService.create(
+            roomService.create(
                     hotelId,
                     roomType,
                     request.getPrice(),
@@ -90,7 +94,12 @@ public class RoomBusiness {
             throw RoomException.notFound();
         }
         Room room = opt.get();
-        roomService.deleteByIdU(String.valueOf(room.getId()));
+
+        List<PhotoRoom> images = photoRoomBusiness.findByRoomId(id); // ดึงข้อมูลรูปภาพทั้งหมดจากฐานข้อมูล
+        for (PhotoRoom image : images) {
+            photoRoomBusiness.deleteImage(image.getPhotoRoomPartFile());
+        }
+        roomService.deleteByIdU(room.getId());
 
         Optional<Room> confirm = roomService.findById(room.getId());
         if (confirm.isEmpty()) {
@@ -111,6 +120,25 @@ public class RoomBusiness {
     public Optional<Room> findById(int id) {
         return roomService.findById(id);
     }
+
+
+    /////////////////////////////////////////////////
+    public List<Room> listRoom(RoomRequest request) throws BaseException {
+        Optional<Hotel> opt = hotelService.findById(request.getHotelId());
+        if (opt.isEmpty()) {
+            throw HotelException.notFound();
+        }
+        return roomService.findByHotelId(opt.get());
+    }
+
+    public List<Room> listStateRoom(RoomRequest request) throws BaseException {
+        Optional<Hotel> opt = hotelService.findById(request.getHotelId());
+        if (opt.isEmpty()) {
+            throw HotelException.notFound();
+        }
+        return roomService.findByHotelIdAndState(opt.get(), request.getStatus());
+    }
+    ////////////////////////////////////////////////
 }
 
 

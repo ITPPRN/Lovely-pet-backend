@@ -5,6 +5,12 @@ public class PhotoRoomException extends BaseException {
         super("booking." + code);
     }
 
+    //upload
+    public static PhotoRoomException imageOverload() {
+        return new PhotoRoomException("image.room.overload");
+    }
+
+
     //CREATE
     public static PhotoRoomException createPartFileNull() {
         return new PhotoRoomException("create.part.file.null");

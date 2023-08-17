@@ -187,6 +187,18 @@ public class HotelBusiness {
         return hotelMapper.toHotelResponse(update);
     }
 
+    public HotelResponse updateVerifyState(HotelVerifyRequest updateRequest) throws BaseException {
+
+        Optional<Hotel> opt = hotelService.findById(updateRequest.getId());
+        if (opt.isEmpty()) {
+            throw HotelException.notFound();
+        }
+        Hotel hotel = opt.get();
+        hotel.setVerify(updateRequest.getStatus());
+        Hotel update = hotelService.update(hotel);
+        return hotelMapper.toHotelResponse(update);
+    }
+
     public String resetPassword(HotelUpdateRequest updateRequest) throws BaseException {
 
         if (Objects.isNull(updateRequest.getNewPassword())) {

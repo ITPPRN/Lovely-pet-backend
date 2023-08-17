@@ -1,5 +1,6 @@
 package com.example.lovelypet.service;
 
+import com.example.lovelypet.entity.PhotoHotel;
 import com.example.lovelypet.entity.PhotoRoom;
 import com.example.lovelypet.entity.Room;
 import com.example.lovelypet.exception.BaseException;
@@ -51,6 +52,16 @@ public class PhotoRoomService {
         entity.setPhotoRoomPartFile(partFile);
         entity.setRoomId(roomId);
         return photoRoomRepository.save(entity);
+    }
+
+
+    public Optional<PhotoRoom> findByName(String name) {
+        return photoRoomRepository.findByPhotoRoomPartFile(name);
+    }
+
+
+    public void deleteByIdImage(int id) {
+        photoRoomRepository.deleteById(id);
     }
 
 }

@@ -15,7 +15,7 @@ public class PhotoHotelException extends BaseException {
     }
 
     public static PhotoHotelException imageOverload() {
-        return new PhotoHotelException("image.overload");
+        return new PhotoHotelException("image.hotel.overload");
     }
 
     public static PhotoHotelException notFound() {

@@ -1,7 +1,6 @@
 package com.example.lovelypet.entity;
 
 import jakarta.persistence.*;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -12,7 +11,7 @@ import static jakarta.persistence.FetchType.EAGER;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Entity(name = "room")
-public class  Room extends BaseEntity {
+public class Room extends BaseEntity {
 
     @Column(nullable = false, length = 100)
     private int roomNumber;
@@ -40,6 +39,6 @@ public class  Room extends BaseEntity {
 
     //entity room type
     @ManyToOne
-    @JoinColumn(name = "roomTypeId",nullable = false)
+    @JoinColumn(name = "roomTypeId", nullable = false)
     private RoomType roomTypeId;
 }

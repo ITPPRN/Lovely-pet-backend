@@ -108,6 +108,10 @@ public class HotelService {
         return repository.findByToken(token);
     }
 
+    public Optional<Hotel> findByDateDelete(Date date) {
+        return repository.findByDateDeleteAccount(date);
+    }
+
     public Optional<Hotel> findByEmail(String email) {
         return repository.findByToken(email);
     }

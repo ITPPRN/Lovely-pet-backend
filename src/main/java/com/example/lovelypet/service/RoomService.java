@@ -37,7 +37,7 @@ public class RoomService {
         if (Objects.isNull(roomType)) {
             throw RoomException.createRoomIdNull();
         }
-        if (Objects.isNull(roomPrice)) {
+        if (roomPrice == 0.0) {
             throw RoomException.createRoomPriceNull();
         }
         //verify
@@ -84,11 +84,8 @@ public class RoomService {
         return roomRepository.findById(id);
     }
 
-    public Optional<Room> findByIdAndHotelId(int id, Hotel hotelId) {
-        return roomRepository.findByIdAndHotelId(id, hotelId);
-    }
 
-    public void deleteByIdU(String idU) {
+    public void deleteByIdU(int idU) {
         roomRepository.deleteById(idU);
     }
 
@@ -96,7 +93,10 @@ public class RoomService {
         return roomRepository.findByHotelId(hotel);
     }
 
-    public int getLastRoomNumber() {
-        return roomRepository.findMaxRoomNumber();
+
+    public List<Room> findByHotelIdAndState(Hotel hotel, String status) {
+        return roomRepository.findByHotelIdAndStatus(hotel, status);
     }
+
+
 }

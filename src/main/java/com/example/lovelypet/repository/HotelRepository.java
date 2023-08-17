@@ -3,6 +3,7 @@ package com.example.lovelypet.repository;
 import com.example.lovelypet.entity.Hotel;
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,6 +18,8 @@ public interface HotelRepository extends CrudRepository<Hotel, String> {
     Optional<Hotel> findById(int idU);
 
     Optional<Hotel> findByToken(String token);
+
+    Optional<Hotel> findByDateDeleteAccount(Date date);
 
     List<Hotel> findByOpenStateAndVerifyOrderByRatingDesc(String stateOpen, String stateVerify);
 

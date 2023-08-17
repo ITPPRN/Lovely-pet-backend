@@ -4,6 +4,7 @@ import com.example.lovelypet.entity.PhotoRoom;
 import com.example.lovelypet.entity.Room;
 import com.example.lovelypet.exception.BaseException;
 import com.example.lovelypet.exception.FileException;
+import com.example.lovelypet.exception.PhotoRoomException;
 import com.example.lovelypet.exception.RoomException;
 import com.example.lovelypet.service.PhotoRoomService;
 import com.example.lovelypet.service.RoomService;
@@ -13,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -23,6 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -32,14 +33,35 @@ public class PhotoRoomBusiness {
 
     private final RoomService roomService;
 
-    private final String part = "src/main/resources/imageUpload/imageRoomUpload";
+    private final String path = "src/main/resources/imageUpload/imageRoomUpload";
 
     public PhotoRoomBusiness(PhotoRoomService photoRoomService, RoomService roomService) {
         this.photoRoomService = photoRoomService;
         this.roomService = roomService;
     }
 
-    public PhotoRoom uploadImage(MultipartFile file, int id) throws IOException, BaseException {
+    //upload image
+    public String storeImage(MultipartFile[] files, int id) throws BaseException {
+        List<PhotoRoom> list = findByRoomId(id);
+        if (list.size() + files.length - 1 > 3) {
+            throw PhotoRoomException.imageOverload();
+        }
+        List<String> filenames = Arrays.stream(files)
+                .map(file -> {
+                    String filename;
+                    try {
+                        filename = uploadImage(file, id);
+                    } catch (IOException | BaseException e) {
+                        throw new RuntimeException(e);
+                    }
+                    return filename;
+                })
+                .collect(Collectors.toList());
+
+        return "Files uploaded successfully: " + String.join(", ", filenames);
+    }
+
+    public String uploadImage(MultipartFile file, int id) throws IOException, BaseException {
 
         //validate request
         if (file == null) {
@@ -59,24 +81,31 @@ public class PhotoRoomBusiness {
             throw FileException.unsupported();
         }
 
-        if (Objects.isNull(id)) {
+        if (id == 0) {
             throw RoomException.createRoomIdNull();
         }
 
         Optional<Room> optIdRoom = roomService.findById(id);
+        if (optIdRoom.isEmpty()) {
+            throw RoomException.notFound();
+        }
         Room idRoom = optIdRoom.get();
 
         // สร้างชื่อไฟล์ที่ไม่ซ้ำกัน
         String fileName = generateUniqueFileName(file.getOriginalFilename());
 
-        String filePath = part + File.separator + fileName;
+        String filePath = path + File.separator + fileName;
         //File filePath = new File(uploadDir, fileName);
 
 
         // สร้างไดเร็กทอรีถ้ายังไม่มี
-        File directory = new File(part);
+        File directory = new File(path);
         if (!directory.exists()) {
-            directory.mkdirs();
+            boolean success = directory.mkdirs();
+            // ตรวจสอบผลลัพธ์
+            if (!success) {
+                throw FileException.failedToCreateDirectory();
+            }
         }
 
         // Save the image file
@@ -85,14 +114,14 @@ public class PhotoRoomBusiness {
         Files.write(path, file.getBytes());
 
         // Save the image information in the database
-        PhotoRoom response = photoRoomService.create(fileName, idRoom);
+        photoRoomService.create(fileName, idRoom);
 
-        return response;
+        return fileName;
     }
 
     // สร้างชื่อไฟล์ที่ไม่ซ้ำกัน
     private String generateUniqueFileName(String originalFileName) {
-        return UUID.randomUUID().toString() + "_" + originalFileName;
+        return UUID.randomUUID() + "_" + originalFileName;
     }
 
     public Optional<PhotoRoom> findById(int id) {
@@ -103,7 +132,7 @@ public class PhotoRoomBusiness {
         Optional<PhotoRoom> imageEntity = photoRoomService.findById(id);
         if (imageEntity.isPresent()) {
             String filename = imageEntity.get().getPhotoRoomPartFile();
-            File imageFile = new File(part + File.separator + filename);
+            File imageFile = new File(path + File.separator + filename);
 
             try {
                 InputStreamResource resource = new InputStreamResource(new FileInputStream(imageFile));
@@ -120,22 +149,56 @@ public class PhotoRoomBusiness {
         }
     }
 
-    public List<String> getImageUrl(int id) {
+    public List<String> getImageUrl(int id) throws BaseException {
         List<PhotoRoom> images = findByRoomId(id); // ดึงข้อมูลรูปภาพทั้งหมดจากฐานข้อมูล
         List<String> response = new ArrayList<>();
         for (PhotoRoom image : images) {
             // สร้าง URL สำหรับแสดงรูปภาพ
-            String imageUrl = part + File.separator + image.getPhotoRoomPartFile();
+            String imageUrl = path + File.separator + image.getPhotoRoomPartFile();
             response.add(imageUrl);
         }
         return response;
     }
 
-    public List<PhotoRoom> findByRoomId(int id) {
+    public List<PhotoRoom> findByRoomId(int id) throws BaseException {
         Optional<Room> opt = roomService.findById(id);
+        if (opt.isEmpty()) {
+            throw RoomException.notFound();
+        }
         Room room = opt.get();
         return photoRoomService.findByRoomId(room);
     }
+
+
+    ///////////////////////////////
+    //delete image
+    public String deleteImage(String name) throws BaseException {
+        Optional<PhotoRoom> opt = photoRoomService.findByName(name);
+        if (opt.isEmpty()) {
+            throw PhotoRoomException.notFound();
+        }
+        String fileName = opt.get().getPhotoRoomPartFile();
+        String filePath = path + File.separator + fileName;
+
+        // สร้างอ็อบเจ็กต์ File จาก path ของไฟล์
+        File imageFile = new File(filePath);
+
+        // ตรวจสอบว่าไฟล์มีอยู่จริงหรือไม่ และลบไฟล์ออกจากเครื่อง server
+        if (imageFile.exists()) {
+            boolean deleted = imageFile.delete();
+            if (!deleted) {
+                throw FileException.deleteImageFailed();
+            }
+        } else {
+            throw FileException.deleteNoFile();
+        }
+
+        photoRoomService.deleteByIdImage(opt.get().getId());
+
+
+        return "Successfully deleted the" + fileName + "image.";
+    }
+    //////////////////////////////
 }
 
 

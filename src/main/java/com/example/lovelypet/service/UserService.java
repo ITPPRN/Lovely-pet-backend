@@ -1,5 +1,6 @@
 package com.example.lovelypet.service;
 
+import com.example.lovelypet.entity.Hotel;
 import com.example.lovelypet.entity.User;
 import com.example.lovelypet.exception.BaseException;
 import com.example.lovelypet.exception.UserException;
@@ -106,6 +107,12 @@ public class UserService {
         Optional<User> user = repository.findByUserName(userName);
         return user;
     }
+
+
+    public Optional<User> findByDateDelete(Date date) {
+        return repository.findByDateDeleteAccount(date);
+    }
+
 
     @CachePut(value = "user", key = "#id")
     public User update(User user) throws BaseException {

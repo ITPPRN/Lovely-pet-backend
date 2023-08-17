@@ -18,16 +18,16 @@ import java.util.TimeZone;
 
 @Service
 @Log4j2
-public class UserSchedule {
+public class HotelSchedule {
 
-    private final UserBusiness userBusiness;
+    private final HotelBusiness hotelBusiness;
 
-    private final UserService userService;
+    private final HotelService hotelService;
 
-    public UserSchedule(UserBusiness userBusiness, UserService userService) {
-        this.userBusiness = userBusiness;
 
-        this.userService = userService;
+    public HotelSchedule( HotelBusiness hotelBusiness, HotelService hotelService) {
+        this.hotelBusiness = hotelBusiness;
+        this.hotelService = hotelService;
     }
 
     //1 => second
@@ -47,15 +47,15 @@ public class UserSchedule {
 //    /**
 //     * Every day at 00.00 (Thai Time)
 //     */
-
     @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Bangkok")
-    public void deleteUserAccountEveryMidNight() throws BaseException {
+    public void deleteHotelAccountEveryMidNight() throws BaseException {
         Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Asia/Bangkok"));
         Date dateDelete = calendar.getTime();
-        Optional<User> opt = userService.findByDateDelete(dateDelete);
+        Optional<Hotel> opt = hotelService.findByDateDelete(dateDelete);
         if (opt.isEmpty()) {
             return;
         }
-        userBusiness.deleteAccount(opt.get().getId());
+        hotelBusiness.deleteAccount(opt.get().getId());
     }
+
 }

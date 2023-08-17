@@ -2,7 +2,7 @@ package com.example.lovelypet.api;
 
 import com.example.lovelypet.business.PhotoRoomBusiness;
 import com.example.lovelypet.business.RoomBusiness;
-import com.example.lovelypet.entity.PhotoRoom;
+import com.example.lovelypet.entity.Room;
 import com.example.lovelypet.exception.BaseException;
 import com.example.lovelypet.model.RoomRequest;
 import org.springframework.core.io.InputStreamResource;
@@ -25,22 +25,37 @@ public class RoomApi {
         this.photoRoomBusiness = photoRoomBusiness;
     }
 
+    //create
     @PostMapping("/add-room")
     public ResponseEntity<String> addRoom(@RequestBody RoomRequest request) throws BaseException {
         String response = roomBusiness.addRoom(request);
         return ResponseEntity.ok(response);
     }
 
+    //update
     @PostMapping("/update-room")
     public ResponseEntity<String> updateRoom(@RequestBody RoomRequest request) throws BaseException {
         String response = roomBusiness.updateRoom(request);
         return ResponseEntity.ok(response);
     }
 
+    //ดึงข้อมูลห้อง
+    @PostMapping("/list-all-room")
+    public ResponseEntity<List<Room>> listRoom(@RequestBody RoomRequest request) throws BaseException {
+        List<Room> response = roomBusiness.listRoom(request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/list-state-room")
+    public ResponseEntity<List<Room>> listStateRoom(@RequestBody RoomRequest request) throws BaseException {
+        List<Room> response = roomBusiness.listStateRoom(request);
+        return ResponseEntity.ok(response);
+    }
+
     //อัพรูป
     @PostMapping("/upload-image")
-    public ResponseEntity<PhotoRoom> uploadImage(@RequestParam("file") MultipartFile file, @RequestParam int id) throws BaseException, IOException {
-        PhotoRoom response = photoRoomBusiness.uploadImage(file, id);
+    public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile[] file, @RequestParam int id) throws BaseException, IOException {
+        String response = photoRoomBusiness.storeImage(file, id);
         return ResponseEntity.ok(response);
     }
 
@@ -51,8 +66,15 @@ public class RoomApi {
     }
 
     @GetMapping("/get-images-url")
-    public ResponseEntity<List<String>> getImageUrl(@RequestParam int id) {
+    public ResponseEntity<List<String>> getImageUrl(@RequestParam int id) throws BaseException {
         List<String> response = photoRoomBusiness.getImageUrl(id);
+        return ResponseEntity.ok(response);
+    }
+
+    //delete image
+    @PostMapping("/delete-image-room")
+    public ResponseEntity<String> deleteImageRoom(@RequestParam String name) throws BaseException {
+        String response = photoRoomBusiness.deleteImage(name);
         return ResponseEntity.ok(response);
     }
 
