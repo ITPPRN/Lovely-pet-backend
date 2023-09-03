@@ -24,11 +24,20 @@ public class Booking extends BaseEntity {
     @Column(nullable = false, length = 60)
     private String paymentMethod;
 
-    @Column(nullable = true,length = 254)
+    @Column(nullable = true, length = 254)
     private String payment;
 
     @Column(nullable = false, length = 60)
     private String state;
+
+    @Column(nullable = true, length = 60)
+    private String nameCustomer;
+
+    @Column(nullable = true, length = 60)
+    private String namePet;
+
+    @Column(nullable = true, length = 60)
+    private boolean bookingByClinic;
 
     //FK
 
@@ -37,9 +46,14 @@ public class Booking extends BaseEntity {
     @JoinColumn(name = "roomId", referencedColumnName = "id")
     private Room roomId;
 
+    // entity additionalService
+    @ManyToOne
+    @JoinColumn(name = "additionalServiceId", nullable = true)
+    private AdditionalServices additionalServiceId;
+
     // entity pet
     @ManyToOne
-    @JoinColumn(name = "petId", referencedColumnName = "id")
+    @JoinColumn(name = "petId", referencedColumnName = "id", nullable = true)
     private Pet petId;
 
     // entity hotel
@@ -49,7 +63,7 @@ public class Booking extends BaseEntity {
 
     // entity user
     @ManyToOne
-    @JoinColumn(name = "userId", nullable = false)
+    @JoinColumn(name = "userId", nullable = true)
     private User userId;
 
     // entity service history

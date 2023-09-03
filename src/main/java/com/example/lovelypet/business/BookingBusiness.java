@@ -3,6 +3,7 @@ package com.example.lovelypet.business;
 import com.example.lovelypet.entity.*;
 import com.example.lovelypet.exception.*;
 import com.example.lovelypet.mapper.BookingMapper;
+import com.example.lovelypet.model.BookingByClinicRequest;
 import com.example.lovelypet.model.BookingListResponse;
 import com.example.lovelypet.model.BookingRequest;
 import com.example.lovelypet.model.ConsiderBookingRequest;
@@ -43,9 +44,11 @@ public class BookingBusiness {
 
     private final ServiceHistoryService serviceHistoryService;
     private final BookingService bookingService;
+
+    private final AdditionalServiceService additionalServiceService;
     private final String path = "src/main/resources/imageUpload/payment";
 
-    public BookingBusiness(PetService petService, BookingMapper bookingMapper, HotelService hotelService, RoomService roomService, UserService userService, ServiceHistoryService serviceHistoryService, BookingService bookingService) {
+    public BookingBusiness(PetService petService, BookingMapper bookingMapper, HotelService hotelService, RoomService roomService, UserService userService, ServiceHistoryService serviceHistoryService, BookingService bookingService, AdditionalServiceService additionalServiceService) {
         this.petService = petService;
         this.bookingMapper = bookingMapper;
         this.hotelService = hotelService;
@@ -53,6 +56,7 @@ public class BookingBusiness {
         this.userService = userService;
         this.serviceHistoryService = serviceHistoryService;
         this.bookingService = bookingService;
+        this.additionalServiceService = additionalServiceService;
     }
 
     public String reserve(BookingRequest request) throws BaseException, IOException {
@@ -91,6 +95,12 @@ public class BookingBusiness {
             throw PetException.notFound();
         }
 
+        //additional
+        AdditionalServices additionalServices = null;
+        if (request.getAdditionService() != 0) {
+            additionalServices = additionalServiceService.findById(request.getAdditionService());
+        }
+
         //date start
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         ParsePosition pos = new ParsePosition(0);
@@ -118,8 +128,8 @@ public class BookingBusiness {
                 endDate,
                 date,
                 request.getPaymentMethod(),
-                fileImage
-
+                fileImage,
+                additionalServices
         );
 
         return "Wait for the approval of booking number " + response.getId();
@@ -335,8 +345,8 @@ public class BookingBusiness {
             }
             if (Objects.nonNull(request.getFile())) {
                 if (!booking.getPaymentMethod().equals("cash payment")) {
-                    String fileImage = null;
-                    if (request.getFile() != null) {
+                    String fileImage;
+                    if (!request.getFile().isEmpty()) {
                         fileImage = uploadImage(request.getFile());
                         booking.setPayment(fileImage);
                     } else {
@@ -397,6 +407,83 @@ public class BookingBusiness {
         bookingService.deleteById(id);
         return "Booking deleted";
     }
+
+
+    //booking by clinic
+    public String reserveByClinic(BookingByClinicRequest request) throws BaseException, IOException {
+
+        //hotel
+        Optional<String> opt = SecurityUtil.getCurrentUserId();
+        if (opt.isEmpty()) {
+            throw UserException.unauthorized();
+        }
+        String hotelId = opt.get();
+        Optional<Hotel> optHotel = hotelService.findById(Integer.parseInt(hotelId));
+        if (optHotel.isEmpty()) {
+            throw HotelException.notFound();
+        }
+        Hotel hotel = optHotel.get();
+
+        //user
+        if (Objects.isNull(request.getCustomerName())) {
+            throw BookingException.createUserIdNull();
+        }
+
+        //room
+        Optional<Room> optRoom = roomService.findById(request.getRoomId());
+        if (optRoom.isEmpty()) {
+            throw RoomException.notFound();
+        }
+
+        if (!optRoom.get().getStatus().equals("empty")) {
+            throw BookingException.roomIsNotAvailable();
+        }
+
+        //pet
+        if (Objects.isNull(request.getPetName())) {
+            throw BookingException.createPetIdNull();
+        }
+
+        //additional
+        AdditionalServices additionalServices = null;
+        if (request.getAdditionService() != 0) {
+            additionalServices = additionalServiceService.findById(request.getAdditionService());
+        }
+
+        //date start
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        ParsePosition pos = new ParsePosition(0);
+        Date startDate = dateFormat.parse(request.getStart(), pos);
+
+        //date end
+        ParsePosition pos2 = new ParsePosition(0);
+        Date endDate = dateFormat.parse(request.getEnd(), pos2);
+
+        //date now
+        LocalDateTime date = LocalDateTime.now();
+
+        String fileImage = null;
+        if (request.getFile() != null) {
+            fileImage = uploadImage(request.getFile());
+        }
+
+        //add pet to database
+        Booking response = bookingService.createByClinic(
+                request.getCustomerName(),
+                optHotel.get(),
+                optRoom.get(),
+                request.getPetName(),
+                startDate,
+                endDate,
+                date,
+                request.getPaymentMethod(),
+                fileImage,
+                additionalServices
+        );
+
+        return " booking number " + response.getId() + " Successfully";
+    }
+
     ///////////////////////////////
 
     ///////////////////////////////

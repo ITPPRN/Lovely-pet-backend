@@ -20,4 +20,7 @@ public class BookingListResponse {
     private Pet petId;
     private User userId;
 
+    private String nameCustomer;
+    private String namePet;
+
 }

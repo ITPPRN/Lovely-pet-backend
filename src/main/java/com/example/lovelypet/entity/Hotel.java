@@ -34,13 +34,13 @@ public class Hotel extends BaseEntity {
     @Column(nullable = false, length = 20)
     private String verify;
 
-    @Column(nullable = false, length = 60,unique = true)
+    @Column(nullable = false, length = 60, unique = true)
     private String hotelUsername;
 
     @Column(nullable = false, length = 60)
     private String password;
 
-    @Column(nullable = false, length = 120,unique = true)
+    @Column(nullable = false, length = 120, unique = true)
     private String email;
 
     @Column(nullable = true, length = 254)
@@ -58,6 +58,10 @@ public class Hotel extends BaseEntity {
     //entity photo hotel
     @OneToMany(mappedBy = "hotelId", fetch = EAGER, orphanRemoval = true)
     private List<PhotoHotel> photoHotels;
+
+    //entity AdditionalServices
+    @OneToMany(mappedBy = "hotelId", fetch = EAGER, orphanRemoval = true)
+    private List<AdditionalServices> additionalService;
 
     //entity booking
     @OneToMany(mappedBy = "hotelId", fetch = EAGER, orphanRemoval = true)

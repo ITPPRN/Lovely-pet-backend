@@ -2,6 +2,7 @@ package com.example.lovelypet.api;
 
 import com.example.lovelypet.business.BookingBusiness;
 import com.example.lovelypet.exception.BaseException;
+import com.example.lovelypet.model.BookingByClinicRequest;
 import com.example.lovelypet.model.BookingListResponse;
 import com.example.lovelypet.model.BookingRequest;
 import com.example.lovelypet.model.ConsiderBookingRequest;
@@ -88,6 +89,14 @@ public class BookingApi {
         return ResponseEntity.ok(response);
     }
 
+    // booking for user
+    @PostMapping("booking-for-user")
+    public ResponseEntity<String> bookingForUser(@RequestBody BookingByClinicRequest request) throws BaseException, IOException {
+        String response = bookingBusiness.reserveByClinic(request);
+        return ResponseEntity.ok(response);
+    }
+
     ///////////////////////////////////
+
     ///////////////////////////////////
 }

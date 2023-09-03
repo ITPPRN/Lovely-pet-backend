@@ -357,7 +357,7 @@ public class UserBusiness {
 
     // สร้างชื่อไฟล์ที่ไม่ซ้ำกัน
     private String generateUniqueFileName(String originalFileName) {
-        return UUID.randomUUID().toString() + "_" + originalFileName;
+        return UUID.randomUUID() + "_" + originalFileName;
     }
 
     public Optional<User> findById(int id) throws BaseException {

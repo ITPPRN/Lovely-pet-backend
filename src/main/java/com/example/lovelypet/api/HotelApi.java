@@ -2,6 +2,7 @@ package com.example.lovelypet.api;
 
 import com.example.lovelypet.business.HotelBusiness;
 import com.example.lovelypet.business.PhotoHotelBusiness;
+import com.example.lovelypet.entity.AdditionalServices;
 import com.example.lovelypet.exception.BaseException;
 import com.example.lovelypet.model.*;
 import org.springframework.core.io.InputStreamResource;

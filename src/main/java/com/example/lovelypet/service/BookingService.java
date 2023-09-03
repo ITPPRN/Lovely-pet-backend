@@ -30,7 +30,8 @@ public class BookingService {
             Date bookingEndDate,
             LocalDateTime date,
             String paymentMethod,
-            String payment
+            String payment,
+            AdditionalServices additionalServices
 
     ) throws BaseException {
 
@@ -85,6 +86,9 @@ public class BookingService {
             }
         }
         entity.setState("waite");
+        if (Objects.nonNull(additionalServices)) {
+            entity.setAdditionalServiceId(additionalServices);
+        }
         return bookingRepository.save(entity);
     }
 
@@ -114,7 +118,82 @@ public class BookingService {
         bookingRepository.deleteById(id);
     }
 
+
+    //booking by clinic
+    public Booking createByClinic(
+            String customerName,
+            Hotel hotel,
+            Room room,
+            String petName,
+            Date bookingStartDate,
+            Date bookingEndDate,
+            LocalDateTime date,
+            String paymentMethod,
+            String payment,
+            AdditionalServices additionalServices
+
+    ) throws BaseException {
+
+        //validate
+        if (Objects.isNull(customerName)) {
+            throw BookingException.createUserIdNull();
+        }
+
+        if (Objects.isNull(hotel)) {
+            throw BookingException.createHotelIdNull();
+        }
+
+        if (Objects.isNull(room)) {
+            throw BookingException.createRoomIdNull();
+        }
+
+        if (Objects.isNull(petName)) {
+            throw BookingException.createPetIdNull();
+        }
+
+        if (Objects.isNull(bookingStartDate)) {
+            throw BookingException.createBookingStartDateNull();
+        }
+
+        if (Objects.isNull(bookingEndDate)) {
+            throw BookingException.createBookingEndDateNull();
+        }
+
+        if (Objects.isNull(date)) {
+            throw BookingException.createBookingDateNull();
+        }
+
+        //verify
+
+        Booking entity = new Booking();
+        entity.setNameCustomer(customerName);
+        entity.setHotelId(hotel);
+        entity.setRoomId(room);
+        entity.setNamePet(petName);
+        entity.setBookingStartDate(bookingStartDate);
+        entity.setBookingEndDate(bookingEndDate);
+        entity.setDate(date);
+        entity.setPaymentMethod(paymentMethod);
+        if (!paymentMethod.equals("cash payment")) {
+            if (Objects.isNull(payment)) {
+                throw BookingException.createBookingPaymentNull();
+            }
+            entity.setPayment(payment);
+        } else {
+            if (Objects.nonNull(payment)) {
+                throw BookingException.wrongPaymentMethod();
+            }
+        }
+        entity.setState("waite");
+        if (Objects.nonNull(additionalServices)) {
+            entity.setAdditionalServiceId(additionalServices);
+        }
+        entity.setBookingByClinic(true);
+        return bookingRepository.save(entity);
+    }
+
     ////////////////////////////////////////////////////
+
     ////////////////////////////////////////////////////
 
 }

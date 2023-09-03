@@ -4,10 +4,10 @@ import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
 @Data
-public class BookingRequest {
-    private int hotelId;
+public class BookingByClinicRequest {
+    private String customerName;
     private int roomId;
-    private int petId;
+    private String petName;
     private String start;
     private String end;
     private String paymentMethod;

@@ -1,31 +1,26 @@
 package com.example.lovelypet.business;
 
-import com.example.common.EmailRequest;
 import com.example.lovelypet.exception.BaseException;
 import com.example.lovelypet.exception.EmaillException;
+import com.example.lovelypet.service.EmailService;
 import jakarta.mail.MessagingException;
-import lombok.extern.log4j.Log4j2;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.util.ResourceUtils;
-import org.springframework.util.concurrent.CompletableToListenableFutureAdapter;
-import org.springframework.util.concurrent.ListenableFuture;
-import org.springframework.util.concurrent.ListenableFutureCallback;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.concurrent.CompletableFuture;
 
-@Log4j2
+
 @Service
 public class EmailBusiness {
-    private final KafkaTemplate<String, EmailRequest> kafkaTemplate;
 
-    public EmailBusiness(KafkaTemplate<String, EmailRequest> kafkaTemplate) {
-        this.kafkaTemplate = kafkaTemplate;
+
+    final public EmailService emailService;
+
+    public EmailBusiness(EmailService emailService) {
+        this.emailService = emailService;
     }
 
     public void sendActivateUserEmail(String email, String name, String token) throws BaseException, MessagingException {
@@ -38,36 +33,19 @@ public class EmailBusiness {
             throw EmaillException.templateNotFound();
         }
 
-        log.info("Token" + token);
 
         String ip = "";
 
-        String finalLink = "http://"+ip+":8080/activate/" + token;
+        String finalLink = "http://" + ip + ":8080/activate/" + token;
         html = html.replace("${P_NAME}", name);
         html = html.replace("${P_LINK}", finalLink);
 
-        EmailRequest request = new EmailRequest();
-        request.setTo(email);
-        request.setSubject("Please activate your account");
-        request.setContent(html);
+        //prepare subject
+        String subject = "Please activated your account";
 
-        CompletableFuture<SendResult<String, EmailRequest>> completableFuture = kafkaTemplate.send("activation-email", request);
+        emailService.send(email, subject, html);
 
-        ListenableFuture<SendResult<String, EmailRequest>> future = new CompletableToListenableFutureAdapter<>(completableFuture);
 
-        future.addCallback(new ListenableFutureCallback<SendResult<String, EmailRequest>>() {
-            @Override
-            public void onFailure(Throwable ex) {
-                log.error("kafka sent fail");
-                log.error(ex);
-            }
-
-            @Override
-            public void onSuccess(SendResult<String, EmailRequest> result) {
-                log.info("kafka sent success");
-                log.info(result);
-            }
-        });
     }
 
 
@@ -81,36 +59,19 @@ public class EmailBusiness {
             throw EmaillException.templateNotFound();
         }
 
-        log.info("Token" + token);
-
         String ip = "";
 
-        String finalLink = "http://"+ip+":8080/activate/" + token;
+        String finalLink = "http://" + ip + ":8080/activate/" + token;
         html = html.replace("${P_NAME}", name);
         html = html.replace("${P_LINK}", finalLink);
 
-        EmailRequest request = new EmailRequest();
-        request.setTo(email);
-        request.setSubject("Please activate your account");
-        request.setContent(html);
 
-        CompletableFuture<SendResult<String, EmailRequest>> completableFuture = kafkaTemplate.send("activation-email", request);
+        //prepare subject
+        String subject = "Please activated your account";
 
-        ListenableFuture<SendResult<String, EmailRequest>> future = new CompletableToListenableFutureAdapter<>(completableFuture);
+        emailService.send(email, subject, html);
 
-        future.addCallback(new ListenableFutureCallback<SendResult<String, EmailRequest>>() {
-            @Override
-            public void onFailure(Throwable ex) {
-                log.error("kafka sent fail");
-                log.error(ex);
-            }
 
-            @Override
-            public void onSuccess(SendResult<String, EmailRequest> result) {
-                log.info("kafka sent success");
-                log.info(result);
-            }
-        });
     }
 
     public void sendResetPasswordEmail(String email, String name, String token) throws BaseException, MessagingException {
@@ -123,36 +84,17 @@ public class EmailBusiness {
             throw EmaillException.templateNotFound();
         }
 
-        log.info("Token" + token);
-
         String ip = "";
 
-        String finalLink = "http://"+ip+":8080/reset-password/" + token;
+        String finalLink = "http://" + ip + ":8080/reset-password/" + token;
         html = html.replace("${P_NAME}", name);
         html = html.replace("${P_LINK}", finalLink);
 
-        EmailRequest request = new EmailRequest();
-        request.setTo(email);
-        request.setSubject("Reset Password");
-        request.setContent(html);
+        //prepare subject
+        String subject = " Reset password ";
 
-        CompletableFuture<SendResult<String, EmailRequest>> completableFuture = kafkaTemplate.send("activation-email", request);
+        emailService.send(email, subject, html);
 
-        ListenableFuture<SendResult<String, EmailRequest>> future = new CompletableToListenableFutureAdapter<>(completableFuture);
-
-        future.addCallback(new ListenableFutureCallback<SendResult<String, EmailRequest>>() {
-            @Override
-            public void onFailure(Throwable ex) {
-                log.error("kafka sent fail");
-                log.error(ex);
-            }
-
-            @Override
-            public void onSuccess(SendResult<String, EmailRequest> result) {
-                log.info("kafka sent success");
-                log.info(result);
-            }
-        });
     }
 
     private String readEmailTemplate(String filename) throws IOException {
