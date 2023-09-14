@@ -8,13 +8,19 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
+
+import java.util.Collections;
+
+import static jakarta.servlet.DispatcherType.ERROR;
+import static jakarta.servlet.DispatcherType.FORWARD;
 
 @Configuration
 @EnableWebSecurity
@@ -26,6 +32,8 @@ public class SecurityConfig {
             "/user/register",
             "/user/login",
             "/user/activate",
+            "/hotel/upload-image",
+            "/user/upload-image",
             "/user/resend-activate-email",
             "/hotel/register",
             "/hotel/login",
@@ -51,45 +59,32 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {
         http
-                .cors().disable()
-                .csrf().disable() // ปิดการใช้งาน CSRF สำหรับความสะดวกในการทดสอบ (หากไม่จำเป็นต้องใช้)
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .authorizeHttpRequests()
-                .requestMatchers(PUBLIC)
-                .permitAll()
-                .anyRequest().authenticated()
-                .and().apply(new TokenFilterConfigurer(tokenService)); // กำหนดว่า URL อื่นๆ จะต้องมีการล็อกอินเพื่อเข้าถึง
-//                .and()
-//                .formLogin() // กำหนดการกำหนดค่าเกี่ยวกับแบบฟอร์มล็อกอิน
-//                .loginProcessingUrl("/api/login") // กำหนด URL ที่จะใช้ส่งข้อมูลล็อกอินไปยัง
-//                .usernameParameter("username") // กำหนดชื่อพารามิเตอร์ที่ใช้สำหรับช่องข้อมูลผู้ใช้
-//                .passwordParameter("password") // กำหนดชื่อพารามิเตอร์ที่ใช้สำหรับช่องข้อมูลรหัสผ่าน
-//                .defaultSuccessUrl("/api/login/success") // กำหนด URL หลังจากล็อกอินสำเร็จ
-//                .failureUrl("/api/login/error") // กำหนด URL หากเกิดข้อผิดพลาดในการล็อกอิน
-//                .and()
-//                .logout() // กำหนดการกำหนดค่าเกี่ยวกับล็อกเอาท์
-//                .logoutUrl("/api/logout") // กำหนด URL ที่จะใช้สำหรับการล็อกเอาท์
-//                .logoutSuccessUrl("/api/logout/success") // กำหนด URL หลังจากล็อกเอาท์สำเร็จ
-//                .and()
-//                .exceptionHandling() // กำหนดการจัดการข้อผิดพลาด
-//                .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)); // กำหนดการตอบกลับเมื่อการเข้าถึงถูกปฏิเสธ
+                .csrf(AbstractHttpConfigurer::disable)
+                .cors(AbstractHttpConfigurer::disable)
+                .sessionManagement((session) -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+                .authorizeHttpRequests((requests) -> requests
+                        .dispatcherTypeMatchers(FORWARD, ERROR).permitAll()
+                        .requestMatchers(PUBLIC).permitAll()
+                        .anyRequest().authenticated())
+                .apply(new TokenFilterConfigurer(tokenService));
         return http.build();
     }
 
     @Bean
-    public CorsFilter corsFilter() {
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowCredentials(true);
+        configuration.setAllowedOrigins(Collections.singletonList("*"));
+        configuration.addAllowedHeader("*");
+        configuration.addAllowedMethod("OPTIONS");
+        configuration.addAllowedMethod("POST");
+        configuration.addAllowedMethod("GET");
+        configuration.addAllowedMethod("PUT");
+        configuration.addAllowedMethod("DELETE");
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
-        config.addAllowedOrigin("http://localhost:4200"); // ที่อยู่ที่ หน้าบ้านรันอยู่ ในตัวอย่าง คือที่ที่ angular รันอยู่
-        config.addAllowedHeader("*");
-        config.addAllowedMethod("OPTIONS");
-        config.addAllowedMethod("POST");
-        config.addAllowedMethod("GET");
-        config.addAllowedMethod("PUT");
-        config.addAllowedMethod("DELETE");
-        source.registerCorsConfiguration("/**", config);
-        return new CorsFilter(source);
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 }
