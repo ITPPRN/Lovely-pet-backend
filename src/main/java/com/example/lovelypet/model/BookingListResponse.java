@@ -10,17 +10,15 @@ import java.util.Date;
 @Data
 public class BookingListResponse {
     private int id;
-    private Date bookingStartDate;
-    private Date bookingEndDate;
+    private String bookingStartDate;
+    private String bookingEndDate;
     private LocalDateTime date;
     private String paymentMethod;
     private String payment;
     private String state;
     private int roomNumber;
-    private Pet petId;
-    private User userId;
-
-    private String nameCustomer;
-    private String namePet;
+    private int petId;
+    private int userId;
+    private int hotelId;
 
 }

@@ -30,4 +30,9 @@ public class PetTypeService {
 
         return repository.findByName(name);
     }
+
+    public Optional<PetType> findByIdPet(int id) {
+
+        return repository.findById(id);
+    }
 }

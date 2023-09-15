@@ -3,6 +3,7 @@ package com.example.lovelypet.business;
 import com.example.lovelypet.entity.Hotel;
 import com.example.lovelypet.entity.PhotoHotel;
 import com.example.lovelypet.exception.*;
+import com.example.lovelypet.model.PhotoHotelRequest;
 import com.example.lovelypet.service.HotelService;
 import com.example.lovelypet.service.PhotoHotelService;
 import com.example.lovelypet.util.SecurityUtil;
@@ -131,8 +132,8 @@ public class PhotoHotelBusiness {
         return photoHotelService.findById(id);
     }
 
-    public ResponseEntity<InputStreamResource> getImageById(int id) {
-        Optional<PhotoHotel> imageEntity = photoHotelService.findById(id);
+    public ResponseEntity<InputStreamResource> getImageById(PhotoHotelRequest id) {
+        Optional<PhotoHotel> imageEntity = photoHotelService.findById(id.getIdPhoto());
         if (imageEntity.isPresent()) {
             String filename = imageEntity.get().getPhotoHotelFile();
             File imageFile = new File(path + File.separator + filename);
@@ -184,8 +185,8 @@ public class PhotoHotelBusiness {
     }
 
     //delete image
-    public String deleteImage(String name) throws BaseException {
-        Optional<PhotoHotel> opt = photoHotelService.findByName(name);
+    public String deleteImage(PhotoHotelRequest name) throws BaseException {
+        Optional<PhotoHotel> opt = photoHotelService.findByName(name.getName());
         if (opt.isEmpty()) {
             throw PhotoHotelException.notFound();
         }

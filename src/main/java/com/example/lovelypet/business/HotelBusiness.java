@@ -283,7 +283,9 @@ public class HotelBusiness {
         //delete image
         List<PhotoHotel> images = photoHotelBusiness.findByHotelId(id); // ดึงข้อมูลรูปภาพทั้งหมดจากฐานข้อมูล
         for (PhotoHotel image : images) {
-            photoHotelBusiness.deleteImage(image.getPhotoHotelFile());
+            PhotoHotelRequest data = new PhotoHotelRequest();
+            data.setName(image.getPhotoHotelFile());
+            photoHotelBusiness.deleteImage(data);
         }
 
         //TODO: delete image room

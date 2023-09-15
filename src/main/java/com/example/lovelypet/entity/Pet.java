@@ -24,12 +24,12 @@ public class Pet extends BaseEntity implements Serializable {
     // Fk
 
     // entity user
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "userId",nullable = false)
     private User userId;
 
     //entity pet type
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "petTypeId",nullable = false)
     private PetType petTypeId;
 

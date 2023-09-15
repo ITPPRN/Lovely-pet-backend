@@ -8,7 +8,10 @@ import com.example.lovelypet.model.BookingRequest;
 import com.example.lovelypet.model.ConsiderBookingRequest;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.util.List;
@@ -31,12 +34,12 @@ public class BookingApi {
 
     //ดึงรูป
     @PostMapping("/get-images")
-    public ResponseEntity<InputStreamResource> getImageById(@RequestBody int id) {
+    public ResponseEntity<InputStreamResource> getImageById(@RequestBody BookingRequest id) {
         return bookingBusiness.getImageById(id);
     }
 
     @PostMapping("/get-images-url")
-    public ResponseEntity<String> getImageUrl(@RequestBody int id) throws BaseException {
+    public ResponseEntity<String> getImageUrl(@RequestBody BookingRequest id) throws BaseException {
         String response = bookingBusiness.getImageUrl(id);
         return ResponseEntity.ok(response);
     }
@@ -56,7 +59,7 @@ public class BookingApi {
     }
 
     @PostMapping("/get-booking")
-    public ResponseEntity<BookingListResponse> getBooking(@RequestParam int id) throws BaseException {
+    public ResponseEntity<BookingListResponse> getBooking(@RequestBody BookingRequest id) throws BaseException {
         BookingListResponse response = bookingBusiness.getBooking(id);
         return ResponseEntity.ok(response);
     }
@@ -77,14 +80,14 @@ public class BookingApi {
 
     //cancel
     @PostMapping("/cancel")
-    public ResponseEntity<String> cancel(@RequestParam int id) throws BaseException {
+    public ResponseEntity<String> cancel(@RequestBody BookingRequest id) throws BaseException {
         String response = bookingBusiness.cancelBooking(id);
         return ResponseEntity.ok(response);
     }
 
     //delete
     @PostMapping("/delete")
-    public ResponseEntity<String> delete(@RequestParam int id) throws BaseException {
+    public ResponseEntity<String> delete(@RequestBody BookingRequest id) throws BaseException {
         String response = bookingBusiness.deleteBooking(id);
         return ResponseEntity.ok(response);
     }

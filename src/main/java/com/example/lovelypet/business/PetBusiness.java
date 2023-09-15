@@ -15,6 +15,7 @@ import com.example.lovelypet.service.PetService;
 import com.example.lovelypet.service.PetTypeService;
 import com.example.lovelypet.service.UserService;
 import com.example.lovelypet.util.SecurityUtil;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -33,18 +34,16 @@ import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-
+@Log4j2
 @Service
 public class PetBusiness {
 
     private final PetService petService;
-
     private final PetMapper petMapper;
-
     private final PetTypeService petTypeService;
-
     private final UserService userService;
     private final String path = "src/main/resources/imageUpload/imagePet";
+    public SimpleDateFormat formatDate = new SimpleDateFormat("dd/MM/yyyy");
 
     public PetBusiness(PetService petService, PetMapper petMapper, PetTypeService petTypeService, UserService userService) {
         this.petService = petService;
@@ -53,7 +52,7 @@ public class PetBusiness {
         this.userService = userService;
     }
 
-    public Pet addMyPet(AddPetRequest request) throws BaseException {
+    public PetProfileResponse addMyPet(AddPetRequest request) throws BaseException {
 
         //user
         Optional<String> opt1 = SecurityUtil.getCurrentUserId();
@@ -84,12 +83,13 @@ public class PetBusiness {
         Date birthday = dateFormat.parse(request.getBirthday(), pos);
 
         //add pet to database
-        return petService.create(
+        Pet pet = petService.create(
                 user,
                 request.getName(),
                 type,
                 birthday
         );
+        return res(pet, user);
 
     }
 
@@ -160,8 +160,8 @@ public class PetBusiness {
         return UUID.randomUUID() + "_" + originalFileName;
     }
 
-    public ResponseEntity<InputStreamResource> getImageById(int id) {
-        Optional<Pet> imageEntity = petService.findById(id);
+    public ResponseEntity<InputStreamResource> getImageById(AddPetRequest id) {
+        Optional<Pet> imageEntity = petService.findById(id.getId());
         if (imageEntity.isPresent()) {
             String filename = imageEntity.get().getPetPhoto();
             File imageFile = new File(path + File.separator + filename);
@@ -181,8 +181,8 @@ public class PetBusiness {
         }
     }
 
-    public String getImageUrl(int id) throws BaseException {
-        Optional<Pet> images = petService.findById(id); // ดึงข้อมูลรูปภาพทั้งหมดจากฐานข้อมูล
+    public String getImageUrl(AddPetRequest id) throws BaseException {
+        Optional<Pet> images = petService.findById(id.getId()); // ดึงข้อมูลรูปภาพทั้งหมดจากฐานข้อมูล
         if (images.isEmpty()) {
             throw PetException.notFound();
         }
@@ -225,16 +225,16 @@ public class PetBusiness {
             pet.setBirthday(birthday);
         }
         Pet petUpdate = petService.update(pet);
-        return petMapper.toPetProfileResponse(petUpdate);
+        return res(petUpdate, petUpdate.getUserId());
     }
 
-    public PetProfileResponse getProfilePet(int id) throws BaseException {
-        Optional<Pet> opt = petService.findById(id); // ดึงข้อมูลรูปภาพทั้งหมดจากฐานข้อมูล
+    public PetProfileResponse getProfilePet(AddPetRequest id) throws BaseException {
+        Optional<Pet> opt = petService.findById(id.getId()); // ดึงข้อมูลรูปภาพทั้งหมดจากฐานข้อมูล
         if (opt.isEmpty()) {
             throw PetException.notFound();
         }
         Pet pet = opt.get();
-        return petMapper.toPetProfileResponse(pet);
+        return res(pet, pet.getUserId());
     }
 
     public List<PetProfileResponse> getMyPet() throws BaseException {
@@ -254,12 +254,8 @@ public class PetBusiness {
         if (opt.isEmpty()) {
             throw PetException.notFound();
         }
-        List<PetProfileResponse> response = new ArrayList<>();
-        for (Pet pet : opt) {
-            PetProfileResponse data = petMapper.toPetProfileResponse(pet);
-            response.add(data);
-        }
-        return response;
+
+        return resList(opt, user);
     }
 
     //find
@@ -269,9 +265,9 @@ public class PetBusiness {
 
     //delete
 
-    public String deleteImage(int id) throws BaseException {
+    public String deleteImage(AddPetRequest id) throws BaseException {
 
-        Optional<Pet> optPet = findById(id);
+        Optional<Pet> optPet = findById(id.getId());
         if (optPet.isEmpty()) {
             throw PetException.notFound();
         }
@@ -298,8 +294,8 @@ public class PetBusiness {
         return "Successfully deleted the" + fileName + "image.";
     }
 
-    public String deletePet(int id) throws BaseException {
-        Optional<Pet> opt = petService.findById(id);
+    public String deletePet(AddPetRequest id) throws BaseException {
+        Optional<Pet> opt = petService.findById(id.getId());
         if (opt.isEmpty()) {
             throw PetException.notFound();
         }
@@ -320,10 +316,43 @@ public class PetBusiness {
         } else {
             throw FileException.deleteNoFile();
         }
-        petService.deleteById(id);
+        petService.deleteById(id.getId());
         return "Successfully deleted" + name + "pet account.";
     }
 
+    private PetProfileResponse res(Pet pet, User user) throws PetException {        //pet type
+        Optional<PetType> optionalPetType = petTypeService.findByIdPet(pet.getPetTypeId().getId());
+        if (optionalPetType.isEmpty()) {
+            throw PetException.notFoundType();
+        }
+        PetType type = optionalPetType.get();
+
+        PetProfileResponse data = new PetProfileResponse();
+        data.setId(pet.getId());
+        data.setPetName(pet.getPetName());
+        data.setBirthday(formatDate.format(pet.getBirthday()));
+        data.setPetTypeId(type.getId());
+        data.setUserOwner(user.getId());
+        data.setPhotoPath(pet.getPetPhoto());
+        return data;
+
+    }
+
+    private List<PetProfileResponse> resList(List<Pet> opt, User user) throws PetException {
+        List<PetProfileResponse> response = new ArrayList<>();
+        for (Pet pet : opt) {
+
+            PetProfileResponse data = new PetProfileResponse();
+            data.setId(pet.getId());
+            data.setPetName(pet.getPetName());
+            data.setBirthday(formatDate.format(pet.getBirthday()));
+            data.setPetTypeId(pet.getPetTypeId().getId());
+            data.setUserOwner(user.getId());
+            data.setPhotoPath(pet.getPetPhoto());
+            response.add(data);
+        }
+        return response;
+    }
 
     /////////////////////////////////////////////////////////
 

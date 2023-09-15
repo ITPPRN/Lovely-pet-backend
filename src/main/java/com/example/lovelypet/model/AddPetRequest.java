@@ -9,4 +9,5 @@ public class AddPetRequest {
     private String birthday;
     private String PetPhoto;
     private String type;
+    private int id;
 }

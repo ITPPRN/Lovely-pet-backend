@@ -6,12 +6,15 @@ import com.example.lovelypet.exception.AdditionalServiceException;
 import com.example.lovelypet.exception.BaseException;
 import com.example.lovelypet.exception.HotelException;
 import com.example.lovelypet.exception.UserException;
+import com.example.lovelypet.mapper.AdditionalServiceMapper;
 import com.example.lovelypet.model.AdditionalServiceRequest;
+import com.example.lovelypet.model.AdditionalServiceResponse;
 import com.example.lovelypet.service.AdditionalServiceService;
 import com.example.lovelypet.service.HotelService;
 import com.example.lovelypet.util.SecurityUtil;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -23,12 +26,15 @@ public class AdditionalServiceBusiness {
 
     private final HotelService hotelService;
 
-    public AdditionalServiceBusiness(AdditionalServiceService additionalServiceService, HotelService hotelService) {
+    private final AdditionalServiceMapper additionalServiceMapper;
+
+    public AdditionalServiceBusiness(AdditionalServiceService additionalServiceService, HotelService hotelService, AdditionalServiceMapper additionalServiceMapper) {
         this.additionalServiceService = additionalServiceService;
         this.hotelService = hotelService;
+        this.additionalServiceMapper = additionalServiceMapper;
     }
 
-    public AdditionalServices addService(AdditionalServiceRequest request) throws BaseException {
+    public AdditionalServiceResponse addService(AdditionalServiceRequest request) throws BaseException {
         //verify
         Hotel hotel = getCurrentId();
 
@@ -40,7 +46,8 @@ public class AdditionalServiceBusiness {
             throw AdditionalServiceException.createPriceNull();
         }
 
-        return additionalServiceService.addService(hotel, request.getName(), request.getPrice());
+        AdditionalServices response = additionalServiceService.addService(hotel, request.getName(), request.getPrice());
+        return additionalServiceMapper.toAdditionalServiceResponse(response);
     }
 
     public String updateService(AdditionalServiceRequest request) throws BaseException {
@@ -59,12 +66,26 @@ public class AdditionalServiceBusiness {
     }
 
     //find
-    public List<AdditionalServices> listAllHotel() throws BaseException {
-        return additionalServiceService.findByHotelId(getCurrentId());
+    public List<AdditionalServiceResponse> listAllHotel() throws BaseException {
+        List<AdditionalServices> additions = additionalServiceService.findByHotelId(getCurrentId());
+
+
+        List<AdditionalServiceResponse> responses = new ArrayList<>();
+        for (AdditionalServices addition : additions) {
+            AdditionalServiceResponse data = additionalServiceMapper.toAdditionalServiceResponse(addition);
+            responses.add(data);
+        }
+        return responses;
     }
 
-    public List<AdditionalServices> listAllHotelForUser(int id) throws BaseException {
-        return additionalServiceService.findByHotelId(getCurrentIdForUser(id));
+    public List<AdditionalServiceResponse> listAllHotelForUser(AdditionalServiceRequest id) throws BaseException {
+        List<AdditionalServices> additions = additionalServiceService.findByHotelId(getCurrentIdForUser(id.getId()));
+        List<AdditionalServiceResponse> responses = new ArrayList<>();
+        for (AdditionalServices addition : additions) {
+            AdditionalServiceResponse data = additionalServiceMapper.toAdditionalServiceResponse(addition);
+            responses.add(data);
+        }
+        return responses;
     }
 
     //delete

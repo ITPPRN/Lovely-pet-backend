@@ -12,6 +12,7 @@ import java.util.Optional;
 public interface PetTypeRepository extends CrudRepository<PetType, String> {
 
     Optional<PetType> findByName(String name);
+    Optional<PetType> findById(int id);
 
     boolean existsByName(String name);
 }

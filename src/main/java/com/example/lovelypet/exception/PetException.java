@@ -27,6 +27,10 @@ public class PetException extends BaseException {
         return new PetException("pet.not.found");
     }
 
+    public static PetException notFoundType() {
+        return new PetException("pet.type.not.found");
+    }
+
     //upload image
     public static PetException imageAlreadyExists() {
         return new PetException("image.already.exists");

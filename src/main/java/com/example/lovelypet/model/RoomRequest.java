@@ -12,4 +12,7 @@ public class RoomRequest {
     private int id;
     private String status;
 
+    private int idPhoto;
+    private String namePhoto;
+
 }

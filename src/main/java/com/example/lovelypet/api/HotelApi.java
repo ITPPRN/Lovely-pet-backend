@@ -85,7 +85,7 @@ public class HotelApi {
 
     //ดึงรูป
     @PostMapping("/get-images")
-    public ResponseEntity<InputStreamResource> getImageById(@RequestParam int id) {
+    public ResponseEntity<InputStreamResource> getImageById(@RequestBody PhotoHotelRequest id) {
         return photoHotelBusiness.getImageById(id);
     }
 
@@ -110,7 +110,7 @@ public class HotelApi {
 
     //delete image
     @PostMapping("/delete-image-hotel")
-    public ResponseEntity<String> deleteImageHotel(@RequestParam String name) throws BaseException {
+    public ResponseEntity<String> deleteImageHotel(@RequestBody PhotoHotelRequest name) throws BaseException {
         String response = photoHotelBusiness.deleteImage(name);
         return ResponseEntity.ok(response);
     }

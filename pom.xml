@@ -14,7 +14,7 @@
     <name>Lovelypet</name>
     <description>Lovelypet</description>
     <properties>
-        <java.version>20</java.version>
+        <java.version>19</java.version>
         <org.mapstruct.version>1.5.3.Final</org.mapstruct.version>
     </properties>
     <dependencies>

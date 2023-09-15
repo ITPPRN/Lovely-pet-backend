@@ -7,12 +7,15 @@ import com.example.lovelypet.entity.RoomType;
 import com.example.lovelypet.exception.BaseException;
 import com.example.lovelypet.exception.HotelException;
 import com.example.lovelypet.exception.RoomException;
+import com.example.lovelypet.mapper.RoomMapper;
 import com.example.lovelypet.model.RoomRequest;
+import com.example.lovelypet.model.RoomResponseList;
 import com.example.lovelypet.service.HotelService;
 import com.example.lovelypet.service.RoomService;
 import com.example.lovelypet.service.RoomTypeService;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,11 +30,14 @@ public class RoomBusiness {
 
     private final PhotoRoomBusiness photoRoomBusiness;
 
-    public RoomBusiness(RoomService roomService, RoomTypeService roomTypeService, HotelService hotelService, PhotoRoomBusiness photoRoomBusiness) {
+    private final RoomMapper roomMapper;
+
+    public RoomBusiness(RoomService roomService, RoomTypeService roomTypeService, HotelService hotelService, PhotoRoomBusiness photoRoomBusiness, RoomMapper roomMapper) {
         this.roomService = roomService;
         this.roomTypeService = roomTypeService;
         this.hotelService = hotelService;
         this.photoRoomBusiness = photoRoomBusiness;
+        this.roomMapper = roomMapper;
     }
 
     public String addRoom(RoomRequest request) throws BaseException {
@@ -88,16 +94,18 @@ public class RoomBusiness {
         return "Successfully updated room NO." + room.getRoomNumber() + " information.";
     }
 
-    public String deleteU(int id) throws BaseException {
-        Optional<Room> opt = roomService.findById(id);
+    public String deleteU(RoomRequest id) throws BaseException {
+        Optional<Room> opt = roomService.findById(id.getId());
         if (opt.isEmpty()) {
             throw RoomException.notFound();
         }
         Room room = opt.get();
 
-        List<PhotoRoom> images = photoRoomBusiness.findByRoomId(id); // ดึงข้อมูลรูปภาพทั้งหมดจากฐานข้อมูล
+        List<PhotoRoom> images = photoRoomBusiness.findByRoomId(id.getId()); // ดึงข้อมูลรูปภาพทั้งหมดจากฐานข้อมูล
         for (PhotoRoom image : images) {
-            photoRoomBusiness.deleteImage(image.getPhotoRoomPartFile());
+            RoomRequest data = new RoomRequest();
+            data.setNamePhoto(image.getPhotoRoomPartFile());
+            photoRoomBusiness.deleteImage(data);
         }
         roomService.deleteByIdU(room.getId());
 
@@ -123,20 +131,40 @@ public class RoomBusiness {
 
 
     /////////////////////////////////////////////////
-    public List<Room> listRoom(RoomRequest request) throws BaseException {
+    public List<RoomResponseList> listRoom(RoomRequest request) throws BaseException {
         Optional<Hotel> opt = hotelService.findById(request.getHotelId());
         if (opt.isEmpty()) {
             throw HotelException.notFound();
         }
-        return roomService.findByHotelId(opt.get());
+        List<Room> roomList = roomService.findByHotelId(opt.get());
+        return resList(roomList);
     }
 
-    public List<Room> listStateRoom(RoomRequest request) throws BaseException {
+    public List<RoomResponseList> listStateRoom(RoomRequest request) throws BaseException {
         Optional<Hotel> opt = hotelService.findById(request.getHotelId());
         if (opt.isEmpty()) {
             throw HotelException.notFound();
         }
-        return roomService.findByHotelIdAndState(opt.get(), request.getStatus());
+        List<Room> rooms = roomService.findByHotelIdAndState(opt.get(), request.getStatus());
+        if (rooms.isEmpty()) {
+            throw RoomException.notFound();
+        }
+        return resList(rooms);
+    }
+
+    public List<RoomResponseList> resList(List<Room> rooms) {
+        List<RoomResponseList> response = new ArrayList<>();
+        for (Room room : rooms) {
+            RoomResponseList data = new RoomResponseList();
+            data.setId(room.getId());
+            data.setRoomNumber(room.getRoomNumber());
+            data.setRoomDetails(room.getRoomDetails());
+            data.setRoomPrice(room.getRoomPrice());
+            data.setType(room.getRoomTypeId().getName());
+            data.setStatus(room.getStatus());
+            response.add(data);
+        }
+        return response;
     }
     ////////////////////////////////////////////////
 }

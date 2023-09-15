@@ -9,7 +9,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @EnableScheduling
-@EnableCaching
 public class LovelyPetApplication {
 
     public static void main(String[] args) {

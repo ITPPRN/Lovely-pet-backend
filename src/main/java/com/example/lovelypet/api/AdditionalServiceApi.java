@@ -1,11 +1,14 @@
 package com.example.lovelypet.api;
 
 import com.example.lovelypet.business.AdditionalServiceBusiness;
-import com.example.lovelypet.entity.AdditionalServices;
 import com.example.lovelypet.exception.BaseException;
 import com.example.lovelypet.model.AdditionalServiceRequest;
+import com.example.lovelypet.model.AdditionalServiceResponse;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -21,8 +24,8 @@ public class AdditionalServiceApi {
 
     //create
     @PostMapping("/add-service")
-    public ResponseEntity<AdditionalServices> addService(@RequestBody AdditionalServiceRequest request) throws BaseException {
-        AdditionalServices response = additionalServiceBusiness.addService(request);
+    public ResponseEntity<AdditionalServiceResponse> addService(@RequestBody AdditionalServiceRequest request) throws BaseException {
+        AdditionalServiceResponse response = additionalServiceBusiness.addService(request);
         return ResponseEntity.ok(response);
     }
 
@@ -35,15 +38,15 @@ public class AdditionalServiceApi {
 
     // list all service in hotel
     @PostMapping("/list-service")
-    public ResponseEntity<List<AdditionalServices>> listService() throws BaseException {
-        List<AdditionalServices> response = additionalServiceBusiness.listAllHotel();
+    public ResponseEntity<List<AdditionalServiceResponse>> listService() throws BaseException {
+        List<AdditionalServiceResponse> response = additionalServiceBusiness.listAllHotel();
         return ResponseEntity.ok(response);
     }//git add
 
     // list all service in hotel for user
     @PostMapping("/list-service-for-user")
-    public ResponseEntity<List<AdditionalServices>> listServiceForUser(@RequestParam int id) throws BaseException {
-        List<AdditionalServices> response = additionalServiceBusiness.listAllHotelForUser(id);
+    public ResponseEntity<List<AdditionalServiceResponse>> listServiceForUser(@RequestBody AdditionalServiceRequest id) throws BaseException {
+        List<AdditionalServiceResponse> response = additionalServiceBusiness.listAllHotelForUser(id);
         return ResponseEntity.ok(response);
     }
 

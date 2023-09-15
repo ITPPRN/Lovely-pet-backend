@@ -3,11 +3,9 @@ package com.example.lovelypet.api;
 import com.example.lovelypet.business.ServiceHistoryBusiness;
 import com.example.lovelypet.exception.BaseException;
 import com.example.lovelypet.model.BookingListResponse;
+import com.example.lovelypet.model.HistoryRequest;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -28,7 +26,7 @@ public class ServiceHistoryApi {
     }
 
     @PostMapping("/get-service-history")
-    public ResponseEntity<BookingListResponse> getService(@RequestParam int id) throws BaseException {
+    public ResponseEntity<BookingListResponse> getService(@RequestBody HistoryRequest id) throws BaseException {
         BookingListResponse response = serviceHistoryBusiness.getServiceHistory(id);
         return ResponseEntity.ok(response);
     }

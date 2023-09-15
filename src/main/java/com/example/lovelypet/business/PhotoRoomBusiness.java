@@ -6,6 +6,7 @@ import com.example.lovelypet.exception.BaseException;
 import com.example.lovelypet.exception.FileException;
 import com.example.lovelypet.exception.PhotoRoomException;
 import com.example.lovelypet.exception.RoomException;
+import com.example.lovelypet.model.RoomRequest;
 import com.example.lovelypet.service.PhotoRoomService;
 import com.example.lovelypet.service.RoomService;
 import org.springframework.core.io.InputStreamResource;
@@ -128,8 +129,8 @@ public class PhotoRoomBusiness {
         return photoRoomService.findById(id);
     }
 
-    public ResponseEntity<InputStreamResource> getImageById(int id) {
-        Optional<PhotoRoom> imageEntity = photoRoomService.findById(id);
+    public ResponseEntity<InputStreamResource> getImageById(RoomRequest id) {
+        Optional<PhotoRoom> imageEntity = photoRoomService.findById(id.getIdPhoto());
         if (imageEntity.isPresent()) {
             String filename = imageEntity.get().getPhotoRoomPartFile();
             File imageFile = new File(path + File.separator + filename);
@@ -149,8 +150,8 @@ public class PhotoRoomBusiness {
         }
     }
 
-    public List<String> getImageUrl(int id) throws BaseException {
-        List<PhotoRoom> images = findByRoomId(id); // ดึงข้อมูลรูปภาพทั้งหมดจากฐานข้อมูล
+    public List<String> getImageUrl(RoomRequest id) throws BaseException {
+        List<PhotoRoom> images = findByRoomId(id.getId()); // ดึงข้อมูลรูปภาพทั้งหมดจากฐานข้อมูล
         List<String> response = new ArrayList<>();
         for (PhotoRoom image : images) {
             // สร้าง URL สำหรับแสดงรูปภาพ
@@ -172,8 +173,8 @@ public class PhotoRoomBusiness {
 
     ///////////////////////////////
     //delete image
-    public String deleteImage(String name) throws BaseException {
-        Optional<PhotoRoom> opt = photoRoomService.findByName(name);
+    public String deleteImage(RoomRequest name) throws BaseException {
+        Optional<PhotoRoom> opt = photoRoomService.findByName(name.getNamePhoto());
         if (opt.isEmpty()) {
             throw PhotoRoomException.notFound();
         }

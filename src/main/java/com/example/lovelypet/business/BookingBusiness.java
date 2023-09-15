@@ -33,20 +33,15 @@ import java.util.*;
 public class BookingBusiness {
 
     private final PetService petService;
-
     private final BookingMapper bookingMapper;
-
     private final HotelService hotelService;
-
     private final RoomService roomService;
-
     private final UserService userService;
-
     private final ServiceHistoryService serviceHistoryService;
     private final BookingService bookingService;
-
     private final AdditionalServiceService additionalServiceService;
     private final String path = "src/main/resources/imageUpload/payment";
+    public SimpleDateFormat formatDate = new SimpleDateFormat("dd/MM/yyyy");
 
     public BookingBusiness(PetService petService, BookingMapper bookingMapper, HotelService hotelService, RoomService roomService, UserService userService, ServiceHistoryService serviceHistoryService, BookingService bookingService, AdditionalServiceService additionalServiceService) {
         this.petService = petService;
@@ -185,8 +180,8 @@ public class BookingBusiness {
         return UUID.randomUUID() + "_" + originalFileName;
     }
 
-    public ResponseEntity<InputStreamResource> getImageById(int id) {
-        Optional<Booking> imageEntity = bookingService.findById(id);
+    public ResponseEntity<InputStreamResource> getImageById(BookingRequest id) {
+        Optional<Booking> imageEntity = bookingService.findById(id.getIdBooking());
         if (imageEntity.isPresent()) {
             String filename = imageEntity.get().getPayment();
             File imageFile = new File(path + File.separator + filename);
@@ -206,8 +201,8 @@ public class BookingBusiness {
         }
     }
 
-    public String getImageUrl(int id) throws BaseException {
-        Optional<Booking> images = bookingService.findById(id); // ดึงข้อมูลรูปภาพทั้งหมดจากฐานข้อมูล
+    public String getImageUrl(BookingRequest id) throws BaseException {
+        Optional<Booking> images = bookingService.findById(id.getIdBooking()); // ดึงข้อมูลรูปภาพทั้งหมดจากฐานข้อมูล
         if (images.isEmpty()) {
             throw BookingException.notFound();
         }
@@ -231,13 +226,7 @@ public class BookingBusiness {
         if (bookingList.isEmpty()) {
             throw BookingException.notFound();
         }
-
-        List<BookingListResponse> response = new ArrayList<>();
-        for (Booking booking : bookingList) {
-            BookingListResponse data = bookingMapper.toBookingListResponse(booking);
-            response.add(data);
-        }
-        return response;
+        return resList(bookingList);
     }
 
     public List<BookingListResponse> allListBooking() throws BaseException {
@@ -257,24 +246,55 @@ public class BookingBusiness {
             throw BookingException.notFound();
         }
 
+        return resList(bookingList);
+    }
+
+    public List<BookingListResponse> resList(List<Booking> bookingList) {
         List<BookingListResponse> response = new ArrayList<>();
         for (Booking booking : bookingList) {
-            BookingListResponse data = bookingMapper.toBookingListResponse(booking);
+            BookingListResponse data = new BookingListResponse();
+            data.setId(booking.getId());
+            data.setRoomNumber(booking.getRoomId().getRoomNumber());
+            data.setDate(booking.getDate());
+            data.setBookingStartDate(formatDate.format(booking.getBookingStartDate()));
+            data.setBookingEndDate(formatDate.format(booking.getBookingEndDate()));
+            data.setPaymentMethod(booking.getPaymentMethod());
+            data.setPayment(booking.getPayment());
+            data.setState(booking.getState());
+            data.setPetId(booking.getPetId().getId());
+            data.setHotelId(booking.getHotelId().getId());
+            data.setUserId(booking.getUserId().getId());
             response.add(data);
         }
         return response;
     }
 
-    public BookingListResponse getBooking(int id) throws BaseException {
-        if (id == 0) {
+    public BookingListResponse res(Booking booking) {
+        BookingListResponse data = new BookingListResponse();
+        data.setId(booking.getId());
+        data.setRoomNumber(booking.getRoomId().getRoomNumber());
+        data.setDate(booking.getDate());
+        data.setBookingStartDate(formatDate.format(booking.getBookingStartDate()));
+        data.setBookingEndDate(formatDate.format(booking.getBookingEndDate()));
+        data.setPaymentMethod(booking.getPaymentMethod());
+        data.setPayment(booking.getPayment());
+        data.setState(booking.getState());
+        data.setPetId(booking.getPetId().getId());
+        data.setHotelId(booking.getHotelId().getId());
+        data.setUserId(booking.getUserId().getId());
+        return data;
+    }
+
+    public BookingListResponse getBooking(BookingRequest id) throws BaseException {
+        if (Objects.isNull(id)) {
             throw BookingException.idBookingIsNull();
         }
-        Optional<Booking> opt = bookingService.findById(id);
+        Optional<Booking> opt = bookingService.findById(id.getIdBooking());
         if (opt.isEmpty()) {
             throw BookingException.notFound();
         }
         Booking booking = opt.get();
-        return bookingMapper.toBookingListResponse(booking);
+        return res(booking);
     }
 
     //considerBooking
@@ -364,11 +384,11 @@ public class BookingBusiness {
     }
 
     //cancel
-    public String cancelBooking(int id) throws BaseException {
-        if (id == 0) {
+    public String cancelBooking(BookingRequest id) throws BaseException {
+        if (Objects.isNull(id)) {
             throw BookingException.idBookingIsNull();
         }
-        Optional<Booking> opt = bookingService.findById(id);
+        Optional<Booking> opt = bookingService.findById(id.getIdBooking());
         if (opt.isEmpty()) {
             throw BookingException.notFound();
         }
@@ -379,11 +399,11 @@ public class BookingBusiness {
     }
 
     //delete
-    public String deleteBooking(int id) throws BaseException {
-        if (id == 0) {
+    public String deleteBooking(BookingRequest id) throws BaseException {
+        if (Objects.isNull(id)) {
             throw BookingException.idBookingIsNull();
         }
-        Optional<Booking> opt = bookingService.findById(id);
+        Optional<Booking> opt = bookingService.findById(id.getIdBooking());
         if (opt.isEmpty()) {
             throw BookingException.notFound();
         }
@@ -404,7 +424,7 @@ public class BookingBusiness {
             throw FileException.deleteNoFile();
         }
 
-        bookingService.deleteById(id);
+        bookingService.deleteById(id.getIdBooking());
         return "Booking deleted";
     }
 

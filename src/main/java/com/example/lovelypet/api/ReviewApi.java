@@ -1,11 +1,14 @@
 package com.example.lovelypet.api;
 
 import com.example.lovelypet.business.ReviewBusiness;
-import com.example.lovelypet.entity.Review;
 import com.example.lovelypet.exception.BaseException;
 import com.example.lovelypet.model.ReviewRequest;
+import com.example.lovelypet.model.ReviewResponse;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -26,8 +29,8 @@ public class ReviewApi {
     }
 
     @PostMapping("/list-review")
-    public ResponseEntity<List<Review>> listFeedback(@RequestParam int id) throws BaseException {
-        List<Review> response = reviewBusiness.listReview(id);
+    public ResponseEntity<List<ReviewResponse>> listFeedback(@RequestBody ReviewRequest id) throws BaseException {
+        List<ReviewResponse> response = reviewBusiness.listReview(id);
         return ResponseEntity.ok(response);
     }
 

@@ -6,7 +6,11 @@ import lombok.Data;
 public class PetProfileResponse {
 
     private int id;
-    private String PetName;
+    private String petName;
     private String birthday;
-    private String type;
+    private int petTypeId;
+    private int userOwner;
+    private String photoPath;
+
+
 }

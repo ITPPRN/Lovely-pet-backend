@@ -15,5 +15,7 @@ public class BookingRequest {
     private int idBooking;
     private int additionService;
 
+    private int idPhoto;
+
 
 }

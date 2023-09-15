@@ -8,4 +8,6 @@ public class ReviewRequest {
     private int idHotel;
     private float rating;
     private String comment;
+
+    private int id;
 }

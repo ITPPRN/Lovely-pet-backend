@@ -7,12 +7,14 @@ import com.example.lovelypet.exception.BaseException;
 import com.example.lovelypet.exception.HotelException;
 import com.example.lovelypet.exception.UserException;
 import com.example.lovelypet.model.ReviewRequest;
+import com.example.lovelypet.model.ReviewResponse;
 import com.example.lovelypet.service.HotelService;
 import com.example.lovelypet.service.ReviewService;
 import com.example.lovelypet.service.UserService;
 import com.example.lovelypet.util.SecurityUtil;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -62,13 +64,29 @@ public class ReviewBusiness {
     }
 
     //get data in review
-    public List<Review> listReview(int id) throws BaseException {
-        Optional<Hotel> optHotel = hotelService.findById(id);
+    public List<ReviewResponse> listReview(ReviewRequest id) throws BaseException {
+        Optional<Hotel> optHotel = hotelService.findById(id.getId());
         if (optHotel.isEmpty()) {
             HotelException.notFound();
         }
         Hotel hotel = optHotel.get();
-        return reviewService.findByHotelId(hotel);
+        List<Review> reviews = reviewService.findByHotelId(hotel);
+        return resList(reviews);
+
+    }
+
+    public List<ReviewResponse> resList(List<Review> reviews) {
+        List<ReviewResponse> response = new ArrayList<>();
+        for (Review review : reviews) {
+            ReviewResponse data = new ReviewResponse();
+            data.setId(review.getId());
+            data.setComment(review.getComment());
+            data.setRating(review.getRating());
+            data.setUserId(review.getUserId().getId());
+            data.setHotelId(review.getHotelId().getId());
+            response.add(data);
+        }
+        return response;
     }
 
 

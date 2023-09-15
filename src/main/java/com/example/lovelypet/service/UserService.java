@@ -86,7 +86,7 @@ public class UserService {
         }
     }
 
-    @Cacheable(value = "user", key = "#idU", unless = "#result == null")
+
     public Optional<User> findById(int idU) throws BaseException {
         Optional<User> user = repository.findById(idU);
         return user;
@@ -114,7 +114,6 @@ public class UserService {
     }
 
 
-    @CachePut(value = "user", key = "#id")
     public User update(User user) throws BaseException {
         if (Objects.isNull(user)) {
             throw UserException.objectIsNull();
@@ -133,9 +132,6 @@ public class UserService {
         return repository.save(user);
     }
 
-
-    @CacheEvict(value = "user", key = "#id")
-    //@CacheEvict(value = "user",allEntries = true)//ในกรณีลบทั้งหมด
     public void deleteByIdU(int idU) {
         repository.deleteById(idU);
     }

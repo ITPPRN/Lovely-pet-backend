@@ -1,7 +1,6 @@
 package com.example.lovelypet.api;
 
 import com.example.lovelypet.business.PetBusiness;
-import com.example.lovelypet.entity.Pet;
 import com.example.lovelypet.exception.BaseException;
 import com.example.lovelypet.model.AddPetRequest;
 import com.example.lovelypet.model.PetProfileResponse;
@@ -25,8 +24,8 @@ public class PetApi {
     }
 
     @PostMapping("/add-pet")
-    public ResponseEntity<Pet> addMyPet(@RequestBody AddPetRequest request) throws BaseException {
-        Pet response = petBusiness.addMyPet(request);
+    public ResponseEntity<PetProfileResponse> addMyPet(@RequestBody AddPetRequest request) throws BaseException {
+        PetProfileResponse response = petBusiness.addMyPet(request);
         return ResponseEntity.ok(response);
     }
 
@@ -39,12 +38,12 @@ public class PetApi {
 
     //ดึงรูป
     @PostMapping("/get-images")
-    public ResponseEntity<InputStreamResource> getImageById(@RequestParam int id) {
+    public ResponseEntity<InputStreamResource> getImageById(@RequestBody AddPetRequest id) {
         return petBusiness.getImageById(id);
     }
 
     @PostMapping("/get-images-url")
-    public ResponseEntity<String> getImageUrl(@RequestParam int id) throws BaseException {
+    public ResponseEntity<String> getImageUrl(@RequestBody AddPetRequest id) throws BaseException {
         String response = petBusiness.getImageUrl(id);
         return ResponseEntity.ok(response);
     }
@@ -58,7 +57,7 @@ public class PetApi {
 
     //get date
     @PostMapping("/get-profile-pet")
-    public ResponseEntity<PetProfileResponse> getProfilePet(@RequestParam int id) throws BaseException {
+    public ResponseEntity<PetProfileResponse> getProfilePet(@RequestBody AddPetRequest id) throws BaseException {
         PetProfileResponse response = petBusiness.getProfilePet(id);
         return ResponseEntity.ok(response);
     }
@@ -71,13 +70,13 @@ public class PetApi {
 
     //delete
     @PostMapping("/delete-pet")
-    public ResponseEntity<String> deletePet(@RequestParam int id) throws BaseException {
+    public ResponseEntity<String> deletePet(@RequestBody AddPetRequest id) throws BaseException {
         String response = petBusiness.deletePet(id);
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/delete-image")
-    public ResponseEntity<String> deleteImage(@RequestParam int id) throws BaseException {
+    public ResponseEntity<String> deleteImage(@RequestBody AddPetRequest id) throws BaseException {
         String response = petBusiness.deleteImage(id);
         return ResponseEntity.ok(response);
     }
