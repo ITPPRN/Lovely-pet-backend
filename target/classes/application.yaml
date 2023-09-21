@@ -1,0 +1,58 @@
+##spring.datasource.url = jdbc:postgresql://localhost:5432/lovelypet
+##spring.datasource.driverClassName = org.postgresql.Driver
+##spring.datasource.username = postgres
+##spring.datasource.password = Tee192414+
+##spring.jpa.hibernate.ddl-auto = create
+##spring.jpa.show-sql = true
+
+##spring.servlet.multipart.enabled=true
+##spring.servlet.multipart.max-file-size=2MB
+##spring.servlet.multipart.max-request-size=5MB
+server:
+  port: 8080
+spring:
+  mail:
+    host: ${SECRET_MAIL_HOST:smtp.gmail.com}
+    port: ${SECRET_MAIL_PORT:587}
+    username: testbackendproject1
+    password: allqyeggimprlqnq
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  jpa:
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: jdbc:postgresql://${SECRET_DB_HOST:localhost}:${SECRET_DB_PORT:5432}/lovely_pet
+    username: ${SECRET_DB_USERNAME:postgres}
+    password: ${SECRET_DB_PASS:Tee192414+}
+    driver-class-name: org.postgresql.Driver
+
+
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 5MB
+      max-request-size: 100MB
+  redis:
+    host: ${SECRET_REDIS_HOST:localhost}
+    port: ${SECRET_REDIS_PORT:6379}
+  cache:
+    type: redis
+    redis:
+      time-to-live: 300000
+
+---
+app:
+  token:
+    secret: n#MySecret9863656GGMPf
+    issuer: HotelPetService
+  email:
+    from: testbackendproject1@gmail.com
