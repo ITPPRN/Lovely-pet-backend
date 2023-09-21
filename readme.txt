@@ -1,0 +1,22 @@
+
+//ให้อนุญาติสิทธิ postgress  ให้เครื่องเซิร์ฟเข้าด้วย ip
+host    all             all             192.168.1.102/32     scram-sha-256
+
+
+
+//build  image
+docker build -t app/lovelypet .
+
+
+//run container
+docker run -d --name lovelypet1 -p 8080:8080
+-e SECRET_DB_HOST=192.168.1.102
+-e SECRET_DB_PORT=5432
+-e DB_USERNAME=postgres
+-e SECRET_DB_PASS=Tee192414+
+-e SECRET_REDIS_HOST=192.168.1.102
+-e SECRET_REDIS_PORT=6379
+app/lovelypet:latest
+
+
+
