@@ -2,7 +2,6 @@ package com.example.lovelypet.api;
 
 import com.example.lovelypet.business.HotelBusiness;
 import com.example.lovelypet.business.PhotoHotelBusiness;
-import com.example.lovelypet.entity.AdditionalServices;
 import com.example.lovelypet.exception.BaseException;
 import com.example.lovelypet.model.*;
 import org.springframework.core.io.InputStreamResource;
@@ -85,13 +84,13 @@ public class HotelApi {
 
     //ดึงรูป
     @PostMapping("/get-images")
-    public ResponseEntity<InputStreamResource> getImageById(@RequestBody PhotoHotelRequest id) {
-        return photoHotelBusiness.getImageById(id);
+    public ResponseEntity<InputStreamResource> getImageByName(@RequestBody PhotoHotelRequest name) {
+        return photoHotelBusiness.getImageByName(name);
     }
 
     @PostMapping("/get-images-url")
-    public ResponseEntity<List<String>> getImageUrl() throws BaseException {
-        List<String> response = photoHotelBusiness.getImageUrl();
+    public ResponseEntity<List<String>> getImageUrl(@RequestBody PhotoHotelRequest id) throws BaseException {
+        List<String> response = photoHotelBusiness.getImageUrl(id);
         return ResponseEntity.ok(response);
     }
 

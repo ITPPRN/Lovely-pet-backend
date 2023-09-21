@@ -132,8 +132,8 @@ public class PhotoHotelBusiness {
         return photoHotelService.findById(id);
     }
 
-    public ResponseEntity<InputStreamResource> getImageById(PhotoHotelRequest id) {
-        Optional<PhotoHotel> imageEntity = photoHotelService.findById(id.getIdPhoto());
+    public ResponseEntity<InputStreamResource> getImageByName(PhotoHotelRequest name) {
+        Optional<PhotoHotel> imageEntity = photoHotelService.findByName(name.getName());
         if (imageEntity.isPresent()) {
             String filename = imageEntity.get().getPhotoHotelFile();
             File imageFile = new File(path + File.separator + filename);
@@ -153,12 +153,12 @@ public class PhotoHotelBusiness {
         }
     }
 
-    public List<String> getImageUrl() throws BaseException {
-        List<PhotoHotel> images = findByHotelId(getCurrentId()); // ดึงข้อมูลรูปภาพทั้งหมดจากฐานข้อมูล
+    public List<String> getImageUrl(PhotoHotelRequest id) throws BaseException {
+        List<PhotoHotel> images = findByHotelId(id.getIdHotel()); // ดึงข้อมูลรูปภาพทั้งหมดจากฐานข้อมูล
         List<String> response = new ArrayList<>();
         for (PhotoHotel image : images) {
             // สร้าง URL สำหรับแสดงรูปภาพ
-            String imageUrl = path + File.separator + image.getPhotoHotelFile();
+            String imageUrl = image.getPhotoHotelFile();
             response.add(imageUrl);
         }
         return response;

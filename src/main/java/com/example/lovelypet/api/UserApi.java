@@ -20,6 +20,10 @@ public class UserApi {
         this.userBusiness = userBusiness;
     }
 
+    @GetMapping("/test")
+    public ResponseEntity<String> test()  {
+        return ResponseEntity.ok("server Start");
+    }
 
     @PostMapping("/register")
     public ResponseEntity<UserRegisterResponse> register(@RequestBody UserRegisterRequest reqUser) throws BaseException {

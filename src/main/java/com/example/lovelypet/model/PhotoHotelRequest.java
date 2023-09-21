@@ -6,5 +6,6 @@ public class PhotoHotelRequest {
 
     private int idPhoto;
     private String name;
+    private int idHotel;
 
 }
