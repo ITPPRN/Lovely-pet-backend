@@ -61,12 +61,12 @@ public class RoomApi {
     }
 
     //ดึงรูป
-    @GetMapping("/get-images")
+    @PostMapping("/get-images")
     public ResponseEntity<InputStreamResource> getImageById(@RequestBody RoomRequest id) {
         return photoRoomBusiness.getImageById(id);
     }
 
-    @GetMapping("/get-images-url")
+    @PostMapping("/get-images-url")
     public ResponseEntity<List<String>> getImageUrl(@RequestBody RoomRequest id) throws BaseException {
         List<String> response = photoRoomBusiness.getImageUrl(id);
         return ResponseEntity.ok(response);

@@ -1,16 +1,10 @@
-# Ignore HELP.md
 HELP.md
+#target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
 
-# Track the 'target' folder and 'maven-wrapper.jar'
-!/target/
-!/.mvn/wrapper/maven-wrapper.jar
-
-# Ignore build folders, but don't ignore the ones in src/main and src/test
-/build/
-!/src/main/**/build/
-!/src/test/**/build/
-
-# Ignore STS (Spring Tool Suite) specific files and folders
+### STS ###
 .apt_generated
 .classpath
 .factorypath
@@ -19,16 +13,21 @@ HELP.md
 .springBeans
 .sts4-cache
 
-# Ignore IntelliJ IDEA specific files and folders
+### IntelliJ IDEA ###
 .idea
 *.iws
 *.iml
 *.ipr
 
-# Ignore NetBeans specific files and folders
+### NetBeans ###
 /nbproject/private/
 /nbbuild/
 /dist/
 /nbdist/
 /.nb-gradle/
 build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/

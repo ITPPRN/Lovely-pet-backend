@@ -75,6 +75,7 @@ public class UserService {
         //save
         else {
             User entity = new User();
+
             entity.setUserName(userName);
             entity.setPassWord(passwordEncoder.encode(passWord));
             entity.setName(name);

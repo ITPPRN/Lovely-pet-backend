@@ -130,7 +130,7 @@ public class PhotoRoomBusiness {
     }
 
     public ResponseEntity<InputStreamResource> getImageById(RoomRequest id) {
-        Optional<PhotoRoom> imageEntity = photoRoomService.findById(id.getIdPhoto());
+        Optional<PhotoRoom> imageEntity = photoRoomService.findByName(id.getNamePhoto());
         if (imageEntity.isPresent()) {
             String filename = imageEntity.get().getPhotoRoomPartFile();
             File imageFile = new File(path + File.separator + filename);
