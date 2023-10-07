@@ -402,8 +402,8 @@ public class UserBusiness {
         if (opt.isEmpty()) {
             throw UserException.notFound();
         }
-        String filePhoto = opt.get().getUserPhoto();
-        return path + File.separator + filePhoto;
+        return opt.get().getUserPhoto();
+
     }
 
     public String deleteRequest() throws BaseException {

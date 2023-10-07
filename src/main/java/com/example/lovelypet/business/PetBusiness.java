@@ -331,7 +331,7 @@ public class PetBusiness {
         data.setId(pet.getId());
         data.setPetName(pet.getPetName());
         data.setBirthday(formatDate.format(pet.getBirthday()));
-        data.setPetTypeId(type.getId());
+        data.setPetTypeId(type.getName());
         data.setUserOwner(user.getId());
         data.setPhotoPath(pet.getPetPhoto());
         return data;
@@ -346,7 +346,7 @@ public class PetBusiness {
             data.setId(pet.getId());
             data.setPetName(pet.getPetName());
             data.setBirthday(formatDate.format(pet.getBirthday()));
-            data.setPetTypeId(pet.getPetTypeId().getId());
+            data.setPetTypeId(pet.getPetTypeId().getName());
             data.setUserOwner(user.getId());
             data.setPhotoPath(pet.getPetPhoto());
             response.add(data);

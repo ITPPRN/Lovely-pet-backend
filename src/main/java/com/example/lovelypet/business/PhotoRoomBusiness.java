@@ -155,7 +155,7 @@ public class PhotoRoomBusiness {
         List<String> response = new ArrayList<>();
         for (PhotoRoom image : images) {
             // สร้าง URL สำหรับแสดงรูปภาพ
-            String imageUrl = path + File.separator + image.getPhotoRoomPartFile();
+            String imageUrl = image.getPhotoRoomPartFile();
             response.add(imageUrl);
         }
         return response;
