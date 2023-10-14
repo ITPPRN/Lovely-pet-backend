@@ -113,6 +113,13 @@ public class BookingBusiness {
             fileImage = uploadImage(request.getFile());
         }
 
+        double totalPrice;
+        if (Objects.isNull(additionalServices)) {
+            totalPrice = optRoom.get().getRoomPrice();
+        } else {
+            totalPrice = optRoom.get().getRoomPrice() + additionalServices.getPrice();
+        }
+
         //add pet to database
         Booking response = bookingService.create(
                 optUser.get(),
@@ -124,7 +131,8 @@ public class BookingBusiness {
                 date,
                 request.getPaymentMethod(),
                 fileImage,
-                additionalServices
+                additionalServices,
+                totalPrice
         );
 
         return "Wait for the approval of booking number " + response.getId();
@@ -229,6 +237,8 @@ public class BookingBusiness {
         return resList(bookingList);
     }
 
+
+
     public List<BookingListResponse> allListBooking() throws BaseException {
         //Hotel
         Optional<String> opt = SecurityUtil.getCurrentUserId();
@@ -242,6 +252,27 @@ public class BookingBusiness {
         }
         Hotel hotel = optHotel.get();
         List<Booking> bookingList = bookingService.findByIdHotel(hotel);
+        if (bookingList.isEmpty()) {
+            throw BookingException.notFound();
+        }
+
+        return resList(bookingList);
+    }
+
+
+    public List<BookingListResponse> allListBookingForUser() throws BaseException {
+        //Hotel
+        Optional<String> opt = SecurityUtil.getCurrentUserId();
+        if (opt.isEmpty()) {
+            throw UserException.unauthorized();
+        }
+        String userId = opt.get();
+        Optional<User> optHotel = userService.findById(Integer.parseInt(userId));
+        if (optHotel.isEmpty()) {
+            throw HotelException.notFound();
+        }
+        User user = optHotel.get();
+        List<Booking> bookingList = bookingService.findByIdUser(user);
         if (bookingList.isEmpty()) {
             throw BookingException.notFound();
         }
@@ -264,6 +295,7 @@ public class BookingBusiness {
             data.setPetId(booking.getPetId().getId());
             data.setHotelId(booking.getHotelId().getId());
             data.setUserId(booking.getUserId().getId());
+            data.setPrice(booking.getTotalPrice());
             response.add(data);
         }
         return response;
@@ -282,6 +314,7 @@ public class BookingBusiness {
         data.setPetId(booking.getPetId().getId());
         data.setHotelId(booking.getHotelId().getId());
         data.setUserId(booking.getUserId().getId());
+        data.setPrice(booking.getTotalPrice());
         return data;
     }
 

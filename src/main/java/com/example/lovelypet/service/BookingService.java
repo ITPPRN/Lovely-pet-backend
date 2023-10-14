@@ -31,7 +31,8 @@ public class BookingService {
             LocalDateTime date,
             String paymentMethod,
             String payment,
-            AdditionalServices additionalServices
+            AdditionalServices additionalServices,
+            double totalPrice
 
     ) throws BaseException {
 
@@ -89,6 +90,7 @@ public class BookingService {
         if (Objects.nonNull(additionalServices)) {
             entity.setAdditionalServiceId(additionalServices);
         }
+        entity.setTotalPrice(totalPrice);
         return bookingRepository.save(entity);
     }
 
@@ -103,6 +105,10 @@ public class BookingService {
 
     public List<Booking> findByIdHotel(Hotel hotel) {
         return bookingRepository.findByHotelId(hotel);
+    }
+
+    public List<Booking> findByIdUser(User user) {
+        return bookingRepository.findByUserId(user);
     }
 
     //update

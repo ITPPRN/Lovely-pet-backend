@@ -20,5 +20,6 @@ public class BookingListResponse {
     private int petId;
     private int userId;
     private int hotelId;
+    private double price;
 
 }

@@ -118,12 +118,12 @@ public class UserBusiness {
         return userMapper.toUserRegisterResponse(update);
     }
 
-    public ActivateResponse activate(ActivateRequest request) throws BaseException {
-        String token = request.getToken();
-        if (StringUtil.isNullOrEmpty(token)) {
+    public ActivateResponse activate(String request) throws BaseException {
+
+        if (StringUtil.isNullOrEmpty(request)) {
             throw UserException.activateNoToken();
         }
-        Optional<User> opt = userService.findByToken(token);
+        Optional<User> opt = userService.findByToken(request);
         if (opt.isEmpty()) {
             throw UserException.activateFail();
         }
@@ -488,6 +488,66 @@ public class UserBusiness {
     }
 
     //////////////////////////////////////////
+
+    public String uploadImageForRegister(MultipartFile file,int id) throws IOException, BaseException {
+
+        //validate request
+        if (file == null) {
+            throw FileException.fileNull();
+        }
+
+        if (file.getSize() > 1048576 * 5) {
+            throw FileException.fileMaxSize();
+        }
+        String contentType = file.getContentType();
+        if (contentType == null) {
+            throw FileException.unsupported();
+        }
+
+        List<String> supportedType = Arrays.asList("image/jpeg", "image/png");
+        if (!supportedType.contains(contentType)) {
+            throw FileException.unsupported();
+        }
+
+        Optional<User> optIdUser = userService.findById(id);
+        if (optIdUser.isEmpty()) {
+            throw UserException.notFound();
+        }
+        User user = optIdUser.get();
+        //จะมีได้แค่ 1 รูป
+        if (Objects.nonNull(user.getUserPhoto())) {
+            throw UserException.imageAlreadyExists();
+        }
+
+
+        // สร้างชื่อไฟล์ที่ไม่ซ้ำกัน
+        String fileName = generateUniqueFileName(file.getOriginalFilename());
+
+        String filePath = path + File.separator + fileName;
+        //File filePath = new File(uploadDir, fileName);
+
+
+        // สร้างไดเร็กทอรีถ้ายังไม่มี
+        File directory = new File(path);
+        if (!directory.exists()) {
+            boolean success = directory.mkdirs();
+            // ตรวจสอบผลลัพธ์
+            if (!success) {
+                throw FileException.failedToCreateDirectory();
+            }
+        }
+
+        // Save the image file
+        //file.transferTo(filePath);
+        Path path = Paths.get(filePath);
+        Files.write(path, file.getBytes());
+
+        // Save the image information in the database
+        user.setUserPhoto(fileName);
+        User response = userService.update(user);
+
+        return "Image" + response.getUserPhoto() + "has been successfully uploaded.";
+    }
 
     //////////////////////////////////////////////////////////
 

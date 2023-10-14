@@ -52,11 +52,19 @@ public class BookingApi {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/list-booking-all-for-user")
+    public ResponseEntity<List<BookingListResponse>> listBookingAllForUser() throws BaseException {
+        List<BookingListResponse> response = bookingBusiness.allListBooking();
+        return ResponseEntity.ok(response);
+    }
+
     @PostMapping("/list-booking")
     public ResponseEntity<List<BookingListResponse>> listBooking(@RequestBody String state) throws BaseException {
         List<BookingListResponse> response = bookingBusiness.listBooking(state);
         return ResponseEntity.ok(response);
     }
+
+
 
     @PostMapping("/get-booking")
     public ResponseEntity<BookingListResponse> getBooking(@RequestBody BookingRequest id) throws BaseException {

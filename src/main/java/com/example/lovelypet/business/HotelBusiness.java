@@ -83,12 +83,11 @@ public class HotelBusiness {
         return tokenService.tokenizeHotel(hotel);
     }
 
-    public ActivateResponse activate(ActivateRequest request) throws BaseException {
-        String token = request.getToken();
-        if (StringUtil.isNullOrEmpty(token)) {
+    public ActivateResponse activate(String request) throws BaseException {
+        if (StringUtil.isNullOrEmpty(request)) {
             throw HotelException.activateNoToken();
         }
-        Optional<Hotel> opt = hotelService.findByToken(token);
+        Optional<Hotel> opt = hotelService.findByToken(request);
         if (opt.isEmpty()) {
             throw HotelException.activateFail();
         }

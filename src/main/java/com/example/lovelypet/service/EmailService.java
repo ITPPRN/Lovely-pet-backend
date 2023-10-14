@@ -30,6 +30,7 @@ public class EmailService {
         helper.setText(body, true); // true indicates HTML
         javaMailSender.send(message);
         log.info("Mock Send Email");
+
     }
 }
 //import jakarta.mai l.internet.MimeMessage;

@@ -37,8 +37,8 @@ public class UserApi {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/activate")
-    public ResponseEntity<ActivateResponse> activate(@RequestBody ActivateRequest request) throws BaseException {
+    @GetMapping("/activate")
+    public ResponseEntity<ActivateResponse> activate(@RequestParam String request) throws BaseException {
         ActivateResponse response = userBusiness.activate(request);
         return ResponseEntity.ok(response);
     }
@@ -84,6 +84,12 @@ public class UserApi {
     @PostMapping("/upload-image")
     public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile file) throws BaseException, IOException {
         String response = userBusiness.uploadImage(file);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/upload-image-register")
+    public ResponseEntity<String> uploadImageForRegister(@RequestParam("file") MultipartFile file,@RequestParam int id) throws BaseException, IOException {
+        String response = userBusiness.uploadImageForRegister(file,id);
         return ResponseEntity.ok(response);
     }
 

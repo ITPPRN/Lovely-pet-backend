@@ -32,8 +32,8 @@ public class HotelApi {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/activate")
-    public ResponseEntity<ActivateResponse> activate(@RequestBody ActivateRequest request) throws BaseException {
+    @GetMapping("/activate")
+    public ResponseEntity<ActivateResponse> activate(@RequestParam String request) throws BaseException {
         ActivateResponse response = hotelBusiness.activate(request);
         return ResponseEntity.ok(response);
     }

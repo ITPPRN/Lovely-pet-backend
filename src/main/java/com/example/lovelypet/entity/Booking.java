@@ -30,6 +30,9 @@ public class Booking extends BaseEntity {
     @Column(nullable = false, length = 60)
     private String state;
 
+    @Column(nullable = false, length = 60)
+    private double totalPrice;
+
     @Column(nullable = true, length = 60)
     private String nameCustomer;
 
