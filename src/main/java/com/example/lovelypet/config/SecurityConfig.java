@@ -33,7 +33,7 @@ public class SecurityConfig {
             "/user/login",
             "/user/activate",
             "/user/test",
-            "/upload-image-register",
+            "/user/upload-image-register",
             "/user/resend-activate-email",
             "/hotel/register",
             "/hotel/login",
