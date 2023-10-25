@@ -1,12 +1,15 @@
 package com.example.lovelypet.business;
 
-import com.example.lovelypet.entity.Booking;
 import com.example.lovelypet.entity.Hotel;
 import com.example.lovelypet.entity.ServiceHistory;
 import com.example.lovelypet.entity.User;
-import com.example.lovelypet.exception.*;
+import com.example.lovelypet.exception.BaseException;
+import com.example.lovelypet.exception.HotelException;
+import com.example.lovelypet.exception.ServiceHistoryException;
+import com.example.lovelypet.exception.UserException;
 import com.example.lovelypet.model.BookingListResponse;
-import com.example.lovelypet.model.HistoryRequest;
+import com.example.lovelypet.model.PetProfileResponse;
+import com.example.lovelypet.model.UseProfile;
 import com.example.lovelypet.service.HotelService;
 import com.example.lovelypet.service.ServiceHistoryService;
 import com.example.lovelypet.service.UserService;
@@ -16,7 +19,6 @@ import org.springframework.stereotype.Service;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 
@@ -61,6 +63,23 @@ public class ServiceHistoryBusiness {
             }
             List<BookingListResponse> response = new ArrayList<>();
             for (ServiceHistory booking : bookingList) {
+
+                PetProfileResponse petProfile = new PetProfileResponse();
+                petProfile.setPetTypeId(booking.getBookingId().getPetId().getPetTypeId().getId());
+                petProfile.setPetTyName(booking.getBookingId().getPetId().getPetTypeId().getName());
+                petProfile.setId(booking.getBookingId().getPetId().getId());
+                petProfile.setPetName(booking.getBookingId().getPetId().getPetName());
+                petProfile.setBirthday(formatDate.format(booking.getBookingId().getPetId().getBirthday()));
+                petProfile.setUserOwner(booking.getBookingId().getPetId().getUserId().getId());
+                petProfile.setPhotoPath(booking.getBookingId().getPetId().getPetPhoto());
+
+                UseProfile use = new UseProfile();
+                use.setId(booking.getUserId().getId());
+                use.setName(booking.getUserId().getName());
+                use.setEmail(booking.getUserId().getEmail());
+                use.setPhoneNumber(booking.getUserId().getPhoneNumber());
+
+
                 BookingListResponse data = new BookingListResponse();
                 data.setId(booking.getBookingId().getId());
                 data.setRoomNumber(booking.getBookingId().getRoomId().getRoomNumber());
@@ -70,9 +89,9 @@ public class ServiceHistoryBusiness {
                 data.setPaymentMethod(booking.getBookingId().getPaymentMethod());
                 data.setPayment(booking.getBookingId().getPayment());
                 data.setState(booking.getBookingId().getState());
-                data.setPetId(booking.getBookingId().getPetId().getId());
+                data.setPet(petProfile);
                 data.setHotelId(booking.getBookingId().getHotelId().getId());
-                data.setUserId(booking.getBookingId().getUserId().getId());
+                data.setUser(use);
                 response.add(data);
             }
             return response;
@@ -91,6 +110,23 @@ public class ServiceHistoryBusiness {
 
             List<BookingListResponse> response2 = new ArrayList<>();
             for (ServiceHistory booking : bookingList2) {
+
+                PetProfileResponse petProfile = new PetProfileResponse();
+                petProfile.setPetTypeId(booking.getBookingId().getPetId().getPetTypeId().getId());
+                petProfile.setPetTyName(booking.getBookingId().getPetId().getPetTypeId().getName());
+                petProfile.setId(booking.getBookingId().getPetId().getId());
+                petProfile.setPetName(booking.getBookingId().getPetId().getPetName());
+                petProfile.setBirthday(formatDate.format(booking.getBookingId().getPetId().getBirthday()));
+                petProfile.setUserOwner(booking.getBookingId().getPetId().getUserId().getId());
+                petProfile.setPhotoPath(booking.getBookingId().getPetId().getPetPhoto());
+
+                UseProfile use = new UseProfile();
+                use.setId(booking.getUserId().getId());
+                use.setName(booking.getUserId().getName());
+                use.setEmail(booking.getUserId().getEmail());
+                use.setPhoneNumber(booking.getUserId().getPhoneNumber());
+
+
                 BookingListResponse data = new BookingListResponse();
                 data.setId(booking.getBookingId().getId());
                 data.setRoomNumber(booking.getBookingId().getRoomId().getRoomNumber());
@@ -100,9 +136,9 @@ public class ServiceHistoryBusiness {
                 data.setPaymentMethod(booking.getBookingId().getPaymentMethod());
                 data.setPayment(booking.getBookingId().getPayment());
                 data.setState(booking.getBookingId().getState());
-                data.setPetId(booking.getBookingId().getPetId().getId());
+                data.setPet(petProfile);
                 data.setHotelId(booking.getBookingId().getHotelId().getId());
-                data.setUserId(booking.getBookingId().getUserId().getId());
+                data.setUser(use);
                 response2.add(data);
             }
             return response2;
@@ -111,18 +147,6 @@ public class ServiceHistoryBusiness {
         }
     }
 
-    public BookingListResponse getServiceHistory(HistoryRequest id) throws BaseException {
-        if (Objects.isNull(id)) {
-            throw BookingException.idBookingIsNull();
-        }
-        Optional<ServiceHistory> opt = serviceHistoryService.findById(id.getId());
-        if (opt.isEmpty()) {
-            throw BookingException.notFound();
-        }
-        Booking serviceHistory = opt.get().getBookingId();
-        BookingListResponse res = new BookingListResponse();
-        return res;
-    }
 
     /////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////

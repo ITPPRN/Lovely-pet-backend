@@ -7,7 +7,6 @@ import com.example.lovelypet.entity.RoomType;
 import com.example.lovelypet.exception.BaseException;
 import com.example.lovelypet.exception.HotelException;
 import com.example.lovelypet.exception.RoomException;
-import com.example.lovelypet.mapper.RoomMapper;
 import com.example.lovelypet.model.RoomRequest;
 import com.example.lovelypet.model.RoomResponseList;
 import com.example.lovelypet.service.HotelService;
@@ -30,14 +29,12 @@ public class RoomBusiness {
 
     private final PhotoRoomBusiness photoRoomBusiness;
 
-    private final RoomMapper roomMapper;
 
-    public RoomBusiness(RoomService roomService, RoomTypeService roomTypeService, HotelService hotelService, PhotoRoomBusiness photoRoomBusiness, RoomMapper roomMapper) {
+    public RoomBusiness(RoomService roomService, RoomTypeService roomTypeService, HotelService hotelService, PhotoRoomBusiness photoRoomBusiness) {
         this.roomService = roomService;
         this.roomTypeService = roomTypeService;
         this.hotelService = hotelService;
         this.photoRoomBusiness = photoRoomBusiness;
-        this.roomMapper = roomMapper;
     }
 
     public String addRoom(RoomRequest request) throws BaseException {

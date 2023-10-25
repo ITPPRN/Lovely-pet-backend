@@ -1,6 +1,5 @@
 package com.example.lovelypet.service;
 
-import com.example.lovelypet.entity.PhotoHotel;
 import com.example.lovelypet.entity.PhotoRoom;
 import com.example.lovelypet.entity.Room;
 import com.example.lovelypet.exception.BaseException;

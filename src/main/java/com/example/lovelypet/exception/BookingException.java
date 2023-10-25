@@ -22,6 +22,10 @@ public class BookingException extends BaseException {
         return new BookingException("create.petId.null");
     }
 
+    public static BookingException createTotalPriceNull() {
+        return new BookingException("create.total.price.null");
+    }
+
     public static BookingException createBookingStartDateNull() {
         return new BookingException("create.bookingStartDate.null");
     }

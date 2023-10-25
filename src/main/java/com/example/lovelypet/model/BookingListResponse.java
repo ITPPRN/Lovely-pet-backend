@@ -17,8 +17,8 @@ public class BookingListResponse {
     private String payment;
     private String state;
     private int roomNumber;
-    private int petId;
-    private int userId;
+    private PetProfileResponse pet;
+    private UseProfile user;
     private int hotelId;
     private double price;
 

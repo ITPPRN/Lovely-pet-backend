@@ -7,7 +7,6 @@ import com.example.lovelypet.exception.BaseException;
 import com.example.lovelypet.exception.FileException;
 import com.example.lovelypet.exception.PetException;
 import com.example.lovelypet.exception.UserException;
-import com.example.lovelypet.mapper.PetMapper;
 import com.example.lovelypet.model.AddPetRequest;
 import com.example.lovelypet.model.PetProfileResponse;
 import com.example.lovelypet.model.UpdatePetRequest;
@@ -39,15 +38,13 @@ import java.util.*;
 public class PetBusiness {
 
     private final PetService petService;
-    private final PetMapper petMapper;
     private final PetTypeService petTypeService;
     private final UserService userService;
     private final String path = "src/main/resources/imageUpload/imagePet";
     public SimpleDateFormat formatDate = new SimpleDateFormat("dd/MM/yyyy");
 
-    public PetBusiness(PetService petService, PetMapper petMapper, PetTypeService petTypeService, UserService userService) {
+    public PetBusiness(PetService petService, PetTypeService petTypeService, UserService userService) {
         this.petService = petService;
-        this.petMapper = petMapper;
         this.petTypeService = petTypeService;
         this.userService = userService;
     }
@@ -331,7 +328,8 @@ public class PetBusiness {
         data.setId(pet.getId());
         data.setPetName(pet.getPetName());
         data.setBirthday(formatDate.format(pet.getBirthday()));
-        data.setPetTypeId(type.getName());
+        data.setPetTypeId(type.getId());
+        data.setPetTyName(type.getName());
         data.setUserOwner(user.getId());
         data.setPhotoPath(pet.getPetPhoto());
         return data;
@@ -346,7 +344,8 @@ public class PetBusiness {
             data.setId(pet.getId());
             data.setPetName(pet.getPetName());
             data.setBirthday(formatDate.format(pet.getBirthday()));
-            data.setPetTypeId(pet.getPetTypeId().getName());
+            data.setPetTypeId(pet.getPetTypeId().getId());
+            data.setPetTyName(pet.getPetTypeId().getName());
             data.setUserOwner(user.getId());
             data.setPhotoPath(pet.getPetPhoto());
             response.add(data);

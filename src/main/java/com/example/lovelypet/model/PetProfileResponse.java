@@ -8,7 +8,8 @@ public class PetProfileResponse {
     private int id;
     private String petName;
     private String birthday;
-    private String petTypeId;
+    private int petTypeId;
+    private String petTyName;
     private int userOwner;
     private String photoPath;
 

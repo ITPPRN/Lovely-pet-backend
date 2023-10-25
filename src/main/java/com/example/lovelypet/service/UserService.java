@@ -1,13 +1,9 @@
 package com.example.lovelypet.service;
 
-import com.example.lovelypet.entity.Hotel;
 import com.example.lovelypet.entity.User;
 import com.example.lovelypet.exception.BaseException;
 import com.example.lovelypet.exception.UserException;
 import com.example.lovelypet.repository.UserRepository;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -89,24 +85,24 @@ public class UserService {
 
 
     public Optional<User> findById(int idU) throws BaseException {
-        Optional<User> user = repository.findById(idU);
-        return user;
+        return repository.findById(idU);
+
     }
 
     public Optional<User> findByEmail(String email) throws BaseException {
-        Optional<User> user = repository.findByEmail(email);
-        return user;
+        return repository.findByEmail(email);
+
     }
 
     public Optional<User> findByToken(String token) throws BaseException {
-        Optional<User> user = repository.findByToken(token);
-        return user;
+        return repository.findByToken(token);
+
     }
 
 
     public Optional<User> findLog(String userName) throws BaseException {
-        Optional<User> user = repository.findByUserName(userName);
-        return user;
+        return repository.findByUserName(userName);
+
     }
 
 

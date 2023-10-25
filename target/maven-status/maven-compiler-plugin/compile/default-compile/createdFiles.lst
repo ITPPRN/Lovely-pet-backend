@@ -114,6 +114,7 @@ com\example\lovelypet\repository\PhotoRoomRepository.class
 com\example\lovelypet\entity\Pet.class
 com\example\lovelypet\service\ReviewService.class
 com\example\lovelypet\model\ConsiderBookingRequest.class
+com\example\lovelypet\model\UseProfile.class
 com\example\lovelypet\model\RoomResponseList.class
 com\example\lovelypet\api\HotelApi.class
 com\example\lovelypet\mapper\PetMapper.class

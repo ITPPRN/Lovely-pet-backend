@@ -67,7 +67,7 @@ public class ReviewBusiness {
     public List<ReviewResponse> listReview(ReviewRequest id) throws BaseException {
         Optional<Hotel> optHotel = hotelService.findById(id.getId());
         if (optHotel.isEmpty()) {
-            HotelException.notFound();
+            throw HotelException.notFound();
         }
         Hotel hotel = optHotel.get();
         List<Review> reviews = reviewService.findByHotelId(hotel);

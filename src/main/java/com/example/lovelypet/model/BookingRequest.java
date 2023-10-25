@@ -14,6 +14,7 @@ public class BookingRequest {
     private MultipartFile file;
     private int idBooking;
     private int additionService;
+    private double totalPrice;
 
     private int idPhoto;
 

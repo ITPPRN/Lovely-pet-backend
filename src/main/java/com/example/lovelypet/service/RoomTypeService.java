@@ -1,6 +1,5 @@
 package com.example.lovelypet.service;
 
-import com.example.lovelypet.entity.PetType;
 import com.example.lovelypet.entity.RoomType;
 import com.example.lovelypet.repository.RoomTypeRepository;
 import org.springframework.stereotype.Service;

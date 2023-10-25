@@ -54,7 +54,7 @@ public class BookingApi {
 
     @PostMapping("/list-booking-all-for-user")
     public ResponseEntity<List<BookingListResponse>> listBookingAllForUser() throws BaseException {
-        List<BookingListResponse> response = bookingBusiness.allListBooking();
+        List<BookingListResponse> response = bookingBusiness.allListBookingForUser();
         return ResponseEntity.ok(response);
     }
 
