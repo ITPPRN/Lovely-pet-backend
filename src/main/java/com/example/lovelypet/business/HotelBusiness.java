@@ -48,7 +48,9 @@ public class HotelBusiness {
                 request.getLocation(),
                 token,
                 nextXMinute(30),
-                request.getAdditionalNotes()
+                request.getAdditionalNotes(),
+                request.getLatitude(),
+                request.getLongitude()
 
         );
         HotelRegisterResponse hRes = hotelMapper.toHotelRegisterResponse(hotel);

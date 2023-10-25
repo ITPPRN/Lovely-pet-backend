@@ -32,7 +32,9 @@ public class HotelService {
             String location,
             String token,
             Date tokenExpireDate,
-            String additionalNotes
+            String additionalNotes,
+            double latitude,
+            double longitude
     ) throws BaseException {
 
         //validate
@@ -45,6 +47,7 @@ public class HotelService {
         if (Objects.isNull(hotelName)) {
             throw HotelException.createNameNull();
         }
+
         if (Objects.isNull(hotelTel)) {
             throw HotelException.createTelNull();
         }
@@ -80,6 +83,8 @@ public class HotelService {
             if (Objects.nonNull(additionalNotes)) {
                 entity.setAdditionalNotes(additionalNotes);
             }
+            entity.setLatitude(latitude);
+            entity.setLongitude(longitude);
             return repository.save(entity);
         }
     }

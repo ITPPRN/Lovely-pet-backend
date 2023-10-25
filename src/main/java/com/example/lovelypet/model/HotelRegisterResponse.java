@@ -12,5 +12,7 @@ public class HotelRegisterResponse {
     private String openState;
     private String verify;
     private String email;
+    private double latitude;
+    private double longitude;
 
 }

@@ -13,5 +13,7 @@ public class HotelResponse {
     private String verify;
     private String email;
     private String additionalNotes;
+    private double latitude;
+    private double longitude;
 
 }

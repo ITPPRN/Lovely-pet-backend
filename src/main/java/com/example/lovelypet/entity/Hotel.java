@@ -40,6 +40,12 @@ public class Hotel extends BaseEntity {
     @Column(nullable = false, length = 60)
     private String password;
 
+    @Column(nullable = false)
+    private double latitude;
+
+    @Column(nullable = false)
+    private double longitude;
+
     @Column(nullable = false, length = 120, unique = true)
     private String email;
 
