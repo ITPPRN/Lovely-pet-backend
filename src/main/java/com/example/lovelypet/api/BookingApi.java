@@ -8,10 +8,8 @@ import com.example.lovelypet.model.BookingRequest;
 import com.example.lovelypet.model.ConsiderBookingRequest;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
@@ -29,6 +27,13 @@ public class BookingApi {
     @PostMapping("/reserve")
     public ResponseEntity<String> reserve(@RequestBody BookingRequest request) throws BaseException, IOException {
         String response = bookingBusiness.reserve(request);
+        return ResponseEntity.ok(response);
+    }
+
+    //อัพรูป
+    @PostMapping("/upload-slip")
+    public ResponseEntity<String> uploadSlipForBooking(@RequestParam("file") MultipartFile file,@RequestParam int id) throws BaseException, IOException {
+        String response = bookingBusiness.uploadSlip(file,id);
         return ResponseEntity.ok(response);
     }
 

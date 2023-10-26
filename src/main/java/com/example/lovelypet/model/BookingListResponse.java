@@ -21,5 +21,6 @@ public class BookingListResponse {
     private UseProfile user;
     private int hotelId;
     private double price;
+    AdditionalServiceResponse addSer;
 
 }

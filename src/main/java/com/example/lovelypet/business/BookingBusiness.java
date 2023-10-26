@@ -102,10 +102,7 @@ public class BookingBusiness {
         //date now
         LocalDateTime date = LocalDateTime.now();
 
-        String fileImage = null;
-        if (request.getFile() != null) {
-            fileImage = uploadImage(request.getFile());
-        }
+
 
 
         if (request.getTotalPrice() == 0) {
@@ -123,12 +120,26 @@ public class BookingBusiness {
                 endDate,
                 date,
                 request.getPaymentMethod(),
-                fileImage,
                 additionalServices,
                 request.getTotalPrice()
         );
 
         return "Wait for the approval of booking number " + response.getId();
+    }
+
+
+    public String uploadSlip(MultipartFile file,int id) throws BaseException, IOException {
+
+        Optional<Booking> optBooking = bookingService.findById(id);
+        if (optBooking.isEmpty()) {
+            throw BookingException.notFound();
+        }
+        Booking booking = optBooking.get();
+        String fileName = uploadImage(file);
+        booking.setPayment(fileName);
+        bookingService.updateBooking(booking);
+
+        return "Wait for the approval of booking number " + booking.getId();
     }
 
     public String uploadImage(MultipartFile file) throws IOException, BaseException {
@@ -205,7 +216,7 @@ public class BookingBusiness {
         if (images.isEmpty()) {
             throw BookingException.notFound();
         }
-        return path + File.separator + images.get().getPayment();
+        return images.get().getPayment();
     }
 
     //get data
@@ -289,6 +300,10 @@ public class BookingBusiness {
             use.setEmail(booking.getUserId().getEmail());
             use.setPhoneNumber(booking.getUserId().getPhoneNumber());
 
+            AdditionalServiceResponse addSer = new AdditionalServiceResponse();
+            addSer.setId(booking.getAdditionalServiceId().getId());
+            addSer.setName(booking.getAdditionalServiceId().getName());
+            addSer.setPrice(booking.getAdditionalServiceId().getPrice());
 
             BookingListResponse data = new BookingListResponse();
             data.setId(booking.getId());
@@ -303,6 +318,7 @@ public class BookingBusiness {
             data.setUser(use);
             data.setPrice(booking.getTotalPrice());
             data.setPet(petProfile);
+            data.setAddSer(addSer);
             response.add(data);
         }
         return response;
@@ -325,6 +341,11 @@ public class BookingBusiness {
         use.setEmail(booking.getUserId().getEmail());
         use.setPhoneNumber(booking.getUserId().getPhoneNumber());
 
+        AdditionalServiceResponse addSer = new AdditionalServiceResponse();
+        addSer.setId(booking.getAdditionalServiceId().getId());
+        addSer.setName(booking.getAdditionalServiceId().getName());
+        addSer.setPrice(booking.getAdditionalServiceId().getPrice());
+
 
         BookingListResponse data = new BookingListResponse();
         data.setId(booking.getId());
@@ -339,6 +360,7 @@ public class BookingBusiness {
         data.setUser(use);
         data.setPrice(booking.getTotalPrice());
         data.setPet(petProfile);
+        data.setAddSer(addSer);
         return data;
     }
 
@@ -419,19 +441,6 @@ public class BookingBusiness {
                     throw BookingException.updatePaymentMethodFail();
                 }
                 booking.setPaymentMethod(request.getPaymentMethod());
-            }
-            if (Objects.nonNull(request.getFile())) {
-                if (!booking.getPaymentMethod().equals("cash payment")) {
-                    String fileImage;
-                    if (!request.getFile().isEmpty()) {
-                        fileImage = uploadImage(request.getFile());
-                        booking.setPayment(fileImage);
-                    } else {
-                        throw BookingException.createBookingPaymentNull();
-                    }
-                } else {
-                    throw BookingException.wrongPaymentMethod();
-                }
             }
             bookingService.updateBooking(booking);
             return "Update booking No." + booking.getId() + " completed.";

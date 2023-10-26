@@ -11,7 +11,6 @@ public class BookingRequest {
     private String start;
     private String end;
     private String paymentMethod;
-    private MultipartFile file;
     private int idBooking;
     private int additionService;
     private double totalPrice;

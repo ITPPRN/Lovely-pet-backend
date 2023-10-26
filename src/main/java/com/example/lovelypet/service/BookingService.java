@@ -31,7 +31,6 @@ public class BookingService {
             Date bookingEndDate,
             LocalDateTime date,
             String paymentMethod,
-            String payment,
             AdditionalServices additionalServices,
             double totalPrice
 
@@ -77,16 +76,6 @@ public class BookingService {
         entity.setBookingEndDate(bookingEndDate);
         entity.setDate(date);
         entity.setPaymentMethod(paymentMethod);
-        if (!paymentMethod.equals("cash payment")) {
-            if (Objects.isNull(payment)) {
-                throw BookingException.createBookingPaymentNull();
-            }
-            entity.setPayment(payment);
-        } else {
-            if (Objects.nonNull(payment)) {
-                throw BookingException.wrongPaymentMethod();
-            }
-        }
         entity.setState("waite");
         if (Objects.nonNull(additionalServices)) {
             entity.setAdditionalServiceId(additionalServices);
