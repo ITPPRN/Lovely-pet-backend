@@ -7,6 +7,7 @@ import com.example.lovelypet.exception.BaseException;
 import com.example.lovelypet.exception.HotelException;
 import com.example.lovelypet.exception.ServiceHistoryException;
 import com.example.lovelypet.exception.UserException;
+import com.example.lovelypet.model.AdditionalServiceResponse;
 import com.example.lovelypet.model.BookingListResponse;
 import com.example.lovelypet.model.PetProfileResponse;
 import com.example.lovelypet.model.UseProfile;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 
@@ -79,6 +81,13 @@ public class ServiceHistoryBusiness {
                 use.setEmail(booking.getUserId().getEmail());
                 use.setPhoneNumber(booking.getUserId().getPhoneNumber());
 
+                AdditionalServiceResponse addSer = new AdditionalServiceResponse();
+                if (Objects.nonNull(booking.getBookingId().getAdditionalServiceId())) {
+                    addSer.setId(booking.getBookingId().getAdditionalServiceId().getId());
+                    addSer.setName(booking.getBookingId().getAdditionalServiceId().getName());
+                    addSer.setPrice(booking.getBookingId().getAdditionalServiceId().getPrice());
+                }
+
 
                 BookingListResponse data = new BookingListResponse();
                 data.setId(booking.getBookingId().getId());
@@ -92,6 +101,7 @@ public class ServiceHistoryBusiness {
                 data.setPet(petProfile);
                 data.setHotelId(booking.getBookingId().getHotelId().getId());
                 data.setUser(use);
+                data.setAddSer(addSer);
                 response.add(data);
             }
             return response;
@@ -126,6 +136,13 @@ public class ServiceHistoryBusiness {
                 use.setEmail(booking.getUserId().getEmail());
                 use.setPhoneNumber(booking.getUserId().getPhoneNumber());
 
+                AdditionalServiceResponse addSer = new AdditionalServiceResponse();
+                if (Objects.nonNull(booking.getBookingId().getAdditionalServiceId())) {
+                    addSer.setId(booking.getBookingId().getAdditionalServiceId().getId());
+                    addSer.setName(booking.getBookingId().getAdditionalServiceId().getName());
+                    addSer.setPrice(booking.getBookingId().getAdditionalServiceId().getPrice());
+                }
+
 
                 BookingListResponse data = new BookingListResponse();
                 data.setId(booking.getBookingId().getId());
@@ -139,6 +156,7 @@ public class ServiceHistoryBusiness {
                 data.setPet(petProfile);
                 data.setHotelId(booking.getBookingId().getHotelId().getId());
                 data.setUser(use);
+                data.setAddSer(addSer);
                 response2.add(data);
             }
             return response2;

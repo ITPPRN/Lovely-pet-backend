@@ -103,8 +103,6 @@ public class BookingBusiness {
         LocalDateTime date = LocalDateTime.now();
 
 
-
-
         if (request.getTotalPrice() == 0) {
             throw BookingException.createTotalPriceNull();
         }
@@ -128,7 +126,7 @@ public class BookingBusiness {
     }
 
 
-    public String uploadSlip(MultipartFile file,int id) throws BaseException, IOException {
+    public String uploadSlip(MultipartFile file, int id) throws BaseException, IOException {
 
         Optional<Booking> optBooking = bookingService.findById(id);
         if (optBooking.isEmpty()) {
@@ -301,9 +299,11 @@ public class BookingBusiness {
             use.setPhoneNumber(booking.getUserId().getPhoneNumber());
 
             AdditionalServiceResponse addSer = new AdditionalServiceResponse();
-            addSer.setId(booking.getAdditionalServiceId().getId());
-            addSer.setName(booking.getAdditionalServiceId().getName());
-            addSer.setPrice(booking.getAdditionalServiceId().getPrice());
+            if (Objects.nonNull(booking.getAdditionalServiceId())) {
+                addSer.setId(booking.getAdditionalServiceId().getId());
+                addSer.setName(booking.getAdditionalServiceId().getName());
+                addSer.setPrice(booking.getAdditionalServiceId().getPrice());
+            }
 
             BookingListResponse data = new BookingListResponse();
             data.setId(booking.getId());
@@ -342,9 +342,11 @@ public class BookingBusiness {
         use.setPhoneNumber(booking.getUserId().getPhoneNumber());
 
         AdditionalServiceResponse addSer = new AdditionalServiceResponse();
-        addSer.setId(booking.getAdditionalServiceId().getId());
-        addSer.setName(booking.getAdditionalServiceId().getName());
-        addSer.setPrice(booking.getAdditionalServiceId().getPrice());
+        if (Objects.nonNull(booking.getAdditionalServiceId())) {
+            addSer.setId(booking.getAdditionalServiceId().getId());
+            addSer.setName(booking.getAdditionalServiceId().getName());
+            addSer.setPrice(booking.getAdditionalServiceId().getPrice());
+        }
 
 
         BookingListResponse data = new BookingListResponse();
