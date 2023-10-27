@@ -298,8 +298,9 @@ public class BookingBusiness {
             use.setEmail(booking.getUserId().getEmail());
             use.setPhoneNumber(booking.getUserId().getPhoneNumber());
 
-            AdditionalServiceResponse addSer = new AdditionalServiceResponse();
+            AdditionalServiceResponse addSer = null;
             if (Objects.nonNull(booking.getAdditionalServiceId())) {
+                addSer = new AdditionalServiceResponse();
                 addSer.setId(booking.getAdditionalServiceId().getId());
                 addSer.setName(booking.getAdditionalServiceId().getName());
                 addSer.setPrice(booking.getAdditionalServiceId().getPrice());
@@ -315,6 +316,12 @@ public class BookingBusiness {
             data.setPayment(booking.getPayment());
             data.setState(booking.getState());
             data.setHotelId(booking.getHotelId().getId());
+            data.setNameHotel(booking.getHotelId().getHotelName());
+            data.setLatitude(booking.getHotelId().getLatitude());
+            data.setLongitude(booking.getHotelId().getLongitude());
+            data.setTelHotel(booking.getHotelId().getHotelTel());
+            data.setEmail(booking.getHotelId().getEmail());
+            data.setFeedback(booking.isFeedback());
             data.setUser(use);
             data.setPrice(booking.getTotalPrice());
             data.setPet(petProfile);
@@ -341,8 +348,9 @@ public class BookingBusiness {
         use.setEmail(booking.getUserId().getEmail());
         use.setPhoneNumber(booking.getUserId().getPhoneNumber());
 
-        AdditionalServiceResponse addSer = new AdditionalServiceResponse();
+        AdditionalServiceResponse addSer = null;
         if (Objects.nonNull(booking.getAdditionalServiceId())) {
+            addSer = new AdditionalServiceResponse();
             addSer.setId(booking.getAdditionalServiceId().getId());
             addSer.setName(booking.getAdditionalServiceId().getName());
             addSer.setPrice(booking.getAdditionalServiceId().getPrice());
@@ -359,6 +367,12 @@ public class BookingBusiness {
         data.setPayment(booking.getPayment());
         data.setState(booking.getState());
         data.setHotelId(booking.getHotelId().getId());
+        data.setNameHotel(booking.getHotelId().getHotelName());
+        data.setLatitude(booking.getHotelId().getLatitude());
+        data.setLongitude(booking.getHotelId().getLongitude());
+        data.setTelHotel(booking.getHotelId().getHotelTel());
+        data.setEmail(booking.getHotelId().getEmail());
+        data.setFeedback(booking.isFeedback());
         data.setUser(use);
         data.setPrice(booking.getTotalPrice());
         data.setPet(petProfile);

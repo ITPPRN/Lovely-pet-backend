@@ -1,13 +1,16 @@
 package com.example.lovelypet.business;
 
+import com.example.lovelypet.entity.Booking;
 import com.example.lovelypet.entity.Hotel;
 import com.example.lovelypet.entity.Review;
 import com.example.lovelypet.entity.User;
 import com.example.lovelypet.exception.BaseException;
+import com.example.lovelypet.exception.BookingException;
 import com.example.lovelypet.exception.HotelException;
 import com.example.lovelypet.exception.UserException;
 import com.example.lovelypet.model.ReviewRequest;
 import com.example.lovelypet.model.ReviewResponse;
+import com.example.lovelypet.service.BookingService;
 import com.example.lovelypet.service.HotelService;
 import com.example.lovelypet.service.ReviewService;
 import com.example.lovelypet.service.UserService;
@@ -28,10 +31,13 @@ public class ReviewBusiness {
 
     private final ReviewService reviewService;
 
-    public ReviewBusiness(HotelService hotelService, UserService userService, ReviewService reviewService) {
+    private final BookingService bookingService;
+
+    public ReviewBusiness(HotelService hotelService, UserService userService, ReviewService reviewService, BookingService bookingService) {
         this.hotelService = hotelService;
         this.userService = userService;
         this.reviewService = reviewService;
+        this.bookingService = bookingService;
     }
 
     public String satisfaction(ReviewRequest request) throws BaseException {
@@ -55,6 +61,15 @@ public class ReviewBusiness {
             throw HotelException.notFound();
         }
         Hotel hotel = optHotel.get();
+
+        Optional<Booking> optBooking = bookingService.findById(request.getBookingId());
+        if (optBooking.isEmpty()) {
+            throw BookingException.notFound();
+        }
+        Booking booking = optBooking.get();
+
+        booking.setFeedback(true);
+        bookingService.updateBooking(booking);
 
         reviewService.create(request.getRating(), request.getComment(), hotel, user);
         float rating = reviewService.calculateAverageScore(hotel);

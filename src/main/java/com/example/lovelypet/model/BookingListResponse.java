@@ -1,14 +1,12 @@
 package com.example.lovelypet.model;
 
-import com.example.lovelypet.entity.Pet;
-import com.example.lovelypet.entity.User;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Data
 public class BookingListResponse {
+    AdditionalServiceResponse addSer;
     private int id;
     private String bookingStartDate;
     private String bookingEndDate;
@@ -20,7 +18,12 @@ public class BookingListResponse {
     private PetProfileResponse pet;
     private UseProfile user;
     private int hotelId;
+    private String nameHotel;
+    private double latitude;
+    private double longitude;
+    private String telHotel;
+    private String email;
+    private boolean feedback;
     private double price;
-    AdditionalServiceResponse addSer;
 
 }

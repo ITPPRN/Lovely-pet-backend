@@ -81,8 +81,9 @@ public class ServiceHistoryBusiness {
                 use.setEmail(booking.getUserId().getEmail());
                 use.setPhoneNumber(booking.getUserId().getPhoneNumber());
 
-                AdditionalServiceResponse addSer = new AdditionalServiceResponse();
+                AdditionalServiceResponse addSer = null;
                 if (Objects.nonNull(booking.getBookingId().getAdditionalServiceId())) {
+                    addSer = new AdditionalServiceResponse();
                     addSer.setId(booking.getBookingId().getAdditionalServiceId().getId());
                     addSer.setName(booking.getBookingId().getAdditionalServiceId().getName());
                     addSer.setPrice(booking.getBookingId().getAdditionalServiceId().getPrice());
@@ -100,6 +101,12 @@ public class ServiceHistoryBusiness {
                 data.setState(booking.getBookingId().getState());
                 data.setPet(petProfile);
                 data.setHotelId(booking.getBookingId().getHotelId().getId());
+                data.setNameHotel(booking.getBookingId().getHotelId().getHotelName());
+                data.setLatitude(booking.getBookingId().getHotelId().getLatitude());
+                data.setLongitude(booking.getBookingId().getHotelId().getLongitude());
+                data.setTelHotel(booking.getBookingId().getHotelId().getHotelTel());
+                data.setEmail(booking.getBookingId().getHotelId().getEmail());
+                data.setFeedback(booking.getBookingId().isFeedback());
                 data.setUser(use);
                 data.setAddSer(addSer);
                 response.add(data);
@@ -136,8 +143,9 @@ public class ServiceHistoryBusiness {
                 use.setEmail(booking.getUserId().getEmail());
                 use.setPhoneNumber(booking.getUserId().getPhoneNumber());
 
-                AdditionalServiceResponse addSer = new AdditionalServiceResponse();
+                AdditionalServiceResponse addSer = null;
                 if (Objects.nonNull(booking.getBookingId().getAdditionalServiceId())) {
+                    addSer = new AdditionalServiceResponse();
                     addSer.setId(booking.getBookingId().getAdditionalServiceId().getId());
                     addSer.setName(booking.getBookingId().getAdditionalServiceId().getName());
                     addSer.setPrice(booking.getBookingId().getAdditionalServiceId().getPrice());
@@ -155,6 +163,12 @@ public class ServiceHistoryBusiness {
                 data.setState(booking.getBookingId().getState());
                 data.setPet(petProfile);
                 data.setHotelId(booking.getBookingId().getHotelId().getId());
+                data.setNameHotel(booking.getBookingId().getHotelId().getHotelName());
+                data.setLatitude(booking.getBookingId().getHotelId().getLatitude());
+                data.setLongitude(booking.getBookingId().getHotelId().getLongitude());
+                data.setTelHotel(booking.getBookingId().getHotelId().getHotelTel());
+                data.setEmail(booking.getBookingId().getHotelId().getEmail());
+                data.setFeedback(booking.getBookingId().isFeedback());
                 data.setUser(use);
                 data.setAddSer(addSer);
                 response2.add(data);

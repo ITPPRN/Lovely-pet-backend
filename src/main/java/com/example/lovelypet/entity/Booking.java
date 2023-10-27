@@ -74,4 +74,7 @@ public class Booking extends BaseEntity {
     private ServiceHistory serviceHistory;
 
 
+    private boolean feedback;
+
+
 }
