@@ -46,4 +46,18 @@ SET open_state = 'OPEN',
     activated = true
 WHERE id <= 1;
 
+//delete table
+DROP TABLE name;
+
+//if dependent 
+DROP TABLE booking CASCADE;
+
+
+
+// maven
+ //install on ubuntu server
+ sudo apt update
+ sudo apt install maven
+//build ja file
+mvn clean install
 

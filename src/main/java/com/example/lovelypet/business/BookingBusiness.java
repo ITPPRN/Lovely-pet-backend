@@ -411,6 +411,7 @@ public class BookingBusiness {
         }
         if (state.equals("complete")) {
             //service history record
+            roomService.update(booking.getRoomId().getId(), null, 0, "empty", null);
             serviceHistoryService.create(updateBooking.getHotelId(), updateBooking.getUserId(), updateBooking);
             response = "Completed No." + updateBooking.getId() + " Booking service.";
         }
@@ -476,6 +477,7 @@ public class BookingBusiness {
         }
         Booking booking = opt.get();
         booking.setState("cancel");
+        roomService.update(booking.getRoomId().getId(), null, 0, "empty", null);
         bookingService.updateBooking(booking);
         return "Booking No." + booking.getId() + " has been cancelled.";
     }
@@ -507,6 +509,7 @@ public class BookingBusiness {
         }
 
         bookingService.deleteById(id.getIdBooking());
+        roomService.update(booking.getRoomId().getId(), null, 0, "empty", null);
         return "Booking deleted";
     }
 
@@ -569,6 +572,7 @@ public class BookingBusiness {
             fileImage = uploadImage(request.getFile());
         }
 
+        roomService.update(optRoom.get().getId(), null, 0, "unavailable", null);
         //add pet to database
         Booking response = bookingService.createByClinic(
                 request.getCustomerName(),
