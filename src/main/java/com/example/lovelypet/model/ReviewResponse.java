@@ -13,5 +13,8 @@ public class ReviewResponse {
     private float rating;
     private String comment;
     private int hotelId;
+    private String nameHotel;
     private int userId;
+    private String nameUser;
+    private String imageUser;
 }

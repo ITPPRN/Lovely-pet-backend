@@ -229,6 +229,19 @@ public class HotelBusiness {
         return optHotel.get();
     }
 
+    public HotelResponse listHotelById(int id) throws BaseException {
+        Optional<Hotel> opt = hotelService.findById(id);
+        if (opt.isEmpty()) {
+            throw HotelException.notFound();
+        }
+
+        Hotel hotel = opt.get();
+
+        return hotelMapper.toHotelResponse(hotel);
+
+
+    }
+
     //get hotel
     public List<HotelResponse> listHotelByState2() throws BaseException {
         List<Hotel> hotels = hotelService.findByStateVerifyAndStateOpen("approve", "OPEN");

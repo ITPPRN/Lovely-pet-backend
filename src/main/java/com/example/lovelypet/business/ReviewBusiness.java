@@ -99,6 +99,9 @@ public class ReviewBusiness {
             data.setRating(review.getRating());
             data.setUserId(review.getUserId().getId());
             data.setHotelId(review.getHotelId().getId());
+            data.setNameHotel(review.getHotelId().getHotelName());
+            data.setNameUser(review.getUserId().getName());
+            data.setImageUser(review.getUserId().getUserPhoto());
             response.add(data);
         }
         return response;

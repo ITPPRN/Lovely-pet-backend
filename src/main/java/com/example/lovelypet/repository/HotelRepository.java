@@ -23,6 +23,7 @@ public interface HotelRepository extends CrudRepository<Hotel, String> {
 
     List<Hotel> findByOpenStateAndVerifyOrderByRatingDesc(String stateOpen, String stateVerify);
 
+
     List<Hotel> findByVerify(String stateVerify);
 
     void deleteById(int id);

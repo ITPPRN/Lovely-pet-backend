@@ -38,6 +38,13 @@ public class HotelApi {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/get-hotel-by-id")
+    public ResponseEntity<HotelResponse> GetHotelById(@RequestParam int id) throws BaseException {
+        HotelResponse response = hotelBusiness.listHotelById(id);
+        return ResponseEntity.ok(response);
+    }
+
+
     @PostMapping("/resend-activate-email")
     public ResponseEntity<Void> resendActivationEmail(@RequestBody ResendActivateEmailRequest request) throws BaseException {
         hotelBusiness.resendActivationEmail(request);
