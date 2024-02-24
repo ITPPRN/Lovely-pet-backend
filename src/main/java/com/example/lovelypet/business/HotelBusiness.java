@@ -219,6 +219,14 @@ public class HotelBusiness {
         return "Successful password reset";
     }
 
+
+    public   HotelResponse decodeToken() throws BaseException {
+        Hotel h = getCurrentId();
+        HotelResponse response = new HotelResponse();
+        response.setId(h.getId());
+        return response;
+    }
+
     //get id on token
     private Hotel getCurrentId() throws BaseException {
         Optional<String> opt = SecurityUtil.getCurrentUserId();

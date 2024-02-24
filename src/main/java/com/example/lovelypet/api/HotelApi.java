@@ -44,6 +44,13 @@ public class HotelApi {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/get-by-token")
+    public ResponseEntity<HotelResponse> GetHotelByToken() throws BaseException {
+        HotelResponse response = hotelBusiness.decodeToken();
+        return ResponseEntity.ok(response);
+    }
+
+
 
     @PostMapping("/resend-activate-email")
     public ResponseEntity<Void> resendActivationEmail(@RequestBody ResendActivateEmailRequest request) throws BaseException {
