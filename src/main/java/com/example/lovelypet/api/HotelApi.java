@@ -108,6 +108,14 @@ public class HotelApi {
         return ResponseEntity.ok(response);
     }
 
+
+
+    @PostMapping("/list-hotel-verify-state")
+    public ResponseEntity<List<HotelResponse>> listHotelToVerify(@RequestBody PhotoHotelRequest state) throws BaseException {
+        List<HotelResponse> response = hotelBusiness.getHotelByVerifyState(state);
+        return ResponseEntity.ok(response);
+    }
+
     @PostMapping("/get-hotel-to-verify")
     public ResponseEntity<List<HotelResponse>> getHotelToVerify() throws BaseException {
         List<HotelResponse> response = hotelBusiness.getHotelByVerify();

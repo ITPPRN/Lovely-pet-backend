@@ -125,6 +125,8 @@ public class HotelService {
         return repository.findByOpenStateAndVerifyOrderByRatingDesc(stateOpen, stateVerify);
     }
 
+
+
     public List<Hotel> findByVerify(String stateVerify) {
         return repository.findByVerify(stateVerify);
     }

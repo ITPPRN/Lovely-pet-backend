@@ -14,7 +14,7 @@ docker run -d --name lovelypetlocal -p 8080:8080 -e SECRET_DB_HOST=192.168.33.12
 docker run -d --name lovely-pet -p 8080:8080 -e SECRET_DB_HOST=192.168.105.124 -e SECRET_DB_PORT=5432 -e DB_USERNAME=postgres -e SECRET_DB_PASS=Tee192414+ -e SECRET_REDIS_HOST=192.168.105.124 -e SECRET_REDIS_PORT=6379 --restart=unless-stopped app:latest
 
 //รันเมลล์ด้วย
-docker run -d --name lovely-pet -p 8080:8080 -e SECRET_MAIL_HOST=smtp.gmail.com -e SECRET_MAIL_PORT=587    -e SECRET_DB_HOST=192.168.1.102 -e SECRET_DB_PORT=5432 -e DB_USERNAME=postgres -e SECRET_DB_PASS=Tee192414+ -e SECRET_REDIS_HOST=192.168.1.102 -e SECRET_REDIS_PORT=6379 --restart=unless-stopped app:latest
+docker run -d --name lovely-pet -p 8089:8080 -e SECRET_MAIL_HOST=smtp.gmail.com -e SECRET_MAIL_PORT=587    -e SECRET_DB_HOST=10.101.106.156 -e SECRET_DB_PORT=5432 -e DB_USERNAME=postgres -e SECRET_DB_PASS=Tee192414+ -e SECRET_REDIS_HOST=10.101.106.156 -e SECRET_REDIS_PORT=6379 --restart=unless-stopped app:latest
 
 
 //view logs

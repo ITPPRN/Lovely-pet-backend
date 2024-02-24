@@ -8,4 +8,8 @@ public class PhotoHotelRequest {
     private String name;
     private int idHotel;
 
+
+
+    private String state;
+
 }

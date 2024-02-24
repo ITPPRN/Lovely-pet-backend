@@ -12,6 +12,7 @@ import com.example.lovelypet.service.TokenService;
 import com.example.lovelypet.util.SecurityUtil;
 import io.netty.util.internal.StringUtil;
 import jakarta.mail.MessagingException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -29,12 +30,15 @@ public class HotelBusiness {
 
     private final PhotoHotelBusiness photoHotelBusiness;
 
-    public HotelBusiness(HotelService hotelService, TokenService tokenService, HotelMapper hotelMapper, EmailBusiness emailBusiness, PhotoHotelBusiness photoHotelBusiness) {
+    private final PasswordEncoder passwordEncoder;
+
+    public HotelBusiness(HotelService hotelService, TokenService tokenService, HotelMapper hotelMapper, EmailBusiness emailBusiness, PhotoHotelBusiness photoHotelBusiness, PasswordEncoder passwordEncoder) {
         this.hotelService = hotelService;
         this.tokenService = tokenService;
         this.hotelMapper = hotelMapper;
         this.emailBusiness = emailBusiness;
         this.photoHotelBusiness = photoHotelBusiness;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public HotelRegisterResponse register(HotelRegisterRequest request) throws BaseException {
@@ -210,7 +214,7 @@ public class HotelBusiness {
             throw HotelException.passwordIncorrect();
 
         }
-        hotel.setPassword(updateRequest.getNewPassword());
+        hotel.setPassword(passwordEncoder.encode(updateRequest.getNewPassword()));
         hotelService.update(hotel);
         return "Successful password reset";
     }
@@ -256,6 +260,21 @@ public class HotelBusiness {
         }
         return response;
     }
+
+    public List<HotelResponse> getHotelByVerifyState(PhotoHotelRequest state) throws BaseException {
+        List<Hotel> hotels = hotelService.findByVerify(state.getState());
+        if (hotels.isEmpty()) {
+            throw HotelException.notFound();
+        }
+        List<HotelResponse> response = new ArrayList<>();
+        for (Hotel hotel : hotels) {
+
+            HotelResponse data = hotelMapper.toHotelResponse(hotel);
+            response.add(data);
+        }
+        return response;
+    }
+
 
     public List<HotelResponse> getHotelByVerify() throws BaseException {
         List<Hotel> hotels = hotelService.findByVerify("waite");

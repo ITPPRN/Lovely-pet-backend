@@ -16,6 +16,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -38,14 +39,15 @@ public class UserBusiness {
 
     private final EmailBusiness emailBusiness;
 
+    private final PasswordEncoder passwordEncoder;
     private final String path = "src/main/resources/imageUpload/imageUserProfileUpload";
 
-    public UserBusiness(UserService userService, TokenService tokenService, UserMapper userMapper, EmailBusiness emailBusiness) {
+    public UserBusiness(UserService userService, TokenService tokenService, UserMapper userMapper, EmailBusiness emailBusiness, PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.tokenService = tokenService;
         this.userMapper = userMapper;
         this.emailBusiness = emailBusiness;
-    }
+        this.passwordEncoder = passwordEncoder;    }
 
     public UserRegisterResponse register(UserRegisterRequest reqUser) throws BaseException {
         String token = SecurityUtil.generateToken();
@@ -234,7 +236,7 @@ public class UserBusiness {
             throw UserException.notFound();
         }
         User user = opt.get();
-        user.setPassWord(request.getOldPassword());
+        user.setPassWord(passwordEncoder.encode(request.getOldPassword()));
         userService.update(user);
         return "Successful password recovery";
     }
