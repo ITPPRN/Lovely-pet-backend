@@ -12,6 +12,7 @@ import com.example.lovelypet.model.RoomResponseList;
 import com.example.lovelypet.service.HotelService;
 import com.example.lovelypet.service.RoomService;
 import com.example.lovelypet.service.RoomTypeService;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -91,6 +92,33 @@ public class RoomBusiness {
         return "Successfully updated room NO." + room.getRoomNumber() + " information.";
     }
 
+
+//    public String deleteU(RoomRequest id) throws BaseException {
+//        Optional<Room> opt = roomService.findById(id.getId());
+//        if (opt.isEmpty()) {
+//            throw RoomException.notFound();
+//        }
+//        Room room = opt.get();
+//
+////        List<PhotoRoom> images = photoRoomBusiness.findByRoomId(id.getId());
+////        for (PhotoRoom image : images) {
+////            // ส่ง ID ของรูปภาพเพื่อทำการลบโดยตรง
+////            photoRoomBusiness.deleteImageById(image.getId());
+////        }
+//
+//        roomService.deleteByIdU(room.getId());
+//
+//        // ทำการตรวจสอบว่าห้องถูกลบออกจากฐานข้อมูลหรือไม่
+//        Optional<Room> confirm = roomService.findById(room.getId());
+//        if (confirm.isEmpty()) {
+//            return "Delete room number " + room.getRoomNumber() + " success";
+//        } else {
+//            return "Delete room number " + room.getRoomNumber() + " fail";
+//        }
+//    }
+
+
+    @Transactional
     public String deleteU(RoomRequest id) throws BaseException {
         Optional<Room> opt = roomService.findById(id.getId());
         if (opt.isEmpty()) {

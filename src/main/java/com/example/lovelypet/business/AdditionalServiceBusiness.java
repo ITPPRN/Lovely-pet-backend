@@ -12,6 +12,7 @@ import com.example.lovelypet.model.AdditionalServiceResponse;
 import com.example.lovelypet.service.AdditionalServiceService;
 import com.example.lovelypet.service.HotelService;
 import com.example.lovelypet.util.SecurityUtil;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -88,6 +89,7 @@ public class AdditionalServiceBusiness {
         return responses;
     }
 
+    @Transactional
     //delete
     public String deleteService(int id) throws BaseException {
         if (id == 0) {

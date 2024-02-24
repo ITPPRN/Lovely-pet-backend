@@ -5,6 +5,7 @@ import com.example.lovelypet.exception.*;
 import com.example.lovelypet.model.*;
 import com.example.lovelypet.service.*;
 import com.example.lovelypet.util.SecurityUtil;
+import jakarta.transaction.Transactional;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -482,6 +483,7 @@ public class BookingBusiness {
         return "Booking No." + booking.getId() + " has been cancelled.";
     }
 
+    @Transactional
     //delete
     public String deleteBooking(BookingRequest id) throws BaseException {
         if (Objects.isNull(id)) {
@@ -503,10 +505,10 @@ public class BookingBusiness {
             boolean deleted = imageFile.delete();
             if (!deleted) {
                 throw FileException.deleteImageFailed();
-            }
-        } else {
-            throw FileException.deleteNoFile();
-        }
+            }}
+//        } else {
+//            throw FileException.deleteNoFile();
+//        }
 
         bookingService.deleteById(id.getIdBooking());
         roomService.update(booking.getRoomId().getId(), null, 0, "empty", null);

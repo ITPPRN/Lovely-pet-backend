@@ -14,6 +14,7 @@ import com.example.lovelypet.service.PetService;
 import com.example.lovelypet.service.PetTypeService;
 import com.example.lovelypet.service.UserService;
 import com.example.lovelypet.util.SecurityUtil;
+import jakarta.transaction.Transactional;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -291,6 +292,7 @@ public class PetBusiness {
         return "Successfully deleted the" + fileName + "image.";
     }
 
+    @Transactional
     public String deletePet(AddPetRequest id) throws BaseException {
         Optional<Pet> opt = petService.findById(id.getId());
         if (opt.isEmpty()) {
@@ -309,10 +311,10 @@ public class PetBusiness {
             boolean deleted = imageFile.delete();
             if (!deleted) {
                 throw FileException.deleteImageFailed();
-            }
-        } else {
-            throw FileException.deleteNoFile();
-        }
+            }}
+//        } else {
+//            throw FileException.deleteNoFile();
+//        }
         petService.deleteById(id.getId());
         return "Successfully deleted" + name + "pet account.";
     }
