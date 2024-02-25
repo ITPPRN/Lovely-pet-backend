@@ -103,15 +103,21 @@ public class BookingApi {
     }
 
     // booking for user
-    @PostMapping("booking-for-user")
+    @PostMapping("/booking-for-user")
     public ResponseEntity<String> bookingForUser(@RequestBody BookingByClinicRequest request) throws BaseException, IOException {
         String response = bookingBusiness.reserveByClinic(request);
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("list-booking-by-clinic")
+    @GetMapping("/list-booking-by-clinic")
     public  ResponseEntity<List<BookingByClinicListResponse>> bookingByClinic(@RequestParam String request)throws BaseException{
         List<BookingByClinicListResponse> response = bookingBusiness.listBookingByClinic(request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/update-booking-by-clinic")
+    public ResponseEntity<String> updateStateBookingByClinic(@RequestBody ConsiderBookingRequest request)throws BaseException{
+        String response = bookingBusiness.considerBookingByClinic(request);
         return ResponseEntity.ok(response);
     }
 

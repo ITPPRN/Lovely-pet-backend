@@ -196,4 +196,13 @@ public class BookingService {
     public List<BookingByClinic> getBookingByClinic(int id , String state){
         return bookingByClinicRepository.findByHotelIdAndStatusBooking(id,state);
     }
+
+    public Optional<BookingByClinic> getBookingByClinicID(int id ){
+        return bookingByClinicRepository.findById(id);
+    }
+
+    public BookingByClinic updateBookingByClinic(BookingByClinic req){
+        return bookingByClinicRepository.save(req);
+    }
+
 }

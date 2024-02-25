@@ -625,6 +625,28 @@ public class BookingBusiness {
         return response;
     }
 
+
+    public String considerBookingByClinic(ConsiderBookingRequest request) throws BaseException {
+        Optional<BookingByClinic> opt = bookingService.getBookingByClinicID(request.getId());
+        if (opt.isEmpty()) {
+            throw BookingException.notFound();
+        }
+        BookingByClinic booking = opt.get();
+        booking.setStatusBooking(request.getState());
+        BookingByClinic updateBooking = bookingService.updateBookingByClinic(booking);
+        String state = updateBooking.getStatusBooking();
+        String response = null;
+        if (state.equals("cancel")) {
+            response = "Booking No. " + updateBooking.getId() + " has been cancel.";
+        }
+        if (state.equals("complete")) {
+            //service history record
+            response = "Completed No." + updateBooking.getId() + " Booking service.";
+        }
+        roomService.update(booking.getRoomId(), null, 0, "empty", null);
+        return response;
+    }
+
 }
 
 

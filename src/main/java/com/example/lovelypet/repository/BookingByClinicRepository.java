@@ -13,6 +13,5 @@ public interface BookingByClinicRepository extends CrudRepository<BookingByClini
     Optional<BookingByClinic> findById(int id);
     List<BookingByClinic> findByHotelIdAndStatusBooking(int hotel,String state);
 
-
     void deleteById(int id);
 }
