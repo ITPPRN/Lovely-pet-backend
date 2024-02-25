@@ -11,6 +11,7 @@ C:\Users\ittip\Downloads\backend\backend_hotel_pet_oneservice\src\main\java\com\
 C:\Users\ittip\Downloads\backend\backend_hotel_pet_oneservice\src\main\java\com\example\lovelypet\exception\EmaillException.java
 C:\Users\ittip\Downloads\backend\backend_hotel_pet_oneservice\src\main\java\com\example\lovelypet\repository\RoomRepository.java
 C:\Users\ittip\Downloads\backend\backend_hotel_pet_oneservice\src\main\java\com\example\lovelypet\business\UserBusiness.java
+C:\Users\ittip\Downloads\backend\backend_hotel_pet_oneservice\src\main\java\com\example\lovelypet\model\BookingByClinicListResponse.java
 C:\Users\ittip\Downloads\backend\backend_hotel_pet_oneservice\src\main\java\com\example\lovelypet\service\PhotoRoomService.java
 C:\Users\ittip\Downloads\backend\backend_hotel_pet_oneservice\src\main\java\com\example\lovelypet\api\PetApi.java
 C:\Users\ittip\Downloads\backend\backend_hotel_pet_oneservice\src\main\java\com\example\lovelypet\repository\AdditionalServiceRepository.java
@@ -55,6 +56,7 @@ C:\Users\ittip\Downloads\backend\backend_hotel_pet_oneservice\src\main\java\com\
 C:\Users\ittip\Downloads\backend\backend_hotel_pet_oneservice\src\main\java\com\example\lovelypet\model\RoomResponseList.java
 C:\Users\ittip\Downloads\backend\backend_hotel_pet_oneservice\src\main\java\com\example\lovelypet\model\PhotoHotelRequest.java
 C:\Users\ittip\Downloads\backend\backend_hotel_pet_oneservice\src\main\java\com\example\lovelypet\business\ChatBusiness.java
+C:\Users\ittip\Downloads\backend\backend_hotel_pet_oneservice\src\main\java\com\example\lovelypet\entity\BookingByClinic.java
 C:\Users\ittip\Downloads\backend\backend_hotel_pet_oneservice\src\main\java\com\example\lovelypet\exception\ReviewException.java
 C:\Users\ittip\Downloads\backend\backend_hotel_pet_oneservice\src\main\java\com\example\lovelypet\LovelyPetApplication.java
 C:\Users\ittip\Downloads\backend\backend_hotel_pet_oneservice\src\main\java\com\example\lovelypet\api\RoomApi.java
@@ -110,6 +112,7 @@ C:\Users\ittip\Downloads\backend\backend_hotel_pet_oneservice\src\main\java\com\
 C:\Users\ittip\Downloads\backend\backend_hotel_pet_oneservice\src\main\java\com\example\lovelypet\model\BookingRequest.java
 C:\Users\ittip\Downloads\backend\backend_hotel_pet_oneservice\src\main\java\com\example\lovelypet\entity\Verify.java
 C:\Users\ittip\Downloads\backend\backend_hotel_pet_oneservice\src\main\java\com\example\lovelypet\model\BookingListResponse.java
+C:\Users\ittip\Downloads\backend\backend_hotel_pet_oneservice\src\main\java\com\example\lovelypet\repository\BookingByClinicRepository.java
 C:\Users\ittip\Downloads\backend\backend_hotel_pet_oneservice\src\main\java\com\example\lovelypet\repository\VerifyRepository.java
 C:\Users\ittip\Downloads\backend\backend_hotel_pet_oneservice\src\main\java\com\example\lovelypet\model\UserRegisterRequest.java
 C:\Users\ittip\Downloads\backend\backend_hotel_pet_oneservice\src\main\java\com\example\lovelypet\entity\Pet.java

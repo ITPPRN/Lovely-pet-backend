@@ -15,10 +15,12 @@ com\example\lovelypet\api\UserApi.class
 com\example\lovelypet\repository\RoomRepository.class
 com\example\lovelypet\service\HotelService.class
 com\example\lovelypet\exception\PhotoRoomException.class
+com\example\lovelypet\model\BookingByClinicListResponse.class
 com\example\lovelypet\model\HotelUpdateRequest.class
 com\example\lovelypet\model\PetProfileResponse.class
 com\example\lovelypet\util\SecurityUtil.class
 com\example\lovelypet\entity\RoomType.class
+com\example\lovelypet\entity\BookingByClinic.class
 com\example\lovelypet\business\HotelBusiness.class
 com\example\lovelypet\exception\BookingException.class
 com\example\lovelypet\model\UserRegisterResponse.class
@@ -102,6 +104,7 @@ com\example\lovelypet\api\RoomApi.class
 com\example\lovelypet\exception\ReviewException.class
 com\example\lovelypet\mapper\BookingMapperImpl.class
 com\example\lovelypet\api\AdditionalServiceApi.class
+com\example\lovelypet\repository\BookingByClinicRepository.class
 com\example\lovelypet\business\AdditionalServiceBusiness.class
 com\example\lovelypet\business\ServiceHistoryBusiness.class
 com\example\lovelypet\repository\ReviewRepository.class

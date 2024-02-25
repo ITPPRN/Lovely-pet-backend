@@ -2,10 +2,7 @@ package com.example.lovelypet.api;
 
 import com.example.lovelypet.business.BookingBusiness;
 import com.example.lovelypet.exception.BaseException;
-import com.example.lovelypet.model.BookingByClinicRequest;
-import com.example.lovelypet.model.BookingListResponse;
-import com.example.lovelypet.model.BookingRequest;
-import com.example.lovelypet.model.ConsiderBookingRequest;
+import com.example.lovelypet.model.*;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -111,6 +108,13 @@ public class BookingApi {
         String response = bookingBusiness.reserveByClinic(request);
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("list-booking-by-clinic")
+    public  ResponseEntity<List<BookingByClinicListResponse>> bookingByClinic(@RequestParam String request)throws BaseException{
+        List<BookingByClinicListResponse> response = bookingBusiness.listBookingByClinic(request);
+        return ResponseEntity.ok(response);
+    }
+
 
     ///////////////////////////////////
 

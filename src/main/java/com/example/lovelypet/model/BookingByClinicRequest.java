@@ -11,9 +11,12 @@ public class BookingByClinicRequest {
     private String start;
     private String end;
     private String paymentMethod;
-    private MultipartFile file;
     private int idBooking;
-    private int additionService;
+    private String additionService;
+    private double totalPrice;
 
+
+
+    private  String state;
 
 }

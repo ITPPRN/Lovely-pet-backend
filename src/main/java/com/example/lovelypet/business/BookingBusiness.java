@@ -517,7 +517,7 @@ public class BookingBusiness {
 
 
     //booking by clinic
-    public String reserveByClinic(BookingByClinicRequest request) throws BaseException, IOException {
+    public String reserveByClinic(BookingByClinicRequest request) throws BaseException {
 
         //hotel
         Optional<String> opt = SecurityUtil.getCurrentUserId();
@@ -551,11 +551,7 @@ public class BookingBusiness {
             throw BookingException.createPetIdNull();
         }
 
-        //additional
-        AdditionalServices additionalServices = null;
-        if (request.getAdditionService() != 0) {
-            additionalServices = additionalServiceService.findById(request.getAdditionService());
-        }
+
 
         //date start
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -569,32 +565,65 @@ public class BookingBusiness {
         //date now
         LocalDateTime date = LocalDateTime.now();
 
-        String fileImage = null;
-        if (request.getFile() != null) {
-            fileImage = uploadImage(request.getFile());
-        }
-
         roomService.update(optRoom.get().getId(), null, 0, "unavailable", null);
         //add pet to database
-        Booking response = bookingService.createByClinic(
-                request.getCustomerName(),
-                optHotel.get(),
-                optRoom.get(),
-                request.getPetName(),
-                startDate,
-                endDate,
+        BookingByClinic response = bookingService.createByClinic(
                 date,
                 request.getPaymentMethod(),
-                fileImage,
-                additionalServices
+                request.getTotalPrice(),
+                request.getCustomerName(),
+                request.getPetName(),
+                request.getRoomId(),
+                request.getAdditionService(),
+                optHotel.get().getId(),
+                startDate,
+                endDate
         );
 
-        return " booking number " + response.getId() + " Successfully";
+        return " booking By Clinic number " + response.getId() + " Successfully";
     }
 
     ///////////////////////////////
 
     ///////////////////////////////
+
+
+    public List<BookingByClinicListResponse> listBookingByClinic(String state) throws BaseException {
+        //Hotel
+        Optional<String> opt = SecurityUtil.getCurrentUserId();
+        if (opt.isEmpty()) {
+            throw UserException.unauthorized();
+        }
+        String userId = opt.get();
+        Optional<Hotel> optHotel = hotelService.findById(Integer.parseInt(userId));
+        if (optHotel.isEmpty()) {
+            throw HotelException.notFound();
+        }
+        Hotel Hotel = optHotel.get();
+        List<BookingByClinic> bookingList = bookingService.getBookingByClinic(optHotel.get().getId(),state);
+        if (bookingList.isEmpty()) {
+            throw BookingException.notFound();
+        }
+
+        List<BookingByClinicListResponse> response = new ArrayList<>();
+        for (BookingByClinic booking : bookingList) {
+
+            BookingByClinicListResponse data = new BookingByClinicListResponse();
+            data.setId(booking.getId());
+            data.setRoomNumber(booking.getRoomId());
+            data.setDate(booking.getDate());
+            data.setBookingStartDate(formatDate.format(booking.getBookingStartDate()));
+            data.setBookingEndDate(formatDate.format(booking.getBookingEndDate()));
+            data.setPaymentMethod(booking.getPaymentMethod());
+            data.setState(booking.getStatusBooking());
+            data.setUser(booking.getNameCustomer());
+            data.setPrice(booking.getTotalPrice());
+            data.setPet(booking.getNamePet());
+            data.setAddSer(booking.getAdditionalServiceId());
+            response.add(data);
+        }
+        return response;
+    }
 
 }
 

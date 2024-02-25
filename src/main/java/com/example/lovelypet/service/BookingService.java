@@ -3,6 +3,8 @@ package com.example.lovelypet.service;
 import com.example.lovelypet.entity.*;
 import com.example.lovelypet.exception.BaseException;
 import com.example.lovelypet.exception.BookingException;
+import com.example.lovelypet.model.BookingByClinicListResponse;
+import com.example.lovelypet.repository.BookingByClinicRepository;
 import com.example.lovelypet.repository.BookingRepository;
 import org.springframework.stereotype.Service;
 
@@ -17,9 +19,11 @@ public class BookingService {
 
     private final BookingRepository bookingRepository;
 
+    private final BookingByClinicRepository bookingByClinicRepository;
 
-    public BookingService(BookingRepository bookingRepository) {
+    public BookingService(BookingRepository bookingRepository, BookingByClinicRepository bookingByClinicRepository) {
         this.bookingRepository = bookingRepository;
+        this.bookingByClinicRepository = bookingByClinicRepository;
     }
 
     public Booking create(
@@ -116,80 +120,80 @@ public class BookingService {
 
 
     //booking by clinic
-    public Booking createByClinic(
-            String customerName,
-            Hotel hotel,
-            Room room,
-            String petName,
-            Date bookingStartDate,
-            Date bookingEndDate,
+    ////////////////////////////////////////////////////
+
+    ////////////////////////////////////////////////////
+
+
+    public BookingByClinic createByClinic(
             LocalDateTime date,
             String paymentMethod,
-            String payment,
-            AdditionalServices additionalServices
+            double totalPrice,
+            String nameCustomer,
+            String namePet,
+            int roomId,
+            String additionalServiceId,
+            int hotelId,
+            Date bookingStartDate,
+            Date bookingEndDate
 
     ) throws BaseException {
 
         //validate
-        if (Objects.isNull(customerName)) {
+        if (Objects.isNull(paymentMethod)) {
             throw BookingException.createUserIdNull();
         }
 
-        if (Objects.isNull(hotel)) {
+        if (Objects.isNull(nameCustomer)) {
             throw BookingException.createHotelIdNull();
         }
 
-        if (Objects.isNull(room)) {
+        if (Objects.isNull(namePet)) {
             throw BookingException.createRoomIdNull();
         }
 
-        if (Objects.isNull(petName)) {
+        if (Objects.isNull(additionalServiceId)) {
             throw BookingException.createPetIdNull();
         }
 
-        if (Objects.isNull(bookingStartDate)) {
+        if (roomId == 0) {
             throw BookingException.createBookingStartDateNull();
         }
 
-        if (Objects.isNull(bookingEndDate)) {
+        if (hotelId == 0) {
             throw BookingException.createBookingEndDateNull();
         }
+
+        if (Objects.isNull(bookingStartDate)) {
+            throw BookingException.createBookingDateNull();
+        }
+
+        if (Objects.isNull(bookingEndDate)) {
+            throw BookingException.createBookingDateNull();
+        }
+
 
         if (Objects.isNull(date)) {
             throw BookingException.createBookingDateNull();
         }
-
         //verify
-
-        Booking entity = new Booking();
-        entity.setNameCustomer(customerName);
-        entity.setHotelId(hotel);
-        entity.setRoomId(room);
-        entity.setNamePet(petName);
+        BookingByClinic entity = new BookingByClinic();
+        entity.setPaymentMethod(paymentMethod);
+        entity.setTotalPrice(totalPrice);
+        entity.setNameCustomer(nameCustomer);
+        entity.setNamePet(namePet);
+        entity.setRoomId(roomId);
+        entity.setAdditionalServiceId(additionalServiceId);
+        entity.setHotelId(hotelId);
+        entity.setStatusBooking("approve");
+        entity.setDate(date);
         entity.setBookingStartDate(bookingStartDate);
         entity.setBookingEndDate(bookingEndDate);
-        entity.setDate(date);
-        entity.setPaymentMethod(paymentMethod);
-        if (!paymentMethod.equals("cash payment")) {
-            if (Objects.isNull(payment)) {
-                throw BookingException.createBookingPaymentNull();
-            }
-            entity.setPayment(payment);
-        } else {
-            if (Objects.nonNull(payment)) {
-                throw BookingException.wrongPaymentMethod();
-            }
-        }
-        entity.setState("waite");
-        if (Objects.nonNull(additionalServices)) {
-            entity.setAdditionalServiceId(additionalServices);
-        }
-        entity.setBookingByClinic(true);
-        return bookingRepository.save(entity);
+
+        return bookingByClinicRepository.save(entity);
     }
 
-    ////////////////////////////////////////////////////
-
-    ////////////////////////////////////////////////////
-
+    public List<BookingByClinic> getBookingByClinic(int id , String state){
+        return bookingByClinicRepository.findByHotelIdAndStatusBooking(id,state);
+    }
 }
